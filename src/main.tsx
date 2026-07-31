@@ -6,7 +6,11 @@ import JinniProvider, {
   createDesignSystem,
 } from "@jinni-labs/ui/JinniProvider";
 
-const designSystem = createDesignSystem();
+const designSystem = createDesignSystem({
+  zIndex: {
+    popper: 3000,
+  },
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
