@@ -7,7 +7,7 @@ const OpenDrawerButton = ({ onClick }: ComponentProps<"button">) => {
   return (
     <ButtonBase
       className={cn(
-        "absolute! right-2.5 top-2.5 inline-flex justify-center items-center aspect-square rounded-full! p-1!",
+        "absolute! right-2.5 top-2.5 inline-flex justify-center items-center aspect-square rounded-full! p-1! bg-(--jinni-color-surface-container-lowest)!",
         { hidden: open },
       )}
       onClick={onClick}

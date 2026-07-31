@@ -4,9 +4,11 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 class BaseProject {
   canvasEl: HTMLCanvasElement;
   scene: THREE.Scene | undefined;
-  camera: THREE.Camera | undefined;
+  camera: THREE.PerspectiveCamera | undefined;
   renderer: THREE.WebGLRenderer | undefined;
   mesh: THREE.Mesh | undefined;
+  controls: OrbitControls | undefined;
+  resizeObserver: ResizeObserver | undefined;
 
   constructor(canvasEl: HTMLCanvasElement) {
     this.canvasEl = canvasEl;
@@ -16,6 +18,7 @@ class BaseProject {
     this.setupCamera();
     this.setupControls();
     this.setupRenderer();
+    this.setupResizeObserver();
     this.renderer?.setAnimationLoop(this.render.bind(this));
   }
 
@@ -54,11 +57,37 @@ class BaseProject {
   }
 
   setupControls() {
-    new OrbitControls(this.camera!, this.canvasEl);
+    this.controls = new OrbitControls(this.camera!, this.canvasEl);
   }
 
-  render(time: number) {
-    this.update(time);
+  setupResizeObserver() {
+    // handleResizeEvent 함수를 한 프레임 당 한 번만 실행
+    let rafId: number | null = null;
+    this.resizeObserver = new ResizeObserver(() => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        this.handleResizeEvent();
+        rafId = null;
+      });
+    });
+    this.resizeObserver.observe(this.canvasEl);
+  }
+
+  handleResizeEvent() {
+    const width = this.canvasEl.clientWidth;
+    const height = this.canvasEl.clientHeight;
+    if (width === 0 || height === 0) return;
+
+    if (this.camera) {
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
+    }
+    this.renderer?.setSize(width, height, false);
+    this.render();
+  }
+
+  render(time?: number) {
+    this.update(time ?? performance.now());
     this.renderer?.render(this.scene!, this.camera!);
   }
 
@@ -81,10 +110,17 @@ class BaseProject {
     // renderer 자체의 GPU 리소스(프로그램, 렌더 타겟 등) 정리
     this.renderer?.dispose();
 
+    // control 정리
+    this.controls?.dispose();
+
+    // Observer 연결 해제
+    this.resizeObserver?.disconnect();
+
     // 참조 해제
     this.scene = undefined;
     this.camera = undefined;
     this.renderer = undefined;
+    this.controls = undefined;
   }
 
   /**

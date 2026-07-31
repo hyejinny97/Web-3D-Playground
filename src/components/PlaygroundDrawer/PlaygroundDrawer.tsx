@@ -25,15 +25,15 @@ const PlaygroundDrawer = ({ open, onClose }: PlaygroundDrawerProps) => {
         width: `${DRAWER_WIDTH}px`,
       }}
     >
-      <DrawerHeader className="flex items-center gap-2.5 px-[16px]!">
+      <DrawerHeader className="flex items-center gap-2.5 px-4!">
         <CloseDrawerButton onClick={onClose} />
         <Text as="h1" className="typo-headline-medium">
           3D Playground
         </Text>
       </DrawerHeader>
-      <DrawerBody className="py-2! overflow-hidden px-[16px]!">
+      <DrawerBody className="py-2! overflow-hidden px-4!">
         <Stack className="h-full overflow-hidden" spacing={16}>
-          <Stack className="px-[8px] py-[4px]" spacing={8}>
+          <Stack className="px-2 py-1" spacing={8}>
             <SearchInput
               options={[
                 { children: "Option 1", label: "Option 1", value: "option1" },
