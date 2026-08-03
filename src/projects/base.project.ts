@@ -1,7 +1,8 @@
 import * as THREE from "three";
+import type { Project } from "@/types/project";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
-class BaseProject {
+class BaseProject implements Project {
   canvasEl: HTMLCanvasElement;
   scene: THREE.Scene | undefined;
   camera: THREE.PerspectiveCamera | undefined;
@@ -19,7 +20,6 @@ class BaseProject {
     this.setupControls();
     this.setupRenderer();
     this.setupResizeObserver();
-    this.renderer?.setAnimationLoop(this.render.bind(this));
   }
 
   setupScene() {
@@ -89,6 +89,10 @@ class BaseProject {
   render(time?: number) {
     this.update(time ?? performance.now());
     this.renderer?.render(this.scene!, this.camera!);
+  }
+
+  renderLoop() {
+    this.renderer?.setAnimationLoop(this.render.bind(this));
   }
 
   update(time: number) {

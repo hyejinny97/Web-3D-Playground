@@ -1,25 +1,45 @@
+import { ALL_PROJECTS, BASE_PROJECT } from "@/constants/projects";
+import useProject from "@/hooks/useProject";
 import Autocomplete from "@jinni-labs/ui/Autocomplete";
 import AutocompleteOption from "@jinni-labs/ui/AutocompleteOption";
-import type { AutocompleteOptionProps } from "@jinni-labs/ui/AutocompleteOption";
+import { useState } from "react";
 
-type OptionType = Pick<AutocompleteOptionProps, "children" | "label" | "value">;
+const SearchInput = () => {
+  const {
+    searchValue,
+    onSearchValueChange,
+    searchInputValueCleared,
+    onSearchInputValueChange,
+  } = useProject();
+  const [inputValue, setInputValue] = useState<string>("");
 
-interface SearchInputProps {
-  options: OptionType[];
-}
-
-const SearchInput = ({ options }: SearchInputProps) => {
   return (
     <Autocomplete
       className="w-full!"
+      mode="free"
+      inputValue={searchInputValueCleared ? "" : inputValue}
+      onInputChange={(_, inputValue) => {
+        onSearchInputValueChange();
+        setInputValue(inputValue);
+      }}
+      value={searchValue}
+      onChange={(_, value) => onSearchValueChange(value as string | null)}
+      onClose={() => {
+        if (inputValue !== searchValue) {
+          onSearchValueChange(inputValue);
+        }
+      }}
       placeholder="Search playground title"
       PopperProps={{ style: { width: "251px" } }}
     >
-      {options.map(({ children, label, value }) => (
-        <AutocompleteOption key={value} label={label} value={value}>
-          {children}
-        </AutocompleteOption>
-      ))}
+      {ALL_PROJECTS.map(
+        ({ id, title }) =>
+          id !== BASE_PROJECT.id && (
+            <AutocompleteOption key={id} label={title} value={id}>
+              {title}
+            </AutocompleteOption>
+          ),
+      )}
     </Autocomplete>
   );
 };
