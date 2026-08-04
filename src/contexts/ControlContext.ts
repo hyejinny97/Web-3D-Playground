@@ -3,8 +3,8 @@ import { createContext } from "react";
 
 export interface ControlContextType {
   controls: Map<string, ControlType[]>;
-  addControls: (groupName: string, controlsToAdd: ControlType[]) => void;
-  removeControls: (groupName: string, controlLabelsToRemove: string[]) => void;
+  add: (groupName: string, controlsToAdd: ControlType[]) => void;
+  remove: (groupName: string, controlLabelsToRemove: string[]) => void;
   removeGroup: (groupName: string) => void;
   clearAll: () => void;
 }

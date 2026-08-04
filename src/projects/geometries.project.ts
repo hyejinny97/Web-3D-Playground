@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import BaseProject from "./base.project.ts";
-import { ProjectConfigure } from "@/decorators/project.ts";
+import { RenderLoop } from "@/decorators/renderLoop.ts";
 
-@ProjectConfigure({ loop: true })
+@RenderLoop()
 class GeometriesProject extends BaseProject {
   setupModel() {
     const geometry = new THREE.BoxGeometry();

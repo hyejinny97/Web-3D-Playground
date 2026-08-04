@@ -3,6 +3,7 @@ import { DRAWER_WIDTH, TRANSITION } from "@/constants/drawer";
 import useProject from "@/hooks/useProject";
 import { ALL_PROJECTS } from "@/constants/projects";
 import type { Project } from "@/types/project";
+import useControl from "@/hooks/useControl";
 
 interface CanvasProps {
   open: boolean;
@@ -11,6 +12,7 @@ interface CanvasProps {
 const Canvas = ({ open }: CanvasProps) => {
   const canvasElRef = useRef<HTMLCanvasElement>(null);
   const { selectedProjectId } = useProject();
+  const { add, remove, removeGroup, clearAll } = useControl();
 
   useEffect(() => {
     const canvasEl = canvasElRef.current;
@@ -34,7 +36,10 @@ const Canvas = ({ open }: CanvasProps) => {
       if (cancelled) return;
 
       const projectClass = module.default;
-      project = new projectClass(canvasEl);
+      project = new projectClass({
+        canvasEl,
+        controlUI: { add, remove, removeGroup, clearAll },
+      });
       if (project.loop) project.renderLoop();
       else project.render();
     };
@@ -46,7 +51,7 @@ const Canvas = ({ open }: CanvasProps) => {
         project.dispose();
       }
     };
-  }, [selectedProjectId]);
+  }, [selectedProjectId, add, remove, removeGroup, clearAll]);
 
   return (
     <canvas

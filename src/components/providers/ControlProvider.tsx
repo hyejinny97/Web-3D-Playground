@@ -9,24 +9,21 @@ const ControlProvider = ({ children }: { children: React.ReactNode }) => {
     new Map(),
   );
 
-  const addControls = useCallback(
-    (groupName: string, controlsToAdd: ControlType[]) => {
-      setControls((prev) => {
-        const newMap = new Map(prev);
-        if (prev.has(groupName)) {
-          const prevControls = prev.get(groupName)!;
-          const newControls = [...prevControls, ...controlsToAdd];
-          newMap.set(groupName, newControls);
-        } else {
-          newMap.set(groupName, controlsToAdd);
-        }
-        return newMap;
-      });
-    },
-    [],
-  );
+  const add = useCallback((groupName: string, controlsToAdd: ControlType[]) => {
+    setControls((prev) => {
+      const newMap = new Map(prev);
+      if (prev.has(groupName)) {
+        const prevControls = prev.get(groupName)!;
+        const newControls = [...prevControls, ...controlsToAdd];
+        newMap.set(groupName, newControls);
+      } else {
+        newMap.set(groupName, controlsToAdd);
+      }
+      return newMap;
+    });
+  }, []);
 
-  const removeControls = useCallback(
+  const remove = useCallback(
     (groupName: string, controlLabelsToRemove: string[]) => {
       setControls((prev) => {
         if (prev.has(groupName)) {
@@ -60,8 +57,8 @@ const ControlProvider = ({ children }: { children: React.ReactNode }) => {
     <ControlContext
       value={{
         controls,
-        addControls,
-        removeControls,
+        add,
+        remove,
         removeGroup,
         clearAll,
       }}

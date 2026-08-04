@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import type { Project } from "@/types/project";
+import type { ConstructorProps, Project } from "@/types/project";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { ProjectConfigure } from "@/decorators/project";
+import { RenderLoop } from "@/decorators/renderLoop";
 
-@ProjectConfigure({ loop: true })
+@RenderLoop()
 class BaseProject implements Project {
   canvasEl: HTMLCanvasElement;
   scene: THREE.Scene | undefined;
@@ -12,9 +12,11 @@ class BaseProject implements Project {
   mesh: THREE.Mesh | undefined;
   controls: OrbitControls | undefined;
   resizeObserver: ResizeObserver | undefined;
+  controlUI: ConstructorProps["controlUI"];
 
-  constructor(canvasEl: HTMLCanvasElement) {
+  constructor({ canvasEl, controlUI }: ConstructorProps) {
     this.canvasEl = canvasEl;
+    this.controlUI = controlUI;
     this.setupScene();
     this.setupModel();
     this.setupLight();
