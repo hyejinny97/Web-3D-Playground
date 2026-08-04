@@ -22,6 +22,8 @@ const UIControls = (props: BoxProps) => {
     }
   };
 
+  if (controls.size === 0) return null;
+
   return (
     <Box
       className="absolute top-3.75 left-3.75 px-3 py-1.5 bg-(--jinni-color-surface-container-lowest)"

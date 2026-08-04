@@ -5,7 +5,6 @@ export const BASE_PROJECT = {
   title: "",
   tags: [],
   module: () => import("@/projects/base.project"),
-  loop: true,
 };
 
 const MODEL_PROJECTS = [
@@ -15,7 +14,6 @@ const MODEL_PROJECTS = [
     imageUrl: "",
     tags: [TAGS.geometry, TAGS.raycaster],
     module: () => import("@/projects/geometries.project"),
-    loop: true,
   },
 ];
 

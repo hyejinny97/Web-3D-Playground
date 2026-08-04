@@ -1,7 +1,9 @@
 import * as THREE from "three";
 import type { Project } from "@/types/project";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { ProjectConfigure } from "@/decorators/project";
 
+@ProjectConfigure({ loop: true })
 class BaseProject implements Project {
   canvasEl: HTMLCanvasElement;
   scene: THREE.Scene | undefined;

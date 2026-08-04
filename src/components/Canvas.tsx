@@ -35,7 +35,7 @@ const Canvas = ({ open }: CanvasProps) => {
 
       const projectClass = module.default;
       project = new projectClass(canvasEl);
-      if (data.loop) project.renderLoop();
+      if (project.loop) project.renderLoop();
       else project.render();
     };
     renderProject();
