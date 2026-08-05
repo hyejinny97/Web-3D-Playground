@@ -10,18 +10,18 @@ const RangeControl = ({
   min = 1,
   max = 5,
   step = 1,
-  initValue,
+  initValue = min,
   onChange,
 }: RangeControlType) => {
-  const [value, setValue] = useState<number>(initValue ?? 0);
+  const [value, setValue] = useState<number>(initValue);
 
   return (
     <Grid
-      className="w-full grid-cols-[1fr_minmax(120px,120px)_1fr]! items-center"
+      className="w-full grid-cols-[minmax(0,1fr)_100px_65px]! items-center"
       columns={3}
       columnSpacing={8}
     >
-      <Text className="typo-label-medium">{label}</Text>
+      <Text className="typo-label-medium wrap-break-word">{label}</Text>
       <Slider
         value={value}
         onChange={(_, val) => {

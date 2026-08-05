@@ -40,7 +40,7 @@ const UIControls = (props: BoxProps) => {
             <AccordionDetails className="p-0!">
               <List className="p-0!">
                 {controls.map((control) => (
-                  <ListItem key={control.label} className="px-2! py-1!">
+                  <ListItem key={control.label} className="p-1!">
                     {getControlByType(control)}
                   </ListItem>
                 ))}

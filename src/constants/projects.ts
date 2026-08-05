@@ -4,7 +4,7 @@ export const BASE_PROJECT = {
   id: "base",
   title: "",
   tags: [],
-  module: () => import("@/projects/base.project"),
+  module: () => import("@/projects/BaseProject"),
 };
 
 const MODEL_PROJECTS = [
@@ -13,7 +13,7 @@ const MODEL_PROJECTS = [
     title: "Geometries",
     imageUrl: "",
     tags: [TAGS.geometry, TAGS.raycaster],
-    module: () => import("@/projects/geometries.project"),
+    module: () => import("@/projects/GeometriesProject"),
   },
 ];
 

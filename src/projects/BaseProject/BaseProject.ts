@@ -17,6 +17,10 @@ class BaseProject implements Project {
   constructor({ canvasEl, controlUI }: ConstructorProps) {
     this.canvasEl = canvasEl;
     this.controlUI = controlUI;
+    this.init();
+  }
+
+  init() {
     this.setupScene();
     this.setupModel();
     this.setupLight();
@@ -134,7 +138,7 @@ class BaseProject implements Project {
   /**
    * material에 연결된 모든 Texture(map, normalMap 등)를 dispose
    */
-  private disposeMaterial(material: THREE.Material) {
+  disposeMaterial(material: THREE.Material) {
     Object.values(material).forEach((value) => {
       if (value instanceof THREE.Texture) {
         value.dispose();
@@ -146,7 +150,7 @@ class BaseProject implements Project {
   /**
    * scene 전체를 순회하며 geometry, material, texture를 dispose
    */
-  private disposeScene() {
+  disposeScene() {
     if (!this.scene) return;
 
     this.scene.traverse((object) => {
