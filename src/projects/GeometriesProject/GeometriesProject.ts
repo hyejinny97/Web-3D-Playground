@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { gsap } from "gsap";
 import { RenderLoop } from "@/decorators/renderLoop.ts";
 import BaseProject from "@/projects/BaseProject";
 import type {
@@ -6,6 +7,7 @@ import type {
   GeometryHelper,
 } from "./GeometriesProject.types";
 import { geometryDictionary } from "./GeometriesProject.constants";
+import { isGeometryName } from "./GeometriesProject.utils";
 
 @RenderLoop()
 class GeometriesProject extends BaseProject {
@@ -13,7 +15,8 @@ class GeometriesProject extends BaseProject {
   declare private meshMaterial: THREE.Material;
   declare private lineMaterial: THREE.Material;
   declare private geometryDictionary: GeometryDictionaryType;
-  declare private selectedGeometry: keyof typeof geometryDictionary;
+  declare private selectedGeometry?: keyof typeof geometryDictionary;
+  declare private raycaster: THREE.Raycaster;
 
   init() {
     super.init();
@@ -86,18 +89,20 @@ class GeometriesProject extends BaseProject {
     this.root.add(model);
   }
 
-  showControlUI() {
-    const { helper } = this.geometryDictionary[this.selectedGeometry];
+  addGeometryToControlUI(name: keyof typeof geometryDictionary) {
+    const { helper } = this.geometryDictionary[name];
     helper.createControlUI(this.controlUI, () => {
-      const model = this.createModel(this.selectedGeometry, helper);
+      const model = this.createModel(name, helper);
       this.addModelToRoot(model);
-      this.geometryDictionary[this.selectedGeometry].model = model;
+      model.position.copy(this.geometryDictionary[name].position!);
+      this.geometryDictionary[name].model = model;
     });
   }
 
   arrangeInGrid() {
-    const models = Object.values(this.geometryDictionary)
-      .map((val) => val.model)
+    const geometryArr = Object.entries(this.geometryDictionary);
+    const models = geometryArr
+      .map(([, value]) => value.model)
       .filter((model) => model !== undefined);
     if (models.length === 0) return;
 
@@ -113,39 +118,74 @@ class GeometriesProject extends BaseProject {
     for (let row = 1; row <= gridRows; row++) {
       for (let column = 1; column <= gridColumns; column++) {
         const idx = gridColumns * (row - 1) + (column - 1);
-        if (idx > models.length - 1) break;
+        if (idx > geometryArr.length - 1) break;
 
-        const model = models[idx];
-        model.position.set(
+        const [x, y, z] = [
           (column - columnMiddle) * COLUMN_GAP,
           (rowMiddle - row) * ROW_GAP,
           0,
-        );
+        ];
+        const name = geometryArr[idx][0];
+        this.geometryDictionary[name].position = new THREE.Vector3(x, y, z);
+        const model = models[idx];
+        model.position.set(x, y, z);
       }
     }
   }
 
-  zoomFit(obj: THREE.Object3D) {
+  zoomFit(obj: THREE.Object3D, animate: boolean = false) {
     if (!this.camera) return;
 
+    const PADDING = 1;
     const box = new THREE.Box3().setFromObject(obj);
-    const sizeBox = box.getSize(new THREE.Vector3()).length();
+    const sizeBox = box.getSize(new THREE.Vector3()).x + PADDING * 2;
     const centerBox = box.getCenter(new THREE.Vector3());
 
     const halfSizeModel = sizeBox * 0.5;
     const halfFov = THREE.MathUtils.degToRad(this.camera.fov * 0.5);
     const distance = halfSizeModel / Math.tan(halfFov);
 
+    const { z } = this.camera.position;
     const direction = new THREE.Vector3()
-      .subVectors(this.camera.position, centerBox)
+      .subVectors(new THREE.Vector3(centerBox.x, centerBox.y, z), centerBox)
       .normalize();
     const position = direction.multiplyScalar(distance).add(centerBox);
 
-    this.camera.position.copy(position);
     this.camera.near = sizeBox / 10;
     this.camera.far = sizeBox * 10;
     this.camera.updateProjectionMatrix();
-    this.camera.lookAt(centerBox.x, centerBox.y, centerBox.z);
+
+    if (animate) {
+      const DURATION = 0.5;
+      const EASE = "power4.out";
+      const lookAtTarget = new THREE.Vector3(0, 0, 0);
+      gsap.to(lookAtTarget, {
+        duration: DURATION,
+        ease: EASE,
+        x: centerBox.x,
+        y: centerBox.y,
+        z: centerBox.z,
+        onUpdate: () => {
+          this.camera!.lookAt(lookAtTarget.x, lookAtTarget.y, lookAtTarget.z);
+        },
+        onComplete: () => {
+          if (this.controls) {
+            this.controls.target.copy(centerBox);
+            this.controls.update();
+          }
+        },
+      });
+      gsap.to(this.camera.position, {
+        duration: DURATION,
+        ease: EASE,
+        x: position.x,
+        y: position.y,
+        z: position.z,
+      });
+    } else {
+      this.camera.position.copy(position);
+      this.camera.lookAt(centerBox.x, centerBox.y, centerBox.z);
+    }
   }
 
   displayBoxHelper(obj: THREE.Object3D) {
@@ -158,8 +198,48 @@ class GeometriesProject extends BaseProject {
     obj.add(axesHelper);
   }
 
-  // TODO: click 이벤트 감지 -> model을 클릭한 경우, this.selectedGeometry에 등록 + showControlUI() 함수 호출
-  setupEvent() {}
+  setupEvent() {
+    this.raycaster = new THREE.Raycaster();
+    this.canvasEl.addEventListener("click", this.handleCanvasClick.bind(this));
+  }
+
+  handleCanvasClick(event: MouseEvent) {
+    if (this.selectedGeometry) return;
+
+    const x = (event.clientX / this.canvasEl.clientWidth) * 2 - 1;
+    const y = -(event.clientY / this.canvasEl.clientHeight) * 2 + 1;
+    const clickedPosition = new THREE.Vector2(x, y);
+
+    this.raycaster.setFromCamera(clickedPosition, this.camera!);
+    const intersects = this.raycaster.intersectObjects(this.root.children);
+
+    if (intersects.length > 0) {
+      for (const intersect of intersects) {
+        const obj = intersect.object;
+        if (obj instanceof THREE.Mesh && obj.parent instanceof THREE.Group) {
+          const group = obj.parent;
+          if (isGeometryName(group.name)) {
+            this.selectedGeometry = group.name;
+            this.zoomFit(group, true);
+            this.addGeometryToControlUI(group.name);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  dispose() {
+    super.dispose();
+    this.canvasEl.removeEventListener("click", this.handleCanvasClick);
+    this.controlUI.clearAll();
+  }
+
+  // TODO: Back 버튼 클릭 시,
+  // 1. 카메라 zoomOut
+  // 2. this.selectedGeometry에 해당하는 controlUI 제거
+  // 3. this.selectedGeometry 값 초기화
+  // 4. this.controls.target 원위치
 }
 
 export default GeometriesProject;

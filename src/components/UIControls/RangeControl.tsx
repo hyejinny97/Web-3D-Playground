@@ -21,7 +21,9 @@ const RangeControl = ({
       columns={3}
       columnSpacing={8}
     >
-      <Text className="typo-label-medium wrap-break-word">{label}</Text>
+      <Text className="typo-label-medium wrap-break-word select-none">
+        {label}
+      </Text>
       <Slider
         value={value}
         onChange={(_, val) => {
