@@ -16,7 +16,7 @@ class GeometriesProject extends BaseProject {
   declare private lineMaterial: THREE.Material;
   declare private geometryDictionary: GeometryDictionaryType;
   declare private selectedGeometry?: keyof typeof geometryDictionary;
-  declare private raycaster: THREE.Raycaster;
+  declare private handleCanvasClick: (event: MouseEvent) => void;
 
   init() {
     super.init();
@@ -24,7 +24,7 @@ class GeometriesProject extends BaseProject {
   }
 
   setupModel() {
-    this.geometryDictionary = geometryDictionary;
+    this.geometryDictionary = this.getGeometryDictionary();
     this.root = new THREE.Group();
     this.scene?.add(this.root);
 
@@ -32,6 +32,15 @@ class GeometriesProject extends BaseProject {
     this.createAllModels();
     this.arrangeInGrid();
     this.zoomFit(this.root);
+  }
+
+  getGeometryDictionary(): GeometryDictionaryType {
+    return Object.fromEntries(
+      Object.entries(geometryDictionary).map(([name, entry]) => [
+        name,
+        { helper: entry.helper, model: undefined, position: undefined },
+      ]),
+    );
   }
 
   createMaterials() {
@@ -90,6 +99,7 @@ class GeometriesProject extends BaseProject {
   }
 
   addGeometryToControlUI(name: keyof typeof geometryDictionary) {
+    if (!this.controlUI) return;
     const { helper } = this.geometryDictionary[name];
     helper.createControlUI(this.controlUI, () => {
       const model = this.createModel(name, helper);
@@ -199,40 +209,39 @@ class GeometriesProject extends BaseProject {
   }
 
   setupEvent() {
-    this.raycaster = new THREE.Raycaster();
-    this.canvasEl.addEventListener("click", this.handleCanvasClick.bind(this));
-  }
+    const raycaster = new THREE.Raycaster();
+    this.handleCanvasClick = (event: MouseEvent) => {
+      if (this.selectedGeometry) return;
 
-  handleCanvasClick(event: MouseEvent) {
-    if (this.selectedGeometry) return;
+      const x = (event.clientX / this.canvasEl.clientWidth) * 2 - 1;
+      const y = -(event.clientY / this.canvasEl.clientHeight) * 2 + 1;
+      const clickedPosition = new THREE.Vector2(x, y);
 
-    const x = (event.clientX / this.canvasEl.clientWidth) * 2 - 1;
-    const y = -(event.clientY / this.canvasEl.clientHeight) * 2 + 1;
-    const clickedPosition = new THREE.Vector2(x, y);
+      raycaster.setFromCamera(clickedPosition, this.camera!);
+      const intersects = raycaster.intersectObjects(this.root.children);
 
-    this.raycaster.setFromCamera(clickedPosition, this.camera!);
-    const intersects = this.raycaster.intersectObjects(this.root.children);
-
-    if (intersects.length > 0) {
-      for (const intersect of intersects) {
-        const obj = intersect.object;
-        if (obj instanceof THREE.Mesh && obj.parent instanceof THREE.Group) {
-          const group = obj.parent;
-          if (isGeometryName(group.name)) {
-            this.selectedGeometry = group.name;
-            this.zoomFit(group, true);
-            this.addGeometryToControlUI(group.name);
-            break;
+      if (intersects.length > 0) {
+        for (const intersect of intersects) {
+          const obj = intersect.object;
+          if (obj instanceof THREE.Mesh && obj.parent instanceof THREE.Group) {
+            const group = obj.parent;
+            if (isGeometryName(group.name)) {
+              this.selectedGeometry = group.name;
+              this.zoomFit(group, true);
+              this.addGeometryToControlUI(group.name);
+              break;
+            }
           }
         }
       }
-    }
+    };
+    this.canvasEl.addEventListener("click", this.handleCanvasClick);
   }
 
   dispose() {
     super.dispose();
     this.canvasEl.removeEventListener("click", this.handleCanvasClick);
-    this.controlUI.clearAll();
+    this.controlUI?.clearAll();
   }
 
   // TODO: Back 버튼 클릭 시,

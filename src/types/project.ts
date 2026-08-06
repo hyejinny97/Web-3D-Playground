@@ -9,7 +9,7 @@ export interface Project {
 
 export interface ConstructorProps {
   canvasEl: HTMLCanvasElement;
-  controlUI: {
+  controlUI?: {
     add: (groupName: string, controlsToAdd: ControlType[]) => void;
     remove: (groupName: string, controlLabelsToRemove: string[]) => void;
     removeGroup: (groupName: string) => void;

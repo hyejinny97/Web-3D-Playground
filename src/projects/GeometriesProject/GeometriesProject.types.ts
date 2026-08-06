@@ -4,7 +4,7 @@ import * as THREE from "three";
 export interface GeometryHelper {
   createGeometry: () => THREE.BufferGeometry;
   createControlUI: (
-    controls: ConstructorProps["controlUI"],
+    controls: NonNullable<ConstructorProps["controlUI"]>,
     onControlChange: () => void,
   ) => void;
 }
