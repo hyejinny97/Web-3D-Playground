@@ -21,12 +21,12 @@ class BaseProject implements Project {
   }
 
   init() {
-    this.setupScene();
-    this.setupModel();
-    this.setupLight();
-    this.setupCamera();
-    this.setupControls();
     this.setupRenderer();
+    this.setupCamera();
+    this.setupScene();
+    this.setupLight();
+    this.setupModel();
+    this.setupControls();
     this.setupResizeObserver();
   }
 

@@ -1,9 +1,8 @@
 import * as THREE from "three";
-import type { GeometryHelper } from "./GeometriesProject.type";
+import type { GeometryHelper } from "../GeometriesProject.types";
 import type { ConstructorProps } from "@/types/project";
 
 class BoxGeometryHelper implements GeometryHelper {
-  name = "box";
   private args = {
     width: 1,
     height: 1,
