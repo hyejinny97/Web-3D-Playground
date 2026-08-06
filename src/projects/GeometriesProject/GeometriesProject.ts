@@ -8,6 +8,9 @@ import type {
 } from "./GeometriesProject.types";
 import { geometryDictionary } from "./GeometriesProject.constants";
 import { isGeometryName } from "./GeometriesProject.utils";
+import type { ConstructorProps } from "@/types/project";
+
+type GeometriesProjectProps = ConstructorProps & { onModelSelect: () => void };
 
 @RenderLoop()
 class GeometriesProject extends BaseProject {
@@ -17,6 +20,12 @@ class GeometriesProject extends BaseProject {
   declare private geometryDictionary: GeometryDictionaryType;
   declare private selectedGeometry?: keyof typeof geometryDictionary;
   declare private handleCanvasClick: (event: MouseEvent) => void;
+  declare private onModelSelect: GeometriesProjectProps["onModelSelect"];
+
+  constructor({ canvasEl, controlUI, onModelSelect }: GeometriesProjectProps) {
+    super({ canvasEl, controlUI });
+    this.onModelSelect = onModelSelect;
+  }
 
   init() {
     super.init();
@@ -98,14 +107,19 @@ class GeometriesProject extends BaseProject {
     this.root.add(model);
   }
 
+  updateModel(name: keyof typeof geometryDictionary) {
+    const { helper } = this.geometryDictionary[name];
+    const model = this.createModel(name, helper);
+    this.addModelToRoot(model);
+    model.position.copy(this.geometryDictionary[name].position!);
+    this.geometryDictionary[name].model = model;
+  }
+
   addGeometryToControlUI(name: keyof typeof geometryDictionary) {
     if (!this.controlUI) return;
     const { helper } = this.geometryDictionary[name];
     helper.createControlUI(this.controlUI, () => {
-      const model = this.createModel(name, helper);
-      this.addModelToRoot(model);
-      model.position.copy(this.geometryDictionary[name].position!);
-      this.geometryDictionary[name].model = model;
+      this.updateModel(name);
     });
   }
 
@@ -166,9 +180,10 @@ class GeometriesProject extends BaseProject {
     this.camera.updateProjectionMatrix();
 
     if (animate) {
-      const DURATION = 0.5;
-      const EASE = "power4.out";
-      const lookAtTarget = new THREE.Vector3(0, 0, 0);
+      const DURATION = 1;
+      const EASE = "power2.in";
+      const { x, y, z } = this.controls?.target || { x: 0, y: 0, z: 0 };
+      const lookAtTarget = { x, y, z };
       gsap.to(lookAtTarget, {
         duration: DURATION,
         ease: EASE,
@@ -229,6 +244,7 @@ class GeometriesProject extends BaseProject {
               this.selectedGeometry = group.name;
               this.zoomFit(group, true);
               this.addGeometryToControlUI(group.name);
+              this.onModelSelect();
               break;
             }
           }
@@ -238,17 +254,26 @@ class GeometriesProject extends BaseProject {
     this.canvasEl.addEventListener("click", this.handleCanvasClick);
   }
 
+  reset() {
+    this.zoomFit(this.root, true);
+    if (this.selectedGeometry && this.controlUI) {
+      const { helper } = this.geometryDictionary[this.selectedGeometry];
+      helper.reset(this.controlUI, () => {
+        this.updateModel(this.selectedGeometry!);
+      });
+      this.selectedGeometry = undefined;
+    }
+    if (this.controls) {
+      this.controls.target.set(0, 0, 0);
+      this.controls.update();
+    }
+  }
+
   dispose() {
     super.dispose();
     this.canvasEl.removeEventListener("click", this.handleCanvasClick);
     this.controlUI?.clearAll();
   }
-
-  // TODO: Back 버튼 클릭 시,
-  // 1. 카메라 zoomOut
-  // 2. this.selectedGeometry에 해당하는 controlUI 제거
-  // 3. this.selectedGeometry 값 초기화
-  // 4. this.controls.target 원위치
 }
 
 export default GeometriesProject;

@@ -7,6 +7,10 @@ export interface GeometryHelper {
     controls: NonNullable<ConstructorProps["controlUI"]>,
     onControlChange: () => void,
   ) => void;
+  reset: (
+    controlUI: NonNullable<ConstructorProps["controlUI"]>,
+    update: () => void,
+  ) => void;
 }
 
 export interface GeometryDictionaryType {
