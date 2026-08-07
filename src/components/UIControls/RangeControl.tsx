@@ -10,6 +10,7 @@ const RangeControl = ({
   min = 1,
   max = 5,
   step = 1,
+  marks = false,
   initValue = min,
   onChange,
 }: RangeControlType) => {
@@ -35,7 +36,7 @@ const RangeControl = ({
         max={max}
         step={step}
         size="md"
-        marks
+        marks={marks}
       />
       <NumberInput
         className="min-w-full! w-full! [&_input]:px-2.5!"

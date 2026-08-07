@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from "react";
 import ProjectContext from "@/contexts/ProjectContext";
-import { BASE_PROJECT, PROJECTS_BY_DOMAIN } from "@/constants/projects";
+import { BASIC_PROJECT, PROJECTS_BY_DOMAIN } from "@/constants/projects";
 import type { TagType } from "@/types/tags";
 import { TAGS } from "@/constants/tags";
 
 const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedProjectId, setSelectedProjectId] = useState<string>(
-    BASE_PROJECT.id,
+    BASIC_PROJECT.id,
   );
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [searchInputValueCleared, setSearchInputValueCleared] =

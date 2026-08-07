@@ -1,4 +1,4 @@
-import { ALL_PROJECTS, BASE_PROJECT } from "@/constants/projects";
+import { ALL_PROJECTS, BASIC_PROJECT } from "@/constants/projects";
 import useProject from "@/hooks/useProject";
 import Autocomplete from "@jinni-labs/ui/Autocomplete";
 import AutocompleteOption from "@jinni-labs/ui/AutocompleteOption";
@@ -34,7 +34,7 @@ const SearchInput = () => {
     >
       {ALL_PROJECTS.map(
         ({ id, title }) =>
-          id !== BASE_PROJECT.id && (
+          id !== BASIC_PROJECT.id && (
             <AutocompleteOption key={id} label={title} value={id}>
               {title}
             </AutocompleteOption>

@@ -4,6 +4,7 @@ export type RangeControlType = {
   min?: number;
   max?: number;
   step?: number;
+  marks?: boolean;
   initValue?: number;
   onChange?: (value: number) => void;
 };

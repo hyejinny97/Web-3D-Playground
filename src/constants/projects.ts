@@ -11,7 +11,7 @@ export const BASIC_PROJECT = {
 const MODEL_PROJECTS = [
   {
     id: "geometries",
-    title: "Geometries",
+    title: "Basic geometries",
     imageUrl: "",
     tags: [TAGS.geometry, TAGS.raycaster],
     component: lazy(() => import("@/components/projects/GeometriesCanvas")),

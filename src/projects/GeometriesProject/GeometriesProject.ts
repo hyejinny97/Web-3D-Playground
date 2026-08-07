@@ -130,9 +130,9 @@ class GeometriesProject extends BaseProject {
       .filter((model) => model !== undefined);
     if (models.length === 0) return;
 
-    const ROW_GAP = 2;
-    const COLUMN_GAP = 2;
-    const MAX_GRID_COLUMNS = 5;
+    const ROW_GAP = 3;
+    const COLUMN_GAP = 3;
+    const MAX_GRID_COLUMNS = 4;
     const geometriesCount = Object.keys(this.geometryDictionary).length;
     const gridColumns = Math.min(geometriesCount, MAX_GRID_COLUMNS);
     const gridRows = Math.ceil(geometriesCount / gridColumns);

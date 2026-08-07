@@ -37,6 +37,7 @@ class BoxGeometryHelper implements GeometryHelper {
         min: 1,
         max: 2,
         step: 0.5,
+        marks: true,
         initValue: this.args.width,
         onChange: (value) => {
           this.args.width = value;
@@ -49,6 +50,7 @@ class BoxGeometryHelper implements GeometryHelper {
         min: 1,
         max: 2,
         step: 0.5,
+        marks: true,
         initValue: this.args.height,
         onChange: (value) => {
           this.args.height = value;
@@ -61,6 +63,7 @@ class BoxGeometryHelper implements GeometryHelper {
         min: 1,
         max: 2,
         step: 0.5,
+        marks: true,
         initValue: this.args.depth,
         onChange: (value) => {
           this.args.depth = value;
@@ -73,6 +76,7 @@ class BoxGeometryHelper implements GeometryHelper {
         min: 1,
         max: 5,
         step: 1,
+        marks: true,
         initValue: this.args.widthSegments,
         onChange: (value) => {
           this.args.widthSegments = value;
@@ -85,6 +89,7 @@ class BoxGeometryHelper implements GeometryHelper {
         min: 1,
         max: 5,
         step: 1,
+        marks: true,
         initValue: this.args.heightSegments,
         onChange: (value) => {
           this.args.heightSegments = value;
@@ -97,6 +102,7 @@ class BoxGeometryHelper implements GeometryHelper {
         min: 1,
         max: 5,
         step: 1,
+        marks: true,
         initValue: this.args.depthSegments,
         onChange: (value) => {
           this.args.depthSegments = value;
