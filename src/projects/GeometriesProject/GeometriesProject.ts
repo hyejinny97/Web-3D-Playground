@@ -263,10 +263,6 @@ class GeometriesProject extends BaseProject {
       });
       this.selectedGeometry = undefined;
     }
-    if (this.controls) {
-      this.controls.target.set(0, 0, 0);
-      this.controls.update();
-    }
   }
 
   dispose() {

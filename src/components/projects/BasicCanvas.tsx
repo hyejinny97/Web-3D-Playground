@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
-import BaseProject from "@/projects/BaseProject";
+import BasicProject from "@/projects/BasicProject";
 import type { Project } from "@/types/project";
 
-const BaseCanvas = () => {
+const BasicCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const BaseCanvas = () => {
     canvasEl.id = String(Date.now());
     container.appendChild(canvasEl);
 
-    const project: Project = new BaseProject({
+    const project: Project = new BasicProject({
       canvasEl,
     });
     if (project.loop) project.renderLoop();
@@ -29,4 +29,4 @@ const BaseCanvas = () => {
   return <div ref={containerRef} className="w-full h-full" />;
 };
 
-export default BaseCanvas;
+export default BasicCanvas;

@@ -1,9 +1,7 @@
 import * as THREE from "three";
 import type { ConstructorProps, Project } from "@/types/project";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { RenderLoop } from "@/decorators/renderLoop";
 
-@RenderLoop()
 class BaseProject implements Project {
   canvasEl: HTMLCanvasElement;
   scene: THREE.Scene | undefined;
@@ -104,12 +102,11 @@ class BaseProject implements Project {
   }
 
   update(time: number) {
-    time *= 0.001;
+    void time;
+  }
 
-    if (this.mesh) {
-      this.mesh.rotation.x = time;
-      this.mesh.rotation.y = time;
-    }
+  stopLoop() {
+    this.renderer?.setAnimationLoop(null);
   }
 
   dispose() {
