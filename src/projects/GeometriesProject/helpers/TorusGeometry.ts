@@ -3,28 +3,26 @@ import type { GeometryHelper } from "../GeometriesProject.types";
 import type { ConstructorProps } from "@/types/project";
 
 const DEFAULT_ARGS = {
-  radiusTop: 1,
-  radiusBottom: 1,
-  height: 1,
-  radialSegments: 32,
-  heightSegments: 1,
-  openEnded: false,
+  radius: 1,
+  tube: 0.4,
+  radialSegments: 12,
+  tubularSegments: 48,
+  arc: 2 * Math.PI,
   thetaStart: 0,
   thetaLength: 2 * Math.PI,
 };
 
-class CylinderGeometryHelper implements GeometryHelper {
-  private controlUIGroupName = "CylinderGeometry";
+class TorusGeometryHelper implements GeometryHelper {
+  private controlUIGroupName = "TorusGeometry";
   private args = JSON.parse(JSON.stringify(DEFAULT_ARGS));
 
   createGeometry() {
-    return new THREE.CylinderGeometry(
-      this.args.radiusTop,
-      this.args.radiusBottom,
-      this.args.height,
+    return new THREE.TorusGeometry(
+      this.args.radius,
+      this.args.tube,
       this.args.radialSegments,
-      this.args.heightSegments,
-      this.args.openEnded,
+      this.args.tubularSegments,
+      this.args.arc,
       this.args.thetaStart,
       this.args.thetaLength,
     );
@@ -37,48 +35,35 @@ class CylinderGeometryHelper implements GeometryHelper {
     controlUI.add(this.controlUIGroupName, [
       {
         type: "range",
-        label: "radiusTop",
-        min: 0,
-        max: 2,
-        step: 0.5,
-        marks: true,
-        initValue: this.args.radiusTop,
-        onChange: (value) => {
-          this.args.radiusTop = value;
-          update();
-        },
-      },
-      {
-        type: "range",
-        label: "radiusBottom",
-        min: 0,
-        max: 2,
-        step: 0.5,
-        marks: true,
-        initValue: this.args.radiusBottom,
-        onChange: (value) => {
-          this.args.radiusBottom = value;
-          update();
-        },
-      },
-      {
-        type: "range",
-        label: "height",
+        label: "radius",
         min: 1,
         max: 2,
         step: 0.5,
         marks: true,
-        initValue: this.args.height,
+        initValue: this.args.radius,
         onChange: (value) => {
-          this.args.height = value;
+          this.args.radius = value;
+          update();
+        },
+      },
+      {
+        type: "range",
+        label: "tube",
+        min: 0.1,
+        max: 1.5,
+        step: 0.1,
+        marks: true,
+        initValue: this.args.tube,
+        onChange: (value) => {
+          this.args.tube = value;
           update();
         },
       },
       {
         type: "range",
         label: "radialSegments",
-        min: 3,
-        max: 50,
+        min: 2,
+        max: 30,
         step: 1,
         initValue: this.args.radialSegments,
         onChange: (value) => {
@@ -88,23 +73,25 @@ class CylinderGeometryHelper implements GeometryHelper {
       },
       {
         type: "range",
-        label: "heightSegments",
-        min: 1,
-        max: 10,
+        label: "tubularSegments",
+        min: 2,
+        max: 50,
         step: 1,
-        marks: true,
-        initValue: this.args.heightSegments,
+        initValue: this.args.tubularSegments,
         onChange: (value) => {
-          this.args.heightSegments = value;
+          this.args.tubularSegments = value;
           update();
         },
       },
       {
-        type: "checkbox",
-        label: "openEnded",
-        initChecked: this.args.openEnded,
+        type: "range",
+        label: "arc",
+        min: 0,
+        max: 360,
+        step: 10,
+        initValue: THREE.MathUtils.radToDeg(this.args.arc),
         onChange: (value) => {
-          this.args.openEnded = value;
+          this.args.arc = THREE.MathUtils.degToRad(value);
           update();
         },
       },
@@ -145,4 +132,4 @@ class CylinderGeometryHelper implements GeometryHelper {
   }
 }
 
-export default CylinderGeometryHelper;
+export default TorusGeometryHelper;

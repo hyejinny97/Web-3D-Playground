@@ -36,7 +36,7 @@ class ConeGeometryHelper implements GeometryHelper {
       {
         type: "range",
         label: "radius",
-        min: 1,
+        min: 0,
         max: 2,
         step: 0.5,
         marks: true,
@@ -62,7 +62,7 @@ class ConeGeometryHelper implements GeometryHelper {
       {
         type: "range",
         label: "radialSegments",
-        min: 1,
+        min: 3,
         max: 50,
         step: 1,
         initValue: this.args.radialSegments,
