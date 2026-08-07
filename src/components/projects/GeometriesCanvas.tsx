@@ -62,7 +62,7 @@ const GeometriesCanvas = () => {
           Reset
         </Button>
       ) : (
-        <Text className="absolute bottom-5 left-5 text-white! typo-body-large">
+        <Text className="absolute bottom-5 left-5 text-white! typo-headline-small">
           * Try clicking on Model
         </Text>
       )}

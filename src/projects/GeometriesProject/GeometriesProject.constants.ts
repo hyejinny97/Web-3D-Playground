@@ -2,6 +2,7 @@ import type { GeometryDictionaryType } from "./GeometriesProject.types";
 import BoxGeometryHelper from "./helpers/BoxGeometryHelper";
 import CircleGeometryHelper from "./helpers/CircleGeometryHelper";
 import ConeGeometryHelper from "./helpers/ConeGeometryHelper";
+import CylinderGeometryHelper from "./helpers/CylinderGeometry";
 
 export const geometryDictionary = {
   box: {
@@ -12,5 +13,8 @@ export const geometryDictionary = {
   },
   cone: {
     helper: new ConeGeometryHelper(),
+  },
+  cylinder: {
+    helper: new CylinderGeometryHelper(),
   },
 } satisfies GeometryDictionaryType;
