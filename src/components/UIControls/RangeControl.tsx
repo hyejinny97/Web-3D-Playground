@@ -1,4 +1,4 @@
-import Grid from "@jinni-labs/ui/Grid";
+import ControlGrid from "./ControlGrid";
 import Text from "@jinni-labs/ui/Text";
 import Slider from "@jinni-labs/ui/Slider";
 import NumberInput from "@jinni-labs/ui/NumberInput";
@@ -17,11 +17,7 @@ const RangeControl = ({
   const [value, setValue] = useState<number>(initValue);
 
   return (
-    <Grid
-      className="w-full grid-cols-[minmax(0,1fr)_100px_65px]! items-center"
-      columns={3}
-      columnSpacing={8}
-    >
+    <ControlGrid>
       <Text className="typo-label-medium wrap-break-word select-none">
         {label}
       </Text>
@@ -51,7 +47,7 @@ const RangeControl = ({
         step={step}
         size="sm"
       />
-    </Grid>
+    </ControlGrid>
   );
 };
 

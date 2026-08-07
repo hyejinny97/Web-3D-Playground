@@ -1,6 +1,6 @@
 import { useState } from "react";
+import ControlGrid from "./ControlGrid";
 import type { CheckboxControlType } from "@/types/controls";
-import Label from "@jinni-labs/ui/Label";
 import Checkbox from "@jinni-labs/ui/Checkbox";
 import Text from "@jinni-labs/ui/Text";
 
@@ -12,8 +12,10 @@ const CheckboxControl = ({
   const [checked, setChecked] = useState<boolean>(initChecked ?? false);
 
   return (
-    <Label content={<Text className="typo-label-small">{label}</Text>}>
+    <ControlGrid>
+      <Text className="typo-label-small">{label}</Text>
       <Checkbox
+        className="col-span-2"
         checked={checked}
         onChange={(e) => {
           const { checked } = e.target;
@@ -22,7 +24,7 @@ const CheckboxControl = ({
         }}
         size="sm"
       />
-    </Label>
+    </ControlGrid>
   );
 };
 
