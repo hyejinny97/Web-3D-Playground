@@ -2,11 +2,12 @@ import type { GeometryDictionaryType } from "./GeometriesProject.types";
 import BoxGeometryHelper from "./helpers/BoxGeometryHelper";
 import CircleGeometryHelper from "./helpers/CircleGeometryHelper";
 import ConeGeometryHelper from "./helpers/ConeGeometryHelper";
-import CylinderGeometryHelper from "./helpers/CylinderGeometry";
-import PlaneGeometryHelper from "./helpers/PlaneGeometry";
+import CylinderGeometryHelper from "./helpers/CylinderGeometryHelper";
+import PlaneGeometryHelper from "./helpers/PlaneGeometryHelper";
 import RingGeometryHelper from "./helpers/RingGeometryHelper";
 import SphereGeometryHelper from "./helpers/SphereGeometryHelper";
-import TorusGeometryHelper from "./helpers/TorusGeometry";
+import TorusGeometryHelper from "./helpers/TorusGeometryHelper";
+import TorusKnotGeometryHelper from "./helpers/TorusKnotGeometryHelper";
 
 export const geometryDictionary = {
   box: {
@@ -32,5 +33,8 @@ export const geometryDictionary = {
   },
   plane: {
     helper: new PlaneGeometryHelper(),
+  },
+  torusKnot: {
+    helper: new TorusKnotGeometryHelper(),
   },
 } satisfies GeometryDictionaryType;
