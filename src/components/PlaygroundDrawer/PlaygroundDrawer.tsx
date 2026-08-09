@@ -34,38 +34,11 @@ const PlaygroundDrawer = ({ open, onClose }: PlaygroundDrawerProps) => {
       <DrawerBody className="py-2! overflow-hidden px-4!">
         <Stack className="h-full overflow-hidden" spacing={16}>
           <Stack className="px-2 py-1" spacing={8}>
-            <SearchInput
-              options={[
-                { children: "Option 1", label: "Option 1", value: "option1" },
-              ]}
-            />
-            <TagSelect
-              options={[
-                {
-                  value: "geometry",
-                  tag: { label: "Geometry", color: "rose-400" },
-                },
-              ]}
-            />
+            <SearchInput />
+            <TagSelect />
           </Stack>
           <article className="flex-1 overflow-y-auto">
-            <ProjectAccordion
-              items={[
-                {
-                  title: "Model",
-                  projects: [
-                    {
-                      id: 3,
-                      title: "Title",
-                      imageUrl: "",
-                      tags: [{ label: "Geometry", color: "rose-400" }],
-                    },
-                  ],
-                },
-              ]}
-              selectedProjectId={3}
-              onProjectClicked={() => null}
-            />
+            <ProjectAccordion />
           </article>
         </Stack>
       </DrawerBody>

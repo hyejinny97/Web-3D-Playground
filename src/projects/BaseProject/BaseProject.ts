@@ -1,7 +1,8 @@
 import * as THREE from "three";
+import type { ConstructorProps, Project } from "@/types/project";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
-class BaseProject {
+class BaseProject implements Project {
   canvasEl: HTMLCanvasElement;
   scene: THREE.Scene | undefined;
   camera: THREE.PerspectiveCamera | undefined;
@@ -9,17 +10,22 @@ class BaseProject {
   mesh: THREE.Mesh | undefined;
   controls: OrbitControls | undefined;
   resizeObserver: ResizeObserver | undefined;
+  controlUI: ConstructorProps["controlUI"];
 
-  constructor(canvasEl: HTMLCanvasElement) {
+  constructor({ canvasEl, controlUI }: ConstructorProps) {
     this.canvasEl = canvasEl;
-    this.setupScene();
-    this.setupModel();
-    this.setupLight();
-    this.setupCamera();
-    this.setupControls();
+    this.controlUI = controlUI;
+    this.init();
+  }
+
+  init() {
     this.setupRenderer();
+    this.setupCamera();
+    this.setupScene();
+    this.setupLight();
+    this.setupModel();
+    this.setupControls();
     this.setupResizeObserver();
-    this.renderer?.setAnimationLoop(this.render.bind(this));
   }
 
   setupScene() {
@@ -91,13 +97,16 @@ class BaseProject {
     this.renderer?.render(this.scene!, this.camera!);
   }
 
-  update(time: number) {
-    time *= 0.001;
+  renderLoop() {
+    this.renderer?.setAnimationLoop(this.render.bind(this));
+  }
 
-    if (this.mesh) {
-      this.mesh.rotation.x = time;
-      this.mesh.rotation.y = time;
-    }
+  update(time: number) {
+    void time;
+  }
+
+  stopLoop() {
+    this.renderer?.setAnimationLoop(null);
   }
 
   dispose() {
@@ -126,7 +135,7 @@ class BaseProject {
   /**
    * material에 연결된 모든 Texture(map, normalMap 등)를 dispose
    */
-  private disposeMaterial(material: THREE.Material) {
+  disposeMaterial(material: THREE.Material) {
     Object.values(material).forEach((value) => {
       if (value instanceof THREE.Texture) {
         value.dispose();
@@ -138,7 +147,7 @@ class BaseProject {
   /**
    * scene 전체를 순회하며 geometry, material, texture를 dispose
    */
-  private disposeScene() {
+  disposeScene() {
     if (!this.scene) return;
 
     this.scene.traverse((object) => {

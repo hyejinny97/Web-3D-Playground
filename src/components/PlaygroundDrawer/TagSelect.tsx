@@ -1,23 +1,28 @@
 import { Fragment } from "react";
 import Select from "@jinni-labs/ui/Select";
 import Option from "@jinni-labs/ui/Option";
+import type { OptionValueType } from "@jinni-labs/ui/Option";
 import Stack from "@jinni-labs/ui/Stack";
 import Chip from "@jinni-labs/ui/Chip";
-import type { TagType } from "@/types/tag";
+import { TAGS } from "@/constants/tags";
+import useProject from "@/hooks/useProject";
+import type { TagType } from "@/types/tags";
 
-interface OptionType {
-  value: string;
-  tag: TagType;
-}
+const TagSelect = () => {
+  const { selectedTags, onTagSelect } = useProject();
 
-interface TagSelectProps {
-  options: OptionType[];
-}
+  const onChange = (
+    _: Event | React.SyntheticEvent,
+    value: OptionValueType[],
+  ) => {
+    onTagSelect(value as TagType[]);
+  };
 
-const TagSelect = ({ options }: TagSelectProps) => {
   return (
     <Select
       className="w-full!"
+      value={selectedTags}
+      onChange={onChange}
       multiple
       variant="underlined"
       placeholder="Select Tags"
@@ -38,7 +43,7 @@ const TagSelect = ({ options }: TagSelectProps) => {
         </Stack>
       )}
     >
-      {options.map(({ value, tag: { label, color } }) => (
+      {Object.entries(TAGS).map(([value, { label, color }]) => (
         <Option key={value} value={value}>
           <Chip
             className="typo-label-small"

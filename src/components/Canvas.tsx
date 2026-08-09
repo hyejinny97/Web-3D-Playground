@@ -1,34 +1,36 @@
-import { useEffect, useRef } from "react";
+import { Suspense } from "react";
 import { DRAWER_WIDTH, TRANSITION } from "@/constants/drawer";
-import BaseProject from "@/projects/base.project";
+import useProject from "@/hooks/useProject";
+import { ALL_PROJECTS } from "@/constants/projects";
+import CircularProgress from "@jinni-labs/ui/CircularProgress";
 
 interface CanvasProps {
   open: boolean;
 }
 
 const Canvas = ({ open }: CanvasProps) => {
-  const canvasElRef = useRef<HTMLCanvasElement>(null);
+  const { selectedProjectId } = useProject();
 
-  useEffect(() => {
-    const canvasEl = canvasElRef.current;
-    if (!canvasEl) return;
+  const selectedProject = ALL_PROJECTS.find(
+    (project) => selectedProjectId === project.id,
+  );
+  if (!selectedProject) return;
 
-    const project = new BaseProject(canvasEl);
-    return () => {
-      project.dispose();
-    };
-  }, []);
+  const ProjectCanvas = selectedProject.component;
 
   return (
-    <canvas
-      ref={canvasElRef}
-      className="h-full"
+    <div
+      className="h-full flex justify-center items-center"
       style={{
         width: open ? `calc(100% - ${DRAWER_WIDTH}px)` : "100%",
         marginRight: open ? `${DRAWER_WIDTH}px` : 0,
         transition: `width ${TRANSITION}, margin-right ${TRANSITION}`,
       }}
-    />
+    >
+      <Suspense fallback={<CircularProgress size="lg" />}>
+        <ProjectCanvas />
+      </Suspense>
+    </div>
   );
 };
 
