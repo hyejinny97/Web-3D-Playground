@@ -42,8 +42,13 @@ const ProjectAccordion = () => {
                   onClick={() => onProjectSelect(id)}
                 >
                   <CardBody className="p-0!">
-                    <Box className="relative w-full h-25 bg-(--jinni-color-gray-900)">
-                      <img src={imageUrl} alt={title} />
+                    <Box className="relative w-full h-30 bg-black">
+                      <img
+                        className="max-w-full h-full object-contain mx-auto"
+                        src={imageUrl}
+                        alt={title}
+                        loading="lazy"
+                      />
                       {selectedProjectId === id && (
                         <CheckmarkIcon className="absolute top-1.25 left-1.25 fill-white" />
                       )}
