@@ -130,9 +130,9 @@ class GeometriesProject extends BaseProject {
       .filter((model) => model !== undefined);
     if (models.length === 0) return;
 
-    const ROW_GAP = 3;
-    const COLUMN_GAP = 3;
-    const MAX_GRID_COLUMNS = 4;
+    const ROW_GAP = 5;
+    const COLUMN_GAP = 5;
+    const MAX_GRID_COLUMNS = 3;
     const geometriesCount = Object.keys(this.geometryDictionary).length;
     const gridColumns = Math.min(geometriesCount, MAX_GRID_COLUMNS);
     const gridRows = Math.ceil(geometriesCount / gridColumns);
@@ -157,12 +157,11 @@ class GeometriesProject extends BaseProject {
     }
   }
 
-  zoomFit(obj: THREE.Object3D, animate: boolean = false) {
+  zoomFit(obj: THREE.Object3D, animate: boolean = false, margin: number = 0) {
     if (!this.camera) return;
 
-    const PADDING = 1;
     const box = new THREE.Box3().setFromObject(obj);
-    const sizeBox = box.getSize(new THREE.Vector3()).x + PADDING * 2;
+    const sizeBox = box.getSize(new THREE.Vector3()).length() + margin * 2;
     const centerBox = box.getCenter(new THREE.Vector3());
 
     const halfSizeModel = sizeBox * 0.5;
@@ -242,7 +241,7 @@ class GeometriesProject extends BaseProject {
             const group = obj.parent;
             if (isGeometryName(group.name)) {
               this.selectedGeometry = group.name;
-              this.zoomFit(group, true);
+              this.zoomFit(group, true, 1);
               this.addGeometryToControlUI(group.name);
               this.onModelSelect();
               break;
