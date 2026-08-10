@@ -130,6 +130,9 @@ class BaseProject implements Project {
     this.camera = undefined;
     this.renderer = undefined;
     this.controls = undefined;
+
+    // Control UI 제거
+    this.controlUI?.clearAll();
   }
 
   /**

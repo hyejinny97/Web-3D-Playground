@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { gsap } from "gsap";
 import { RenderLoop } from "@/decorators/renderLoop.ts";
 import BaseProject from "@/projects/BaseProject";
 import type {
@@ -9,6 +8,8 @@ import type {
 import { geometryDictionary } from "./GeometriesProject.constants";
 import { isGeometryName } from "./GeometriesProject.utils";
 import type { ConstructorProps } from "@/types/project";
+import GridAlignHelper from "@/helpers/GridAlignHelper";
+import CameraZoomHelper from "@/helpers/CameraZoomHelper";
 
 type GeometriesProjectProps = ConstructorProps & { onModelSelect: () => void };
 
@@ -130,86 +131,37 @@ class GeometriesProject extends BaseProject {
       .filter((model) => model !== undefined);
     if (models.length === 0) return;
 
-    const ROW_GAP = 5;
-    const COLUMN_GAP = 5;
-    const MAX_GRID_COLUMNS = 3;
-    const geometriesCount = Object.keys(this.geometryDictionary).length;
-    const gridColumns = Math.min(geometriesCount, MAX_GRID_COLUMNS);
-    const gridRows = Math.ceil(geometriesCount / gridColumns);
+    const gridHelper = new GridAlignHelper({
+      rowGap: 5,
+      columnGap: 5,
+      maxGridColumns: 3,
+    });
+    gridHelper.align(models);
 
-    const rowMiddle = (gridRows + 1) / 2;
-    const columnMiddle = (gridColumns + 1) / 2;
-    for (let row = 1; row <= gridRows; row++) {
-      for (let column = 1; column <= gridColumns; column++) {
-        const idx = gridColumns * (row - 1) + (column - 1);
-        if (idx > geometryArr.length - 1) break;
-
-        const [x, y, z] = [
-          (column - columnMiddle) * COLUMN_GAP,
-          (rowMiddle - row) * ROW_GAP,
-          0,
-        ];
-        const name = geometryArr[idx][0];
-        this.geometryDictionary[name].position = new THREE.Vector3(x, y, z);
-        const model = models[idx];
-        model.position.set(x, y, z);
-      }
-    }
+    models.forEach((model, idx) => {
+      const name = geometryArr[idx][0];
+      this.geometryDictionary[name].position = model.position;
+    });
   }
 
   zoomFit(obj: THREE.Object3D, animate: boolean = false, margin: number = 0) {
     if (!this.camera) return;
 
-    const box = new THREE.Box3().setFromObject(obj);
-    const sizeBox = box.getSize(new THREE.Vector3()).length() + margin * 2;
-    const centerBox = box.getCenter(new THREE.Vector3());
-
-    const halfSizeModel = sizeBox * 0.5;
-    const halfFov = THREE.MathUtils.degToRad(this.camera.fov * 0.5);
-    const distance = halfSizeModel / Math.tan(halfFov);
-
-    const { z } = this.camera.position;
-    const direction = new THREE.Vector3()
-      .subVectors(new THREE.Vector3(centerBox.x, centerBox.y, z), centerBox)
-      .normalize();
-    const position = direction.multiplyScalar(distance).add(centerBox);
-
-    this.camera.near = sizeBox / 10;
-    this.camera.far = sizeBox * 10;
-    this.camera.updateProjectionMatrix();
-
-    if (animate) {
-      const DURATION = 1;
-      const EASE = "power2.in";
-      const { x, y, z } = this.controls?.target || { x: 0, y: 0, z: 0 };
-      const lookAtTarget = { x, y, z };
-      gsap.to(lookAtTarget, {
-        duration: DURATION,
-        ease: EASE,
-        x: centerBox.x,
-        y: centerBox.y,
-        z: centerBox.z,
-        onUpdate: () => {
-          this.camera!.lookAt(lookAtTarget.x, lookAtTarget.y, lookAtTarget.z);
-        },
-        onComplete: () => {
-          if (this.controls) {
-            this.controls.target.copy(centerBox);
-            this.controls.update();
-          }
-        },
-      });
-      gsap.to(this.camera.position, {
-        duration: DURATION,
-        ease: EASE,
-        x: position.x,
-        y: position.y,
-        z: position.z,
-      });
-    } else {
-      this.camera.position.copy(position);
-      this.camera.lookAt(centerBox.x, centerBox.y, centerBox.z);
-    }
+    const zoomHelper = new CameraZoomHelper(this.camera);
+    zoomHelper.fit({
+      obj,
+      margin,
+      animate,
+      duration: 1,
+      ease: "power2.in",
+      initLookAtTarget: this.controls?.target,
+      onAnimationComplete: (lookAtTarget) => {
+        if (this.controls) {
+          this.controls.target.copy(lookAtTarget);
+          this.controls.update();
+        }
+      },
+    });
   }
 
   displayBoxHelper(obj: THREE.Object3D) {
@@ -267,7 +219,6 @@ class GeometriesProject extends BaseProject {
   dispose() {
     super.dispose();
     this.canvasEl.removeEventListener("click", this.handleCanvasClick);
-    this.controlUI?.clearAll();
   }
 }
 
