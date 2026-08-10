@@ -1,6 +1,6 @@
 import { TAGS } from "./tags";
 import { lazy } from "react";
-import image_url_basic_geometries from "@/assets/images/project_basic_geometries.png";
+import image_url_basic_geometries from "@/assets/images/projects/basic_geometries.png";
 
 export const BASIC_PROJECT = {
   id: "base",
