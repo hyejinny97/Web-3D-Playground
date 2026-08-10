@@ -5,6 +5,7 @@ import { RenderLoop } from "@/decorators/renderLoop";
 import GeometryDictionary from "./GeometryDictionary";
 import GridAlignHelper from "@/helpers/GridAlignHelper";
 import CameraZoomHelper from "@/helpers/CameraZoomHelper";
+import PolyhedronGeometryHelper from "./helpers/PolyhedronGeometryHelper";
 
 @RenderLoop()
 class PolyhedronGeometryProject extends BaseProject {
@@ -120,38 +121,18 @@ class PolyhedronGeometryProject extends BaseProject {
 
   createAllGeometryControlUI() {
     const geometryArr = Object.entries(this.geometryDictionary.value);
-    this.controlUI?.add("All PolyhedronGeometry", [
-      {
-        type: "range",
-        label: "radius",
-        min: 1,
-        max: 1.5,
-        step: 0.1,
-        marks: true,
-        initValue: 1,
-        onChange: (value) => {
-          geometryArr.forEach(([name, { helper }]) => {
-            helper.setRadius(value);
-            this.updateModel(name);
-          });
-        },
-      },
-      {
-        type: "range",
-        label: "detail",
-        min: 0,
-        max: 5,
-        step: 1,
-        marks: true,
-        initValue: 0,
-        onChange: (value) => {
-          geometryArr.forEach(([name, { helper }]) => {
-            helper.setDetail(value);
-            this.updateModel(name);
-          });
-        },
-      },
-    ]);
+    const polyHelper = new PolyhedronGeometryHelper(
+      this.controlUI!,
+      "All PolyhedronGeometry",
+    );
+    polyHelper.createControlUI((props) => {
+      if (!props) return;
+      const { radius, detail } = props;
+      geometryArr.forEach(([name, { helper }]) => {
+        helper.args = { radius, detail };
+        this.updateModel(name);
+      });
+    });
   }
 
   addControlsUI() {

@@ -8,23 +8,30 @@ const DEFAULT_ARGS = {
 } as const;
 
 class PolyhedronGeometryHelper implements GeometryHelper {
-  controlUIGroupName = "PolyhedronGeometry";
+  private controlUIGroupName: string;
   private _args = JSON.parse(JSON.stringify(DEFAULT_ARGS));
   controlUI: ControlUIType;
 
-  constructor(controlUI: ControlUIType) {
+  constructor(controlUI: ControlUIType, controlUIGroupName: string) {
     this.controlUI = controlUI;
+    this.controlUIGroupName = controlUIGroupName;
   }
 
   get args() {
     return this._args;
   }
 
+  set args({ radius, detail }: { radius: number; detail: number }) {
+    this._args = { radius, detail };
+  }
+
   createGeometry() {
     return new THREE.PolyhedronGeometry();
   }
 
-  createControlUI(update: () => void) {
+  createControlUI(
+    update: (props?: { radius: number; detail: number }) => void,
+  ) {
     this.controlUI.add(this.controlUIGroupName, [
       {
         type: "range",
@@ -36,7 +43,7 @@ class PolyhedronGeometryHelper implements GeometryHelper {
         initValue: this.args.radius,
         onChange: (value) => {
           this.args.radius = value;
-          update();
+          update({ radius: value, detail: this.args.detail });
         },
       },
       {
@@ -49,18 +56,10 @@ class PolyhedronGeometryHelper implements GeometryHelper {
         initValue: this.args.detail,
         onChange: (value) => {
           this.args.detail = value;
-          update();
+          update({ radius: this.args.radius, detail: value });
         },
       },
     ]);
-  }
-
-  setRadius(radius: number) {
-    this.args.radius = radius;
-  }
-
-  setDetail(detail: number) {
-    this.args.detail = detail;
   }
 }
 

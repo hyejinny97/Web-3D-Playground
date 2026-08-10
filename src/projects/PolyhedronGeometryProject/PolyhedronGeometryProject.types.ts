@@ -1,10 +1,9 @@
 import * as THREE from "three";
 
 export interface GeometryHelper {
+  args: { radius: number; detail: number };
   createGeometry: () => THREE.BufferGeometry;
   createControlUI: (update: () => void) => void;
-  setRadius: (radius: number) => void;
-  setDetail: (detail: number) => void;
 }
 
 export interface GeometryDictionaryType {

@@ -12,16 +12,19 @@ class GeometryDictionary implements GeometryDictionaryType {
   constructor(controlUI: ControlUIType) {
     this._value = {
       tetra: {
-        helper: new TetrahedronGeometryHelper(controlUI),
+        helper: new TetrahedronGeometryHelper(controlUI, "TetrahedronGeometry"),
       },
       octa: {
-        helper: new OctahedronGeometryHelper(controlUI),
+        helper: new OctahedronGeometryHelper(controlUI, "OctahedronGeometry"),
       },
       dodeca: {
-        helper: new DodecahedronGeometryHelper(controlUI),
+        helper: new DodecahedronGeometryHelper(
+          controlUI,
+          "DodecahedronGeometry",
+        ),
       },
       icosa: {
-        helper: new IcosahedronGeometryHelper(controlUI),
+        helper: new IcosahedronGeometryHelper(controlUI, "IcosahedronGeometry"),
       },
     };
   }
