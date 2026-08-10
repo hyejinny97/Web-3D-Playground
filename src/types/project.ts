@@ -7,12 +7,14 @@ export interface Project {
   dispose: () => void;
 }
 
+export interface ControlUIType {
+  add: (groupName: string, controlsToAdd: ControlType[]) => void;
+  remove: (groupName: string, controlLabelsToRemove: string[]) => void;
+  removeGroup: (groupName: string) => void;
+  clearAll: () => void;
+}
+
 export interface ConstructorProps {
   canvasEl: HTMLCanvasElement;
-  controlUI?: {
-    add: (groupName: string, controlsToAdd: ControlType[]) => void;
-    remove: (groupName: string, controlLabelsToRemove: string[]) => void;
-    removeGroup: (groupName: string) => void;
-    clearAll: () => void;
-  };
+  controlUI?: ControlUIType;
 }
