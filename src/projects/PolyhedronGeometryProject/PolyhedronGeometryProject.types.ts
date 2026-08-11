@@ -4,6 +4,7 @@ export interface GeometryHelper {
   args: { radius: number; detail: number };
   createGeometry: () => THREE.BufferGeometry;
   createControlUI: (update: () => void) => void;
+  reset: (update: () => void) => void;
 }
 
 export interface GeometryDictionaryType {

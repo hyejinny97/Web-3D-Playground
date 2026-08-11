@@ -6,6 +6,13 @@ import GeometryDictionary from "./GeometryDictionary";
 import GridAlignHelper from "@/helpers/GridAlignHelper";
 import CameraZoomHelper from "@/helpers/CameraZoomHelper";
 import PolyhedronGeometryHelper from "./helpers/PolyhedronGeometryHelper";
+import type { ConstructorProps } from "@/types/project";
+
+const ALL_GEOMETRY_CONTROL_UI_GROUP_NAME = "All PolyhedronGeometry" as const;
+
+type PolyhedronGeometryProjectProps = ConstructorProps & {
+  onModelSelect: () => void;
+};
 
 @RenderLoop()
 class PolyhedronGeometryProject extends BaseProject {
@@ -13,6 +20,23 @@ class PolyhedronGeometryProject extends BaseProject {
   declare private meshMaterial: THREE.Material;
   declare private lineMaterial: THREE.Material;
   declare private geometryDictionary: GeometryDictionary;
+  declare private selectedGeometry?: string;
+  declare private handleCanvasClick: (event: MouseEvent) => void;
+  declare private onModelSelect: PolyhedronGeometryProjectProps["onModelSelect"];
+
+  constructor({
+    canvasEl,
+    controlUI,
+    onModelSelect,
+  }: PolyhedronGeometryProjectProps) {
+    super({ canvasEl, controlUI });
+    this.onModelSelect = onModelSelect;
+  }
+
+  init() {
+    super.init();
+    this.setupEvent();
+  }
 
   setupModel() {
     if (!this.controlUI) throw new Error("controlUI 값이 없습니다.");
@@ -24,8 +48,8 @@ class PolyhedronGeometryProject extends BaseProject {
     this.createMaterials();
     this.createAllModels();
     this.arrangeInGrid();
-    this.zoomFit();
-    this.addControlsUI();
+    this.zoomFit({ obj: this.root });
+    this.addAllGeometryControlUI();
   }
 
   createMaterials() {
@@ -102,12 +126,29 @@ class PolyhedronGeometryProject extends BaseProject {
     });
   }
 
-  zoomFit() {
+  zoomFit({
+    obj,
+    animate,
+    margin,
+  }: {
+    obj: THREE.Object3D;
+    animate?: boolean;
+    margin?: number;
+  }) {
     if (!this.camera) return;
 
     const zoomHelper = new CameraZoomHelper(this.camera);
     zoomHelper.fit({
-      obj: this.root,
+      obj,
+      animate,
+      margin,
+      initLookAtTarget: this.controls?.target,
+      onAnimationComplete: (lookAtTarget) => {
+        if (this.controls) {
+          this.controls.target.copy(lookAtTarget);
+          this.controls.update();
+        }
+      },
     });
   }
 
@@ -119,11 +160,11 @@ class PolyhedronGeometryProject extends BaseProject {
     if (position) modelObj.position.copy(position);
   }
 
-  createAllGeometryControlUI() {
+  addAllGeometryControlUI() {
     const geometryArr = Object.entries(this.geometryDictionary.value);
     const polyHelper = new PolyhedronGeometryHelper(
       this.controlUI!,
-      "All PolyhedronGeometry",
+      ALL_GEOMETRY_CONTROL_UI_GROUP_NAME,
     );
     polyHelper.createControlUI((props) => {
       if (!props) return;
@@ -135,11 +176,63 @@ class PolyhedronGeometryProject extends BaseProject {
     });
   }
 
-  addControlsUI() {
+  removeAllGeometryControlUI() {
+    this.controlUI?.removeGroup(ALL_GEOMETRY_CONTROL_UI_GROUP_NAME);
+  }
+
+  addGeometryControlUI(name: string) {
+    this.geometryDictionary.value[name].helper.createControlUI(() =>
+      this.updateModel(name),
+    );
+  }
+
+  setupEvent() {
+    const raycaster = new THREE.Raycaster();
+    this.handleCanvasClick = (event: MouseEvent) => {
+      if (this.selectedGeometry) return;
+
+      const x = (event.clientX / this.canvasEl.clientWidth) * 2 - 1;
+      const y = -(event.clientY / this.canvasEl.clientHeight) * 2 + 1;
+      const clickedPosition = new THREE.Vector2(x, y);
+
+      raycaster.setFromCamera(clickedPosition, this.camera!);
+      const intersects = raycaster.intersectObjects(this.root.children);
+
+      if (intersects.length > 0) {
+        for (const intersect of intersects) {
+          const obj = intersect.object;
+          if (obj instanceof THREE.Mesh && obj.parent instanceof THREE.Group) {
+            const group = obj.parent;
+            if (
+              Object.keys(this.geometryDictionary.value).includes(group.name)
+            ) {
+              this.selectedGeometry = group.name;
+              this.zoomFit({ obj: group, animate: true, margin: 1 });
+              this.removeAllGeometryControlUI();
+              this.addGeometryControlUI(group.name);
+              this.onModelSelect();
+              break;
+            }
+          }
+        }
+      }
+    };
+    this.canvasEl.addEventListener("click", this.handleCanvasClick);
+  }
+
+  reset() {
+    this.zoomFit({ obj: this.root, animate: true });
     const geometryArr = Object.entries(this.geometryDictionary.value);
     geometryArr.forEach(([name, { helper }]) => {
-      helper.createControlUI(() => this.updateModel(name));
+      helper.reset(() => this.updateModel(name));
     });
+    this.addAllGeometryControlUI();
+    this.selectedGeometry = undefined;
+  }
+
+  dispose() {
+    super.dispose();
+    this.canvasEl.removeEventListener("click", this.handleCanvasClick);
   }
 }
 

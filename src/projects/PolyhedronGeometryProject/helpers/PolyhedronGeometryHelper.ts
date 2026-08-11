@@ -61,6 +61,12 @@ class PolyhedronGeometryHelper implements GeometryHelper {
       },
     ]);
   }
+
+  reset(update: () => void) {
+    this._args = JSON.parse(JSON.stringify(DEFAULT_ARGS));
+    update();
+    this.controlUI.removeGroup(this.controlUIGroupName);
+  }
 }
 
 export default PolyhedronGeometryHelper;
