@@ -1,29 +1,34 @@
 import * as THREE from "three";
-import { RenderLoop } from "@/decorators/renderLoop.ts";
-import BaseProject from "@/projects/BaseProject";
-import type {
-  GeometryDictionaryType,
-  GeometryHelper,
-} from "./GeometriesProject.types";
-import { geometryDictionary } from "./GeometriesProject.constants";
-import { isGeometryName } from "./GeometriesProject.utils";
-import type { ConstructorProps } from "@/types/project";
+import BaseProject from "../BaseProject";
+import type { GeometryHelper } from "./PolyhedronGeometryProject.types";
+import { RenderLoop } from "@/decorators/renderLoop";
+import GeometryDictionary from "./GeometryDictionary";
 import GridAlignHelper from "@/helpers/GridAlignHelper";
 import CameraZoomHelper from "@/helpers/CameraZoomHelper";
+import PolyhedronGeometryHelper from "./helpers/PolyhedronGeometryHelper";
+import type { ConstructorProps } from "@/types/project";
 
-type GeometriesProjectProps = ConstructorProps & { onModelSelect: () => void };
+const ALL_GEOMETRY_CONTROL_UI_GROUP_NAME = "All PolyhedronGeometry" as const;
+
+type PolyhedronGeometryProjectProps = ConstructorProps & {
+  onModelSelect: () => void;
+};
 
 @RenderLoop()
-class GeometriesProject extends BaseProject {
+class PolyhedronGeometryProject extends BaseProject {
   declare private root: THREE.Group;
   declare private meshMaterial: THREE.Material;
   declare private lineMaterial: THREE.Material;
-  declare private geometryDictionary: GeometryDictionaryType;
-  declare private selectedGeometry?: keyof typeof geometryDictionary;
+  declare private geometryDictionary: GeometryDictionary;
+  declare private selectedGeometry?: string;
   declare private handleCanvasClick: (event: MouseEvent) => void;
-  declare private onModelSelect: GeometriesProjectProps["onModelSelect"];
+  declare private onModelSelect: PolyhedronGeometryProjectProps["onModelSelect"];
 
-  constructor({ canvasEl, controlUI, onModelSelect }: GeometriesProjectProps) {
+  constructor({
+    canvasEl,
+    controlUI,
+    onModelSelect,
+  }: PolyhedronGeometryProjectProps) {
     super({ canvasEl, controlUI });
     this.onModelSelect = onModelSelect;
   }
@@ -34,23 +39,17 @@ class GeometriesProject extends BaseProject {
   }
 
   setupModel() {
-    this.geometryDictionary = this.getGeometryDictionary();
+    if (!this.controlUI) throw new Error("controlUI 값이 없습니다.");
+
+    this.geometryDictionary = new GeometryDictionary(this.controlUI);
     this.root = new THREE.Group();
     this.scene?.add(this.root);
 
     this.createMaterials();
     this.createAllModels();
     this.arrangeInGrid();
-    this.zoomFit(this.root);
-  }
-
-  getGeometryDictionary(): GeometryDictionaryType {
-    return Object.fromEntries(
-      Object.entries(geometryDictionary).map(([name, entry]) => [
-        name,
-        { helper: entry.helper, model: undefined, position: undefined },
-      ]),
-    );
+    this.zoomFit({ obj: this.root });
+    this.addAllGeometryControlUI();
   }
 
   createMaterials() {
@@ -71,18 +70,7 @@ class GeometriesProject extends BaseProject {
     });
   }
 
-  createAllModels() {
-    Object.entries(this.geometryDictionary).forEach(
-      ([name, { helper, model }]) => {
-        if (model) return;
-        const modelObj = this.createModel(name, helper);
-        this.addModelToRoot(modelObj);
-        this.geometryDictionary[name].model = modelObj;
-      },
-    );
-  }
-
-  createModel(name: string, geometryHelper: GeometryHelper): THREE.Group {
+  generateModel(name: string, geometryHelper: GeometryHelper): THREE.Group {
     const geometry = geometryHelper.createGeometry();
     const wireframeGeometry = new THREE.WireframeGeometry(geometry);
 
@@ -108,52 +96,52 @@ class GeometriesProject extends BaseProject {
     this.root.add(model);
   }
 
-  updateModel(name: keyof typeof geometryDictionary) {
-    const { helper } = this.geometryDictionary[name];
-    const model = this.createModel(name, helper);
-    this.addModelToRoot(model);
-    model.position.copy(this.geometryDictionary[name].position!);
-    this.geometryDictionary[name].model = model;
-  }
-
-  addGeometryToControlUI(name: keyof typeof geometryDictionary) {
-    if (!this.controlUI) return;
-    const { helper } = this.geometryDictionary[name];
-    helper.createControlUI(this.controlUI, () => {
-      this.updateModel(name);
-    });
+  createAllModels() {
+    Object.entries(this.geometryDictionary.value).forEach(
+      ([name, { helper, model }]) => {
+        if (model) return;
+        const modelObj = this.generateModel(name, helper);
+        this.addModelToRoot(modelObj);
+        this.geometryDictionary.setModel(name, modelObj);
+      },
+    );
   }
 
   arrangeInGrid() {
-    const geometryArr = Object.entries(this.geometryDictionary);
+    const geometryArr = Object.entries(this.geometryDictionary.value);
     const models = geometryArr
       .map(([, value]) => value.model)
       .filter((model) => model !== undefined);
     if (models.length === 0) return;
 
     const gridHelper = new GridAlignHelper({
-      rowGap: 5,
-      columnGap: 5,
-      maxGridColumns: 3,
+      columnGap: 3.5,
+      maxGridColumns: 4,
     });
     gridHelper.align(models);
 
     models.forEach((model, idx) => {
       const name = geometryArr[idx][0];
-      this.geometryDictionary[name].position = model.position;
+      this.geometryDictionary.value[name].position = model.position;
     });
   }
 
-  zoomFit(obj: THREE.Object3D, animate: boolean = false, margin: number = 0) {
+  zoomFit({
+    obj,
+    animate,
+    margin,
+  }: {
+    obj: THREE.Object3D;
+    animate?: boolean;
+    margin?: number;
+  }) {
     if (!this.camera) return;
 
     const zoomHelper = new CameraZoomHelper(this.camera);
     zoomHelper.fit({
       obj,
-      margin,
       animate,
-      duration: 1,
-      ease: "power2.in",
+      margin,
       initLookAtTarget: this.controls?.target,
       onAnimationComplete: (lookAtTarget) => {
         if (this.controls) {
@@ -164,14 +152,38 @@ class GeometriesProject extends BaseProject {
     });
   }
 
-  displayBoxHelper(obj: THREE.Object3D) {
-    const boxHelper = new THREE.BoxHelper(this.root, "yellow");
-    obj.add(boxHelper);
+  updateModel(name: string) {
+    const { helper, position } = this.geometryDictionary.value[name];
+    const modelObj = this.generateModel(name, helper);
+    this.addModelToRoot(modelObj);
+    this.geometryDictionary.setModel(name, modelObj);
+    if (position) modelObj.position.copy(position);
   }
 
-  displayAxisHelper(obj: THREE.Object3D) {
-    const axesHelper = new THREE.AxesHelper(1);
-    obj.add(axesHelper);
+  addAllGeometryControlUI() {
+    const geometryArr = Object.entries(this.geometryDictionary.value);
+    const polyHelper = new PolyhedronGeometryHelper(
+      this.controlUI!,
+      ALL_GEOMETRY_CONTROL_UI_GROUP_NAME,
+    );
+    polyHelper.createControlUI((props) => {
+      if (!props) return;
+      const { radius, detail } = props;
+      geometryArr.forEach(([name, { helper }]) => {
+        helper.args = { radius, detail };
+        this.updateModel(name);
+      });
+    });
+  }
+
+  removeAllGeometryControlUI() {
+    this.controlUI?.removeGroup(ALL_GEOMETRY_CONTROL_UI_GROUP_NAME);
+  }
+
+  addGeometryControlUI(name: string) {
+    this.geometryDictionary.value[name].helper.createControlUI(() =>
+      this.updateModel(name),
+    );
   }
 
   setupEvent() {
@@ -191,10 +203,13 @@ class GeometriesProject extends BaseProject {
           const obj = intersect.object;
           if (obj instanceof THREE.Mesh && obj.parent instanceof THREE.Group) {
             const group = obj.parent;
-            if (isGeometryName(group.name)) {
+            if (
+              Object.keys(this.geometryDictionary.value).includes(group.name)
+            ) {
               this.selectedGeometry = group.name;
-              this.zoomFit(group, true, 1);
-              this.addGeometryToControlUI(group.name);
+              this.zoomFit({ obj: group, animate: true, margin: 1 });
+              this.removeAllGeometryControlUI();
+              this.addGeometryControlUI(group.name);
               this.onModelSelect();
               break;
             }
@@ -206,14 +221,13 @@ class GeometriesProject extends BaseProject {
   }
 
   reset() {
-    this.zoomFit(this.root, true);
-    if (this.selectedGeometry && this.controlUI) {
-      const { helper } = this.geometryDictionary[this.selectedGeometry];
-      helper.reset(this.controlUI, () => {
-        this.updateModel(this.selectedGeometry!);
-      });
-      this.selectedGeometry = undefined;
-    }
+    this.zoomFit({ obj: this.root, animate: true });
+    const geometryArr = Object.entries(this.geometryDictionary.value);
+    geometryArr.forEach(([name, { helper }]) => {
+      helper.reset(() => this.updateModel(name));
+    });
+    this.addAllGeometryControlUI();
+    this.selectedGeometry = undefined;
   }
 
   dispose() {
@@ -222,4 +236,4 @@ class GeometriesProject extends BaseProject {
   }
 }
 
-export default GeometriesProject;
+export default PolyhedronGeometryProject;
