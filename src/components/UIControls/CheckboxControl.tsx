@@ -13,7 +13,9 @@ const CheckboxControl = ({
 
   return (
     <ControlGrid>
-      <Text className="typo-label-small">{label}</Text>
+      <Text className="typo-label-medium wrap-break-word select-none">
+        {label}
+      </Text>
       <Checkbox
         className="col-span-2"
         checked={checked}

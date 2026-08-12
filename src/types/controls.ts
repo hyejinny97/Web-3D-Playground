@@ -16,4 +16,13 @@ export type CheckboxControlType = {
   onChange?: (checked: boolean) => void;
 };
 
-export type ControlType = RangeControlType | CheckboxControlType;
+export type PlainTextControlType = {
+  type: "plain-text";
+  label: string;
+  content: string;
+};
+
+export type ControlType =
+  | RangeControlType
+  | CheckboxControlType
+  | PlainTextControlType;
