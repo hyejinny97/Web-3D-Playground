@@ -9,6 +9,7 @@ import ListItem from "@jinni-labs/ui/ListItem";
 import type { ControlType } from "@/types/controls";
 import RangeControl from "./RangeControl";
 import CheckboxControl from "./CheckboxControl";
+import PlainTextControl from "./PlainTextControl";
 
 const UIControls = (props: BoxProps) => {
   const { controls } = useControl();
@@ -19,6 +20,8 @@ const UIControls = (props: BoxProps) => {
         return <RangeControl {...control} />;
       case "checkbox":
         return <CheckboxControl {...control} />;
+      case "plain-text":
+        return <PlainTextControl {...control} />;
     }
   };
 

@@ -2,6 +2,7 @@ import { TAGS } from "./tags";
 import { lazy } from "react";
 import image_url_basic_geometries from "@/assets/images/projects/basic_geometries.png";
 import image_url_polyhedron_geometry from "@/assets/images/projects/polyhedron_geometry.png";
+import image_url_extrude_geometry from "@/assets/images/projects/extrude__geometry.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -25,6 +26,15 @@ const MODEL_PROJECTS = [
     tags: [TAGS.geometry, TAGS.raycaster],
     component: lazy(
       () => import("@/components/projects/PolyhedronGeometryCanvas"),
+    ),
+  },
+  {
+    id: "extrude-geometry",
+    title: "ExtrudeGeometry",
+    imageUrl: image_url_extrude_geometry,
+    tags: [TAGS.geometry, TAGS.raycaster],
+    component: lazy(
+      () => import("@/components/projects/ExtrudeGeometryCanvas"),
     ),
   },
 ];

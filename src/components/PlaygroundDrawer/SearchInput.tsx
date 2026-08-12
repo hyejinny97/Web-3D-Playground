@@ -24,10 +24,16 @@ const SearchInput = () => {
       }}
       value={searchValue}
       onChange={(_, value) => onSearchValueChange(value as string | null)}
-      onClose={() => {
-        if (inputValue !== searchValue) {
-          onSearchValueChange(inputValue);
-        }
+      onClose={(event) => {
+        const { target } = event;
+        if (!target) return;
+
+        const isOptionClicked = !!(target as HTMLElement).closest(
+          ".JinniAutocompleteOption",
+        );
+        if (isOptionClicked || inputValue === searchValue) return;
+
+        onSearchValueChange(inputValue);
       }}
       placeholder="Search playground title"
       PopperProps={{ style: { width: "251px" } }}
@@ -35,7 +41,7 @@ const SearchInput = () => {
       {ALL_PROJECTS.map(
         ({ id, title }) =>
           id !== BASIC_PROJECT.id && (
-            <AutocompleteOption key={id} label={title} value={id}>
+            <AutocompleteOption key={id} label={title} value={title}>
               {title}
             </AutocompleteOption>
           ),
