@@ -5,3 +5,5 @@ export const FONT_URLS = {
   helvetiker: "src/assets/fonts/helvetiker_regular.typeface.json",
   optimer: "src/assets/fonts/optimer_regular.typeface.json",
 };
+
+export const DIRECTION = ["ltr", "rtl", "tb"] as const;

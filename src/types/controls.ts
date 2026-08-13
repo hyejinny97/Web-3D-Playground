@@ -22,7 +22,24 @@ export type PlainTextControlType = {
   content: string;
 };
 
+export type TextInputControlType = {
+  type: "text-input";
+  label: string;
+  initValue?: string;
+  onChange?: (value: string) => void;
+};
+
+export type SelectControlType = {
+  type: "select";
+  label: string;
+  options: { label: string; value: string }[];
+  initValue?: string;
+  onChange?: (value: string) => void;
+};
+
 export type ControlType =
   | RangeControlType
   | CheckboxControlType
-  | PlainTextControlType;
+  | PlainTextControlType
+  | TextInputControlType
+  | SelectControlType;

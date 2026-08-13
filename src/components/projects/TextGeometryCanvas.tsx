@@ -3,9 +3,11 @@ import TextGeometryProject from "@/projects/TextGeometryProject";
 import type { Project } from "@/types/project";
 import CircularProgress from "@jinni-labs/ui/CircularProgress";
 import Text from "@jinni-labs/ui/Text";
+import useControl from "@/hooks/useControl";
 
 const TextGeometryCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { add, remove, removeGroup, clearAll } = useControl();
   const [isFontLoading, setFontLoading] = useState(false);
   const [progress, setProgress] = useState<number>(0);
 
@@ -32,6 +34,7 @@ const TextGeometryCanvas = () => {
 
     const project: Project = new TextGeometryProject({
       canvasEl,
+      controlUI: { add, remove, removeGroup, clearAll },
       loadStart,
       loading,
       loadComplete,
@@ -43,12 +46,12 @@ const TextGeometryCanvas = () => {
       project.dispose();
       container.removeChild(canvasEl);
     };
-  }, [loadStart, loading, loadComplete]);
+  }, [add, remove, removeGroup, clearAll, loadStart, loading, loadComplete]);
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
       {isFontLoading && (
-        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
+        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black">
           <div className="relative">
             <CircularProgress
               size={60}

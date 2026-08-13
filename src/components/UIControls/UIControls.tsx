@@ -10,6 +10,8 @@ import type { ControlType } from "@/types/controls";
 import RangeControl from "./RangeControl";
 import CheckboxControl from "./CheckboxControl";
 import PlainTextControl from "./PlainTextControl";
+import TextInputControl from "./TextInputControl";
+import SelectControl from "./SelectControl";
 
 const UIControls = (props: BoxProps) => {
   const { controls } = useControl();
@@ -22,6 +24,10 @@ const UIControls = (props: BoxProps) => {
         return <CheckboxControl {...control} />;
       case "plain-text":
         return <PlainTextControl {...control} />;
+      case "text-input":
+        return <TextInputControl {...control} />;
+      case "select":
+        return <SelectControl {...control} />;
     }
   };
 
