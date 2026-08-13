@@ -37,6 +37,13 @@ const MODEL_PROJECTS = [
       () => import("@/components/projects/ExtrudeGeometryCanvas"),
     ),
   },
+  {
+    id: "text-geometry",
+    title: "TextGeometry",
+    imageUrl: "",
+    tags: [TAGS.geometry],
+    component: lazy(() => import("@/components/projects/TextGeometryCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [BASIC_PROJECT, ...MODEL_PROJECTS];
