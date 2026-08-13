@@ -189,8 +189,8 @@ class TextGeometryHelper implements GeometryHelper {
         type: "range",
         label: "bevelOffset",
         min: 0,
-        max: 1,
-        step: 0.1,
+        max: 10,
+        step: 1,
         marks: true,
         initValue: this._args.bevelOffset,
         onChange: (value) => {
