@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import data from "../../assets/json/korea_geolocation.json" with { type: "json" };
+import data from "../assets/json/korea_geolocation.json" with { type: "json" };
 
 const [min_latitude, min_longitude] = data.bbox;
 
