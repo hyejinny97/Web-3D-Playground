@@ -24,8 +24,6 @@ coordinates.forEach((val, idx) => {
   }
 });
 
-console.log(min_latitude, min_longitude, max_latitude, max_longitude);
-
 // 데이터 평탄화/평준화
 const isFourTimesArr = (arr) =>
   Array.isArray(arr) &&
