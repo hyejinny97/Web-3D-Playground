@@ -4,6 +4,7 @@ import image_url_basic_geometries from "@/assets/images/projects/basic_geometrie
 import image_url_polyhedron_geometry from "@/assets/images/projects/polyhedron_geometry.png";
 import image_url_extrude_geometry from "@/assets/images/projects/extrude_geometry.png";
 import image_url_text_geometry from "@/assets/images/projects/text_geometry.png";
+import image_url_shape_geometry from "@/assets/images/projects/shape_geometry.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -28,6 +29,13 @@ const MODEL_PROJECTS = [
     component: lazy(
       () => import("@/components/projects/PolyhedronGeometryCanvas"),
     ),
+  },
+  {
+    id: "shape-geometry",
+    title: "ShapeGeometry",
+    imageUrl: image_url_shape_geometry,
+    tags: [TAGS.geometry],
+    component: lazy(() => import("@/components/projects/ShapeGeometryCanvas")),
   },
   {
     id: "extrude-geometry",
