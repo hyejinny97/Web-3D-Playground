@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type ExtrudeGeometryHelper from "./helpers/ExtrudeGeometryHelper";
 
-export interface GeometryHelper {
+export interface ExtrudeGeometryHelperType {
   args: {
     curveSegments: number;
     steps: number;
@@ -12,7 +12,11 @@ export interface GeometryHelper {
     bevelOffset: number;
     bevelSegments: number;
   };
-  createGeometry: (shapes: THREE.Shape | THREE.Shape) => THREE.BufferGeometry;
+  createGeometry: () => THREE.BufferGeometry;
+}
+
+export interface ShapeGeometryHelperType {
+  createGeometry: () => THREE.BufferGeometry;
 }
 
 export interface SidoDictionaryValueType {
@@ -22,4 +26,22 @@ export interface SidoDictionaryValueType {
     geometryHelper: ExtrudeGeometryHelper;
     model?: THREE.Group;
   };
+}
+
+export interface SigunguDictionaryValueType {
+  [sidoCodeNm: number]: {
+    [sigunguCodeNm: number]: {
+      englishName: string;
+      koreanName: string;
+      geometryHelper: ShapeGeometryHelperType;
+      model?: THREE.Group;
+    };
+  };
+}
+
+export interface JSONDataType {
+  codeNm: number;
+  englishName: string;
+  koreanName: string;
+  shapes: number[][][];
 }

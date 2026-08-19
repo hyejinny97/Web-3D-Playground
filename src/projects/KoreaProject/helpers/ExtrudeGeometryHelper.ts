@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import type { GeometryHelper } from "../KoreaProject.types";
+import type { ExtrudeGeometryHelperType } from "../KoreaProject.types";
 
 export const DEFAULT_ARGS = {
   curveSegments: 12,
@@ -12,8 +12,8 @@ export const DEFAULT_ARGS = {
   bevelSegments: 3,
 } as const;
 
-class ExtrudeGeometryHelper implements GeometryHelper {
-  private _args: GeometryHelper["args"];
+class ExtrudeGeometryHelper implements ExtrudeGeometryHelperType {
+  private _args: ExtrudeGeometryHelperType["args"];
   shapes: THREE.Shape | THREE.Shape[];
 
   constructor(shapes: THREE.Shape | THREE.Shape[]) {

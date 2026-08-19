@@ -22,8 +22,12 @@ class SidoDictionary {
     return this._value;
   }
 
+  getAllCodeNms(): number[] {
+    return Object.keys(this._value).map(Number);
+  }
+
   validateCodeNm(codeNm: number) {
-    if (!Object.keys(this._value).includes(String(codeNm))) {
+    if (!this.getAllCodeNms().includes(codeNm)) {
       throw new Error(`'${codeNm}' codeNm은 존재하지 않습니다.`);
     }
   }
