@@ -53,6 +53,13 @@ const MODEL_PROJECTS = [
     tags: [TAGS.geometry],
     component: lazy(() => import("@/components/projects/TextGeometryCanvas")),
   },
+  {
+    id: "korea",
+    title: "Korea",
+    imageUrl: "",
+    tags: [TAGS.geometry, TAGS.raycaster],
+    component: lazy(() => import("@/components/projects/KoreaCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [BASIC_PROJECT, ...MODEL_PROJECTS];

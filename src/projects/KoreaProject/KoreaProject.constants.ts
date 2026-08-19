@@ -1,0 +1,1 @@
+export const DEFAULT_SIDO_COLOR_SATURATION = 0.6;
