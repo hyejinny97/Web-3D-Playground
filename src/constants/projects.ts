@@ -5,6 +5,7 @@ import image_url_polyhedron_geometry from "@/assets/images/projects/polyhedron_g
 import image_url_extrude_geometry from "@/assets/images/projects/extrude_geometry.png";
 import image_url_text_geometry from "@/assets/images/projects/text_geometry.png";
 import image_url_shape_geometry from "@/assets/images/projects/shape_geometry.png";
+import image_url_korea from "@/assets/images/projects/korea.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -56,7 +57,7 @@ const MODEL_PROJECTS = [
   {
     id: "korea",
     title: "Korea",
-    imageUrl: "",
+    imageUrl: image_url_korea,
     tags: [TAGS.geometry, TAGS.raycaster],
     component: lazy(() => import("@/components/projects/KoreaCanvas")),
   },
