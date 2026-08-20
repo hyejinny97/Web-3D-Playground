@@ -21,6 +21,7 @@ type KoreaProjectProps = ConstructorProps & {
     position: { left: number; top: number },
   ) => void;
   closePopper: () => void;
+  onModelSelect: () => void;
 };
 
 @RenderLoop()
@@ -29,6 +30,7 @@ class KoreaProject extends BaseProject {
   declare private lineMaterial: THREE.Material;
   declare private sidoDictionary: SidoDictionary;
   declare private sigunguDictionary: SigunguDictionary;
+  private sigunguModelGroupName: string = "sigungu";
   private hoveredSidoCodeNm: number | null = null;
   private hoveredSigunguCodeNm: number | null = null;
   private clickedSidoCodeNm: number | null = null;
@@ -37,16 +39,19 @@ class KoreaProject extends BaseProject {
   declare private handleSidoClick: (event: MouseEvent) => void;
   declare private openPopper: KoreaProjectProps["openPopper"];
   declare private closePopper: KoreaProjectProps["closePopper"];
+  declare private onModelSelect: KoreaProjectProps["onModelSelect"];
 
   constructor({
     canvasEl,
     controlUI,
     openPopper,
     closePopper,
+    onModelSelect,
   }: KoreaProjectProps) {
     super({ canvasEl, controlUI });
     this.openPopper = openPopper;
     this.closePopper = closePopper;
+    this.onModelSelect = onModelSelect;
   }
 
   init() {
@@ -127,8 +132,7 @@ class KoreaProject extends BaseProject {
     if (!sidoModel) return;
 
     const sigunguModelGroup = new THREE.Group();
-    const sigunguModelGroupName = "sigungu";
-    sigunguModelGroup.name = sigunguModelGroupName;
+    sigunguModelGroup.name = this.sigunguModelGroupName;
 
     const sigunguData = this.sigunguDictionary.value[sidoCodeNm];
     Object.entries(sigunguData).forEach(
@@ -162,7 +166,16 @@ class KoreaProject extends BaseProject {
       },
     );
 
-    const oldModelGroup = sidoModel.getObjectByName(sigunguModelGroupName);
+    this.removeSigunguModels(sidoCodeNm);
+    sigunguModelGroup.position.z = INCREASED_DEPTH + 0.001;
+    sidoModel.add(sigunguModelGroup);
+  }
+
+  removeSigunguModels(sidoCodeNm: number) {
+    const sidoModel = this.sidoDictionary.value[sidoCodeNm]?.model;
+    if (!sidoModel) return;
+
+    const oldModelGroup = sidoModel.getObjectByName(this.sigunguModelGroupName);
     if (oldModelGroup) {
       oldModelGroup.children.forEach((group) => {
         if (!(group instanceof THREE.Group)) return;
@@ -175,9 +188,6 @@ class KoreaProject extends BaseProject {
       });
       sidoModel.remove(oldModelGroup);
     }
-
-    sigunguModelGroup.position.z = INCREASED_DEPTH + 0.001;
-    sidoModel.add(sigunguModelGroup);
   }
 
   centralizeRoot() {
@@ -304,22 +314,29 @@ class KoreaProject extends BaseProject {
     }
   }
 
-  increaseSidoModelDepth({
+  changeSidoModelDepth({
+    to,
     codeNm,
+    onStart,
     onComplete,
   }: {
+    to: "increase" | "decrease";
     codeNm: number;
-    onComplete: () => void;
+    onStart?: () => void;
+    onComplete?: () => void;
   }) {
     this.sidoDictionary.validateCodeNm(codeNm);
     const sidoData = this.sidoDictionary.value[codeNm];
     if (!sidoData.model) return;
 
-    const depth = { value: 0 };
+    const fromDepth = to === "increase" ? 0 : INCREASED_DEPTH;
+    const toDepth = to === "increase" ? INCREASED_DEPTH : 0;
+    const depth = { value: fromDepth };
     gsap.to(depth, {
       duration: DURATION,
       ease: EASE,
-      value: INCREASED_DEPTH,
+      value: toDepth,
+      onStart,
       onUpdate: () => {
         sidoData.geometryHelper.setDepth(depth.value);
         for (const child of sidoData.model!.children) {
@@ -468,10 +485,14 @@ class KoreaProject extends BaseProject {
             const sidoData = this.sidoDictionary.value[codeNm];
             const sidoModel = sidoData.model;
             if (sidoModel) {
-              this.changeSidoModelSaturation(sidoModel, "increase");
-              this.zoomFit({ obj: sidoModel, margin: 0.2, animate: true });
-              this.increaseSidoModelDepth({
+              this.onModelSelect();
+              this.changeSidoModelDepth({
+                to: "increase",
                 codeNm,
+                onStart: () => {
+                  this.changeSidoModelSaturation(sidoModel, "increase");
+                  this.zoomFit({ obj: sidoModel, margin: 0.2, animate: true });
+                },
                 onComplete: () => {
                   this.createSigunguModels(codeNm);
                   this.changeSidoModelLightness(sidoModel, "increase");
@@ -484,6 +505,27 @@ class KoreaProject extends BaseProject {
       }
     };
     this.canvasEl.addEventListener("click", this.handleSidoClick);
+  }
+
+  reset() {
+    if (!this.clickedSidoCodeNm) return;
+    const sidoModel = this.sidoDictionary.value[this.clickedSidoCodeNm].model;
+    if (!sidoModel) return;
+
+    this.changeSidoModelDepth({
+      to: "decrease",
+      codeNm: this.clickedSidoCodeNm,
+      onStart: () => {
+        this.removeSigunguModels(this.clickedSidoCodeNm!);
+        this.changeSidoModelLightness(sidoModel, "decrease");
+        if (this.controlUI) this.controlUI.clearAll();
+        this.zoomFit({ obj: this.root, animate: true });
+      },
+      onComplete: () => {
+        this.changeSidoModelSaturation(sidoModel, "decrease");
+        this.clickedSidoCodeNm = null;
+      },
+    });
   }
 
   dispose() {
