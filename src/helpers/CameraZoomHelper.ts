@@ -8,6 +8,27 @@ class CameraZoomHelper {
     this.camera = camera;
   }
 
+  private updateNearFar({
+    cameraPosition,
+    targetPosition,
+    nearFactor = 0.1,
+    farFactor = 10,
+    minNear = 0.01,
+    minFar = 100,
+  }: {
+    cameraPosition: THREE.Vector3;
+    targetPosition: THREE.Vector3;
+    nearFactor?: number;
+    farFactor?: number;
+    minNear?: number;
+    minFar?: number;
+  }) {
+    const dist = cameraPosition.distanceTo(targetPosition);
+    this.camera.near = Math.max(dist * nearFactor, minNear);
+    this.camera.far = Math.max(dist * farFactor, minFar);
+    this.camera.updateProjectionMatrix();
+  }
+
   fit({
     obj,
     margin = 0,
@@ -39,10 +60,6 @@ class CameraZoomHelper {
       .normalize();
     const position = direction.multiplyScalar(distance).add(centerBox);
 
-    this.camera.near = sizeBox / 10;
-    this.camera.far = sizeBox * 10;
-    this.camera.updateProjectionMatrix();
-
     if (animate) {
       const lookAtTarget = initLookAtTarget;
       gsap.to(lookAtTarget, {
@@ -62,10 +79,22 @@ class CameraZoomHelper {
         x: position.x,
         y: position.y,
         z: position.z,
+        onUpdate: () => {
+          this.updateNearFar({
+            cameraPosition: this.camera.position,
+            targetPosition: centerBox,
+            minFar: sizeBox * 10,
+          });
+        },
       });
     } else {
       this.camera.position.copy(position);
       this.camera.lookAt(centerBox.x, centerBox.y, centerBox.z);
+      this.updateNearFar({
+        cameraPosition: this.camera.position,
+        targetPosition: centerBox,
+        minFar: sizeBox * 10,
+      });
     }
   }
 }
