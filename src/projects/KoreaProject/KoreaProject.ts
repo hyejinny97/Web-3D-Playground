@@ -75,10 +75,8 @@ class KoreaProject extends BaseProject {
 
   generateSidoMeshMaterial({
     color,
-    polygonOffsetUnits,
   }: {
     color: THREE.ColorRepresentation;
-    polygonOffsetUnits: number;
   }): THREE.MeshPhongMaterial {
     return new THREE.MeshPhongMaterial({
       color: color,
@@ -88,7 +86,7 @@ class KoreaProject extends BaseProject {
       opacity: 0.75,
       polygonOffset: true,
       polygonOffsetFactor: 1,
-      polygonOffsetUnits,
+      polygonOffsetUnits: 1,
     });
   }
 
@@ -104,7 +102,6 @@ class KoreaProject extends BaseProject {
             DEFAULT_SIDO_COLOR_SATURATION,
             DEFAULT_SIDO_COLOR_LIGHTNESS,
           ),
-          polygonOffsetUnits: idx,
         });
 
         const mesh = new THREE.Mesh(extrudeGeometry, meshMaterial);
@@ -113,8 +110,8 @@ class KoreaProject extends BaseProject {
         const group = new THREE.Group();
         group.name = codeNm;
         group.add(mesh, line);
-        this.sidoDictionary.setModel({ codeNm: Number(codeNm), model: group });
 
+        this.sidoDictionary.setModel({ codeNm: Number(codeNm), model: group });
         this.root.add(group);
       },
     );
@@ -138,8 +135,10 @@ class KoreaProject extends BaseProject {
           color: 0xffffff,
           transparent: true,
           opacity: 0,
+          depthWrite: false,
           polygonOffset: true,
           polygonOffsetFactor: 1,
+          polygonOffsetUnits: 1,
         });
 
         const mesh = new THREE.Mesh(shapeGeometry, sigunguMeshMaterial);
