@@ -216,7 +216,11 @@ class KoreaProject extends BaseProject {
     return new THREE.Vector2(x, y);
   }
 
-  enhanceSidoModelSaturation(sidoModel: THREE.Group) {
+  changeSidoModelSaturation(
+    sidoModel: THREE.Group,
+    to: "increase" | "decrease",
+  ) {
+    const toSaturation = to === "increase" ? 1 : DEFAULT_SIDO_COLOR_SATURATION;
     for (const child of sidoModel.children) {
       if (
         child instanceof THREE.Mesh &&
@@ -224,13 +228,17 @@ class KoreaProject extends BaseProject {
       ) {
         const hsl = { h: 0, s: 0, l: 0 };
         child.material.color.getHSL(hsl);
-        child.material.color.setHSL(hsl.h, 1, hsl.l);
+        child.material.color.setHSL(hsl.h, toSaturation, hsl.l);
         return;
       }
     }
   }
 
-  lowerSidoModelSaturation(sidoModel: THREE.Group) {
+  changeSidoModelLightness(
+    sidoModel: THREE.Group,
+    to: "increase" | "decrease",
+  ) {
+    const toLightness = to === "increase" ? 0.5 : DEFAULT_SIDO_COLOR_LIGHTNESS;
     for (const child of sidoModel.children) {
       if (
         child instanceof THREE.Mesh &&
@@ -238,63 +246,23 @@ class KoreaProject extends BaseProject {
       ) {
         const hsl = { h: 0, s: 0, l: 0 };
         child.material.color.getHSL(hsl);
-        child.material.color.setHSL(
-          hsl.h,
-          DEFAULT_SIDO_COLOR_SATURATION,
-          hsl.l,
-        );
+        child.material.color.setHSL(hsl.h, hsl.s, toLightness);
         return;
       }
     }
   }
 
-  enhanceSidoModelLightness(sidoModel: THREE.Group) {
-    for (const child of sidoModel.children) {
-      if (
-        child instanceof THREE.Mesh &&
-        child.material instanceof THREE.MeshPhongMaterial
-      ) {
-        const hsl = { h: 0, s: 0, l: 0 };
-        child.material.color.getHSL(hsl);
-        child.material.color.setHSL(hsl.h, hsl.s, 0.5);
-        return;
-      }
-    }
-  }
-
-  lowerSidoModelLightness(sidoModel: THREE.Group) {
-    for (const child of sidoModel.children) {
-      if (
-        child instanceof THREE.Mesh &&
-        child.material instanceof THREE.MeshPhongMaterial
-      ) {
-        const hsl = { h: 0, s: 0, l: 0 };
-        child.material.color.getHSL(hsl);
-        child.material.color.setHSL(hsl.h, hsl.s, DEFAULT_SIDO_COLOR_LIGHTNESS);
-        return;
-      }
-    }
-  }
-
-  enhanceSigunguModelOpacity(sigunguModel: THREE.Group) {
+  changeSigunguModelOpacity(
+    sigunguModel: THREE.Group,
+    to: "increase" | "decrease",
+  ) {
+    const toOpacity = to === "increase" ? 0.5 : 0;
     for (const child of sigunguModel.children) {
       if (
         child instanceof THREE.Mesh &&
         child.material instanceof THREE.MeshPhongMaterial
       ) {
-        child.material.opacity = 0.5;
-        return;
-      }
-    }
-  }
-
-  lowerSigunguModelOpacity(sigunguModel: THREE.Group) {
-    for (const child of sigunguModel.children) {
-      if (
-        child instanceof THREE.Mesh &&
-        child.material instanceof THREE.MeshPhongMaterial
-      ) {
-        child.material.opacity = 0;
+        child.material.opacity = toOpacity;
         return;
       }
     }
@@ -336,7 +304,7 @@ class KoreaProject extends BaseProject {
     const prevHoveredSidoModel =
       this.sidoDictionary.value[this.hoveredSidoCodeNm].model;
     if (prevHoveredSidoModel) {
-      this.lowerSidoModelSaturation(prevHoveredSidoModel);
+      this.changeSidoModelSaturation(prevHoveredSidoModel, "decrease");
     }
     this.hoveredSidoCodeNm = null;
   }
@@ -347,7 +315,7 @@ class KoreaProject extends BaseProject {
     const prevHoveredSigunguModel =
       this.sigunguDictionary.value[sidoCodeNm][this.hoveredSigunguCodeNm].model;
     if (prevHoveredSigunguModel) {
-      this.lowerSigunguModelOpacity(prevHoveredSigunguModel);
+      this.changeSigunguModelOpacity(prevHoveredSigunguModel, "decrease");
     }
     this.hoveredSigunguCodeNm = null;
   }
@@ -382,7 +350,7 @@ class KoreaProject extends BaseProject {
             if (sidoModel) {
               this.resetSidoHover();
               this.hoveredSidoCodeNm = codeNm;
-              this.enhanceSidoModelSaturation(sidoModel);
+              this.changeSidoModelSaturation(sidoModel, "increase");
               return;
             }
           }
@@ -427,7 +395,7 @@ class KoreaProject extends BaseProject {
             if (sigunguModel) {
               this.resetSigunguHover();
               this.hoveredSigunguCodeNm = sigunguCodeNm;
-              this.enhanceSigunguModelOpacity(sigunguModel);
+              this.changeSigunguModelOpacity(sigunguModel, "increase");
               return;
             }
           }
@@ -464,13 +432,13 @@ class KoreaProject extends BaseProject {
             const sidoData = this.sidoDictionary.value[codeNm];
             const sidoModel = sidoData.model;
             if (sidoModel) {
-              this.enhanceSidoModelSaturation(sidoModel);
+              this.changeSidoModelSaturation(sidoModel, "increase");
               this.zoomFit({ obj: sidoModel, margin: 0.2, animate: true });
               this.increaseSidoModelDepth({
                 codeNm,
                 onComplete: () => {
                   this.createSigunguModels(codeNm);
-                  this.enhanceSidoModelLightness(sidoModel);
+                  this.changeSidoModelLightness(sidoModel, "increase");
                 },
               });
             }
