@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import KoreaProject from "@/projects/KoreaProject";
 import type { Project } from "@/types/project";
 import Popper from "@jinni-labs/ui/Popper";
+import useControl from "@/hooks/useControl";
 
 const INIT_POSITION = { left: 0, top: 0 };
 
 const KoreaCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { add, remove, removeGroup, clearAll } = useControl();
   const [anchorPosition, setAnchorPosition] = useState<{
     left: number;
     top: number;
@@ -37,6 +39,7 @@ const KoreaCanvas = () => {
 
     const project: Project = new KoreaProject({
       canvasEl,
+      controlUI: { add, remove, removeGroup, clearAll },
       openPopper,
       closePopper,
     });
@@ -47,7 +50,7 @@ const KoreaCanvas = () => {
       project.dispose();
       container.removeChild(canvasEl);
     };
-  }, []);
+  }, [add, remove, removeGroup, clearAll]);
 
   return (
     <>

@@ -38,8 +38,13 @@ class KoreaProject extends BaseProject {
   declare private openPopper: KoreaProjectProps["openPopper"];
   declare private closePopper: KoreaProjectProps["closePopper"];
 
-  constructor({ canvasEl, openPopper, closePopper }: KoreaProjectProps) {
-    super({ canvasEl });
+  constructor({
+    canvasEl,
+    controlUI,
+    openPopper,
+    closePopper,
+  }: KoreaProjectProps) {
+    super({ canvasEl, controlUI });
     this.openPopper = openPopper;
     this.closePopper = closePopper;
   }
@@ -213,6 +218,38 @@ class KoreaProject extends BaseProject {
     const x = (event.clientX / this.canvasEl.clientWidth) * 2 - 1;
     const y = -(event.clientY / this.canvasEl.clientHeight) * 2 + 1;
     return new THREE.Vector2(x, y);
+  }
+
+  addSidoInfoToControlUI(sidoCodeNm: number) {
+    if (!this.controlUI) {
+      throw new Error(`controlUI가 없습니다.`);
+    }
+
+    const { koreanName, englishName, introduction, population, area } =
+      this.sidoDictionary.value[sidoCodeNm];
+    this.controlUI.clearAll();
+    this.controlUI.add(koreanName, [
+      {
+        type: "plain-text",
+        label: "영문명",
+        content: englishName,
+      },
+      {
+        type: "plain-text",
+        label: "소개",
+        content: introduction,
+      },
+      {
+        type: "plain-text",
+        label: "인구",
+        content: new Intl.NumberFormat().format(population) + " 명",
+      },
+      {
+        type: "plain-text",
+        label: "면적",
+        content: new Intl.NumberFormat().format(area) + " km³",
+      },
+    ]);
   }
 
   changeSidoModelSaturation(
@@ -438,6 +475,7 @@ class KoreaProject extends BaseProject {
                 onComplete: () => {
                   this.createSigunguModels(codeNm);
                   this.changeSidoModelLightness(sidoModel, "increase");
+                  this.addSidoInfoToControlUI(codeNm);
                 },
               });
             }

@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import koreaGeoData from "@/assets/json/normalized_korea_geo_시도_2026.json" with { type: "json" };
-import type { SidoDictionaryValueType } from "./KoreaProject.types";
+import sidoInfoData from "@/assets/json/korea_시도_information.json" with { type: "json" };
+import type {
+  SidoDictionaryValueType,
+  SidoInfoDataType,
+} from "./KoreaProject.types";
 import ExtrudeGeometryHelper from "./helpers/ExtrudeGeometryHelper";
 import { createShapes } from "./KoreaProject.utils";
 
@@ -8,11 +12,16 @@ class SidoDictionary {
   private _value: SidoDictionaryValueType = {};
 
   constructor() {
+    const infoData = this.generateSidoInfoData();
     koreaGeoData.forEach(({ codeNm, englishName, koreanName, shapes }) => {
       const geometryHelper = new ExtrudeGeometryHelper(createShapes(shapes));
+      const { introduction, population, area } = infoData[codeNm];
       this._value[codeNm] = {
         englishName,
         koreanName,
+        introduction,
+        population,
+        area,
         geometryHelper,
       };
     });
@@ -20,6 +29,22 @@ class SidoDictionary {
 
   get value() {
     return this._value;
+  }
+
+  generateSidoInfoData(): SidoInfoDataType {
+    const data: SidoInfoDataType = {};
+    sidoInfoData.forEach(
+      ({ codeNm, englishName, koreanName, population, area, introduction }) => {
+        data[codeNm] = {
+          englishName,
+          koreanName,
+          introduction,
+          population: Number(population),
+          area: Number(area),
+        };
+      },
+    );
+    return data;
   }
 
   getAllCodeNms(): number[] {

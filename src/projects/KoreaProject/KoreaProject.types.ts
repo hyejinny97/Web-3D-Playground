@@ -19,10 +19,23 @@ export interface ShapeGeometryHelperType {
   createGeometry: () => THREE.BufferGeometry;
 }
 
+export interface SidoInfoDataType {
+  [codeNm: number]: {
+    englishName: string;
+    koreanName: string;
+    introduction: string;
+    population: number;
+    area: number;
+  };
+}
+
 export interface SidoDictionaryValueType {
   [codeNm: number]: {
     englishName: string;
     koreanName: string;
+    introduction: string;
+    population: number;
+    area: number;
     geometryHelper: ExtrudeGeometryHelper;
     model?: THREE.Group;
   };
