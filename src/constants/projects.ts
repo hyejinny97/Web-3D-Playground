@@ -6,6 +6,7 @@ import image_url_extrude_geometry from "@/assets/images/projects/extrude_geometr
 import image_url_text_geometry from "@/assets/images/projects/text_geometry.png";
 import image_url_shape_geometry from "@/assets/images/projects/shape_geometry.png";
 import image_url_korea from "@/assets/images/projects/korea.png";
+import image_url_lathe_geometry from "@/assets/images/projects/lathe_geometry.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -53,6 +54,13 @@ const MODEL_PROJECTS = [
     imageUrl: image_url_text_geometry,
     tags: [TAGS.geometry],
     component: lazy(() => import("@/components/projects/TextGeometryCanvas")),
+  },
+  {
+    id: "lathe-geometry",
+    title: "LatheGeometry",
+    imageUrl: image_url_lathe_geometry,
+    tags: [TAGS.geometry],
+    component: lazy(() => import("@/components/projects/LatheGeometryCanvas")),
   },
   {
     id: "korea",
