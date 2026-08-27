@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import ParametricGeometryProject from "@/projects/ParametricGeometryProject";
 import type { Project } from "@/types/project";
 import useControl from "@/hooks/useControl";
@@ -7,7 +7,7 @@ const ParametricGeometryCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { add, remove, removeGroup, clearAll } = useControl();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 

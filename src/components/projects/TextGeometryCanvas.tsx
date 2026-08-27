@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import TextGeometryProject from "@/projects/TextGeometryProject";
 import type { Project } from "@/types/project";
 import CircularProgress from "@jinni-labs/ui/CircularProgress";
@@ -23,7 +23,7 @@ const TextGeometryCanvas = () => {
     setFontLoading(false);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 

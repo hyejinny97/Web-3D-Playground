@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import type { Project } from "@/types/project";
 import PolyhedronGeometryProject from "@/projects/PolyhedronGeometryProject";
 import useControl from "@/hooks/useControl";
@@ -23,7 +23,7 @@ const PolyhedronGeometryCanvas = () => {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
