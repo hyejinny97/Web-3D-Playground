@@ -1,11 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import BasicProject from "@/projects/BasicProject";
 import type { Project } from "@/types/project";
 
 const BasicCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 

@@ -15,7 +15,7 @@ const SearchInput = () => {
 
   return (
     <Autocomplete
-      className="w-full!"
+      className="w-full! min-w-0!"
       mode="free"
       inputValue={searchInputValueCleared ? "" : inputValue}
       onInputChange={(_, inputValue) => {
@@ -36,7 +36,6 @@ const SearchInput = () => {
         onSearchValueChange(inputValue);
       }}
       placeholder="Search playground title"
-      PopperProps={{ style: { width: "251px" } }}
     >
       {ALL_PROJECTS.map(
         ({ id, title }) =>

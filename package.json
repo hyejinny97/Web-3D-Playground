@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@jinni-labs/ui": "^0.0.3",
+    "@jinni-labs/ui": "^0.1.0",
     "@tailwindcss/vite": "^4.3.3",
     "classnames": "^2.5.1",
     "gsap": "^3.15.0",

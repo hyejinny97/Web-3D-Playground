@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import KoreaProject from "@/projects/KoreaProject";
 import type { Project } from "@/types/project";
 import Popper from "@jinni-labs/ui/Popper";
@@ -43,7 +43,7 @@ const KoreaCanvas = () => {
     setPopperContent("");
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 

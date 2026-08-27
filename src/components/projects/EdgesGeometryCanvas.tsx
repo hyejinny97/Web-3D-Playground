@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import EdgesGeometryProject from "@/projects/EdgesGeometryProject";
 import type { Project } from "@/types/project";
 import useControl from "@/hooks/useControl";
@@ -23,7 +23,7 @@ const EdgesGeometryCanvas = () => {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
