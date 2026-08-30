@@ -12,6 +12,7 @@ import CheckboxControl from "./CheckboxControl";
 import PlainTextControl from "./PlainTextControl";
 import TextInputControl from "./TextInputControl";
 import SelectControl from "./SelectControl";
+import ColorControl from "./ColorControl";
 
 const UIControls = (props: BoxProps) => {
   const { controls } = useControl();
@@ -28,6 +29,8 @@ const UIControls = (props: BoxProps) => {
         return <TextInputControl {...control} />;
       case "select":
         return <SelectControl {...control} />;
+      case "color":
+        return <ColorControl {...control} />;
     }
   };
 
