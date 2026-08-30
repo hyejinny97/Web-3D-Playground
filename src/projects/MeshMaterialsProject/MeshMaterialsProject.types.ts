@@ -26,9 +26,23 @@ export interface MeshBasicMaterialHelperType {
   reset: () => void;
 }
 
+export interface MeshLambertMaterialHelperType {
+  args: {
+    color: THREE.Color;
+    fog: boolean;
+    wireframe: boolean;
+    emissive: THREE.Color;
+    emissiveIntensity: number;
+  };
+  material: THREE.MeshLambertMaterial;
+  createControlUI: () => void;
+  reset: () => void;
+}
+
 export interface MaterialDictionaryType {
   values: {
     meshBasic: MeshBasicMaterialHelperType;
+    meshLambert: MeshLambertMaterialHelperType;
   };
 }
 

@@ -1,6 +1,7 @@
 import type { ControlUIType } from "@/types/project";
 import MeshBasicMaterialHelper from "./helpers/MeshBasicMaterialHelper";
 import type { MaterialDictionaryType } from "./MeshMaterialsProject.types";
+import MeshLambertMaterialHelper from "./helpers/MeshLambertMaterial";
 
 class MaterialDictionary implements MaterialDictionaryType {
   private _values: MaterialDictionaryType["values"];
@@ -8,6 +9,7 @@ class MaterialDictionary implements MaterialDictionaryType {
   constructor(controlUI: ControlUIType) {
     this._values = {
       meshBasic: new MeshBasicMaterialHelper(controlUI),
+      meshLambert: new MeshLambertMaterialHelper(controlUI),
     };
   }
 
