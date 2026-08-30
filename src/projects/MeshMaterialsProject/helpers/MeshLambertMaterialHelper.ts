@@ -3,10 +3,13 @@ import type { ControlUIType } from "@/types/project";
 import type { MeshLambertMaterialHelperType } from "../MeshMaterialsProject.types";
 import type { HEX } from "@jinni-labs/ui/types";
 import MaterialHelper from "./MaterialHelper";
-import { PROPERTIES_NEED_UPDATE } from "../MeshMaterialsProject.constants";
+import {
+  DEFAULT_COLOR,
+  PROPERTIES_NEED_UPDATE,
+} from "../MeshMaterialsProject.constants";
 
 const DEFAULT_ARGS = {
-  color: new THREE.Color().setStyle("#049ef4"),
+  color: new THREE.Color(DEFAULT_COLOR),
   fog: true,
   wireframe: false,
   emissive: new THREE.Color(0, 0, 0),

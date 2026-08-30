@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import type { ControlUIType } from "@/types/project";
-import type { MeshBasicMaterialHelperType } from "../MeshMaterialsProject.types";
+import type { MeshPhongMaterialHelperType } from "../MeshMaterialsProject.types";
 import type { HEX } from "@jinni-labs/ui/types";
 import MaterialHelper from "./MaterialHelper";
 import {
@@ -12,12 +12,16 @@ const DEFAULT_ARGS = {
   color: new THREE.Color(DEFAULT_COLOR),
   fog: true,
   wireframe: false,
+  emissive: new THREE.Color(0, 0, 0),
+  emissiveIntensity: 0.1,
+  specular: new THREE.Color(0x111111),
+  shininess: 30,
 } as const;
 
-class MeshBasicMaterialHelper implements MeshBasicMaterialHelperType {
-  private controlUIGroupName = "MeshBasicMaterial";
-  private _args: MeshBasicMaterialHelperType["args"];
-  private _material: THREE.MeshBasicMaterial;
+class MeshPhongMaterialHelper implements MeshPhongMaterialHelperType {
+  private controlUIGroupName = "MeshPhongMaterial";
+  private _args: MeshPhongMaterialHelperType["args"];
+  private _material: THREE.MeshPhongMaterial;
   private _materialHelper: MaterialHelper;
   controlUI: ControlUIType;
 
@@ -25,7 +29,7 @@ class MeshBasicMaterialHelper implements MeshBasicMaterialHelperType {
     this.controlUI = controlUI;
     this._args = { ...DEFAULT_ARGS };
     this._materialHelper = new MaterialHelper(controlUI);
-    this._material = new THREE.MeshBasicMaterial({
+    this._material = new THREE.MeshPhongMaterial({
       ...this._args,
       ...this._materialHelper.args,
     });
@@ -39,7 +43,7 @@ class MeshBasicMaterialHelper implements MeshBasicMaterialHelperType {
     return this._material;
   }
 
-  update(properties: THREE.MeshBasicMaterialParameters) {
+  update(properties: THREE.MeshPhongMaterialParameters) {
     this._material.setValues(properties);
     if (
       Object.keys(properties).some((targetPro) =>
@@ -81,6 +85,52 @@ class MeshBasicMaterialHelper implements MeshBasicMaterialHelperType {
           this.update({ wireframe: this._args.wireframe });
         },
       },
+      {
+        type: "color",
+        label: "emissive",
+        initValue: `#${this._args.emissive.getHexString()}` as HEX,
+        onChange: (value) => {
+          const valueRemovedAlpha =
+            value.length === 9 ? value.slice(0, 7) : value;
+          this._args.emissive = new THREE.Color().setStyle(valueRemovedAlpha);
+          this.update({ emissive: this._args.emissive });
+        },
+      },
+      {
+        type: "range",
+        label: "emissiveIntensity",
+        min: 0,
+        max: 2,
+        step: 0.1,
+        initValue: this._args.emissiveIntensity,
+        onChange: (value) => {
+          this._args.emissiveIntensity = value;
+          this.update({ emissiveIntensity: this._args.emissiveIntensity });
+        },
+      },
+      {
+        type: "color",
+        label: "specular",
+        initValue: `#${this._args.specular.getHexString()}` as HEX,
+        onChange: (value) => {
+          const valueRemovedAlpha =
+            value.length === 9 ? value.slice(0, 7) : value;
+          this._args.specular = new THREE.Color().setStyle(valueRemovedAlpha);
+          this.update({ specular: this._args.specular });
+        },
+      },
+      {
+        type: "range",
+        label: "shininess",
+        min: 0,
+        max: 100,
+        step: 5,
+        initValue: this._args.shininess,
+        onChange: (value) => {
+          this._args.shininess = value;
+          this.update({ shininess: this._args.shininess });
+        },
+      },
     ]);
 
     this._materialHelper.createControlUI((properties) => {
@@ -98,4 +148,4 @@ class MeshBasicMaterialHelper implements MeshBasicMaterialHelperType {
   }
 }
 
-export default MeshBasicMaterialHelper;
+export default MeshPhongMaterialHelper;

@@ -12,3 +12,5 @@ export const PROPERTIES_NEED_UPDATE = [
   "transparent",
   "fog",
 ] as const;
+
+export const DEFAULT_COLOR = "#049ef4" as const;
