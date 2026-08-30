@@ -37,9 +37,9 @@ class MeshMaterialsProject extends BaseProject {
 
   setupScene() {
     super.setupScene();
-    if (!this.controlUI) return;
-    this.fogHelper = new FogHelper(this.controlUI);
-    this.controlFog();
+    if (this.controlUI && this.scene) {
+      this.fogHelper = new FogHelper(this.controlUI, this.scene);
+    }
   }
 
   setupModel() {
@@ -103,26 +103,13 @@ class MeshMaterialsProject extends BaseProject {
     });
   }
 
-  controlFog() {
-    if (!this.scene) return;
-
-    const { fog, fogColor, fogDensity } = this.fogHelper.args;
-    if (fog) {
-      this.scene.fog = new THREE.FogExp2(fogColor, fogDensity);
-    } else {
-      this.scene.fog = null;
-    }
-  }
-
   addMaterialControlUI(name: keyof MaterialDictionary["values"]) {
     const materialHelper = this.materialDictionary.values[name];
     materialHelper.createControlUI();
   }
 
   addFogControlUI() {
-    this.fogHelper.createControlUI(() => {
-      this.controlFog();
-    });
+    this.fogHelper.createControlUI();
   }
 
   setupEvent() {
@@ -163,9 +150,7 @@ class MeshMaterialsProject extends BaseProject {
         this.materialDictionary.values[this.selectedMaterial];
       materialHelper.reset();
       this.selectedMaterial = undefined;
-      this.fogHelper.reset(() => {
-        this.controlFog();
-      });
+      this.fogHelper.reset();
     }
   }
 

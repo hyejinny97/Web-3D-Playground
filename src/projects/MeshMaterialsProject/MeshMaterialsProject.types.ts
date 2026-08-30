@@ -38,6 +38,6 @@ export interface FogHelperType {
     fogColor: THREE.Color;
     fogDensity: number;
   };
-  createControlUI: (update: () => void) => void;
-  reset: (update: () => void) => void;
+  createControlUI: () => void;
+  reset: () => void;
 }

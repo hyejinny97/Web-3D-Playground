@@ -13,17 +13,29 @@ class FogHelper implements FogHelperType {
   private controlUIGroupName = "Scene";
   private _args: FogHelperType["args"];
   controlUI: ControlUIType;
+  scene: THREE.Scene;
 
-  constructor(controlUI: ControlUIType) {
+  constructor(controlUI: ControlUIType, scene: THREE.Scene) {
     this.controlUI = controlUI;
+    this.scene = scene;
     this._args = { ...DEFAULT_ARGS };
+    this.update();
   }
 
   get args() {
     return this._args;
   }
 
-  createControlUI(update: () => void) {
+  update() {
+    const { fog, fogColor, fogDensity } = this._args;
+    if (fog) {
+      this.scene.fog = new THREE.FogExp2(fogColor, fogDensity);
+    } else {
+      this.scene.fog = null;
+    }
+  }
+
+  createControlUI() {
     this.controlUI.add(this.controlUIGroupName, [
       {
         type: "checkbox",
@@ -31,7 +43,7 @@ class FogHelper implements FogHelperType {
         initChecked: this._args.fog,
         onChange: (value) => {
           this._args.fog = value;
-          update();
+          this.update();
         },
       },
       {
@@ -42,7 +54,7 @@ class FogHelper implements FogHelperType {
           const valueRemovedAlpha =
             value.length === 9 ? value.slice(0, 7) : value;
           this._args.fogColor = new THREE.Color().setStyle(valueRemovedAlpha);
-          update();
+          this.update();
         },
       },
       {
@@ -54,15 +66,15 @@ class FogHelper implements FogHelperType {
         initValue: this._args.fogDensity,
         onChange: (value) => {
           this._args.fogDensity = value;
-          update();
+          this.update();
         },
       },
     ]);
   }
 
-  reset(update: () => void) {
+  reset() {
     this._args = { ...DEFAULT_ARGS };
-    update();
+    this.update();
     this.controlUI.removeGroup(this.controlUIGroupName);
   }
 }
