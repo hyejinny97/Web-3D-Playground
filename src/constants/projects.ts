@@ -95,6 +95,13 @@ const MODEL_PROJECTS = [
     tags: [TAGS.geometry, TAGS.raycaster],
     component: lazy(() => import("@/components/projects/KoreaCanvas")),
   },
+  {
+    id: "mesh-materials",
+    title: "MeshMaterials",
+    imageUrl: "",
+    tags: [TAGS.material, TAGS.raycaster],
+    component: lazy(() => import("@/components/projects/MeshMaterialsCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [BASIC_PROJECT, ...MODEL_PROJECTS];
