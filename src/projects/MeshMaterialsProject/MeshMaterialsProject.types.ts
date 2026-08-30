@@ -54,11 +54,27 @@ export interface MeshPhongMaterialHelperType {
   reset: () => void;
 }
 
+export interface MeshStandardMaterialHelperType {
+  args: {
+    color: THREE.Color;
+    fog: boolean;
+    wireframe: boolean;
+    emissive: THREE.Color;
+    emissiveIntensity: number;
+    metalness: number;
+    roughness: number;
+  };
+  material: THREE.MeshStandardMaterial;
+  createControlUI: () => void;
+  reset: () => void;
+}
+
 export interface MaterialDictionaryType {
   values: {
     meshBasic: MeshBasicMaterialHelperType;
     meshLambert: MeshLambertMaterialHelperType;
     meshPhong: MeshPhongMaterialHelperType;
+    meshStandard: MeshStandardMaterialHelperType;
   };
 }
 
