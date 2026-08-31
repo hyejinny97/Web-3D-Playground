@@ -108,6 +108,15 @@ export interface MeshDepthMaterialHelperType {
   reset: () => void;
 }
 
+export interface MeshNormalMaterialHelperType {
+  args: {
+    wireframe: boolean;
+  };
+  material: THREE.MeshNormalMaterial;
+  createControlUI: () => void;
+  reset: () => void;
+}
+
 export interface MaterialDictionaryType {
   values: {
     meshBasic: MeshBasicMaterialHelperType;
@@ -116,6 +125,7 @@ export interface MaterialDictionaryType {
     meshStandard: MeshStandardMaterialHelperType;
     meshPhysical: MeshPhysicalMaterialHelperType;
     meshDepth: MeshDepthMaterialHelperType;
+    meshNormal: MeshNormalMaterialHelperType;
   };
 }
 
