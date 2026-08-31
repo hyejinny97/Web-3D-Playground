@@ -1,7 +1,10 @@
 import * as THREE from "three";
-import type { SIDES } from "./MeshMaterialsProject.constants";
+import type { DEPTH_PACKING, SIDES } from "./MeshMaterialsProject.constants";
 
 export type SideType = (typeof SIDES)[keyof typeof SIDES];
+
+export type DepthPackingType =
+  (typeof DEPTH_PACKING)[keyof typeof DEPTH_PACKING];
 
 export interface MaterialHelperType {
   args: {
@@ -95,6 +98,16 @@ export interface MeshPhysicalMaterialHelperType {
   reset: () => void;
 }
 
+export interface MeshDepthMaterialHelperType {
+  args: {
+    wireframe: boolean;
+    depthPacking: DepthPackingType;
+  };
+  material: THREE.MeshDepthMaterial;
+  createControlUI: () => void;
+  reset: () => void;
+}
+
 export interface MaterialDictionaryType {
   values: {
     meshBasic: MeshBasicMaterialHelperType;
@@ -102,6 +115,7 @@ export interface MaterialDictionaryType {
     meshPhong: MeshPhongMaterialHelperType;
     meshStandard: MeshStandardMaterialHelperType;
     meshPhysical: MeshPhysicalMaterialHelperType;
+    meshDepth: MeshDepthMaterialHelperType;
   };
 }
 

@@ -37,9 +37,12 @@ class MeshMaterialsProject extends BaseProject {
 
   setupScene() {
     super.setupScene();
-    if (this.controlUI && this.scene) {
-      this.fogHelper = new FogHelper(this.controlUI, this.scene);
-    }
+
+    if (!this.scene) return;
+    this.scene.background = new THREE.Color(0.1, 0.1, 0.1);
+
+    if (!this.controlUI) return;
+    this.fogHelper = new FogHelper(this.controlUI, this.scene);
   }
 
   setupModel() {
