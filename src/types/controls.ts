@@ -1,3 +1,5 @@
+import type { HEX } from "@jinni-labs/ui/types";
+
 export type RangeControlType = {
   type: "range";
   label: string;
@@ -32,9 +34,16 @@ export type TextInputControlType = {
 export type SelectControlType = {
   type: "select";
   label: string;
-  options: { label: string; value: string }[];
-  initValue?: string;
-  onChange?: (value: string) => void;
+  options: { label: string; value: string | number }[];
+  initValue?: string | number;
+  onChange?: (value: string | number) => void;
+};
+
+export type ColorControlType = {
+  type: "color";
+  label: string;
+  initValue: HEX;
+  onChange?: (value: HEX) => void;
 };
 
 export type ControlType =
@@ -42,4 +51,5 @@ export type ControlType =
   | CheckboxControlType
   | PlainTextControlType
   | TextInputControlType
-  | SelectControlType;
+  | SelectControlType
+  | ColorControlType;

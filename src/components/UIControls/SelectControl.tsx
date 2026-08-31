@@ -19,7 +19,7 @@ const SelectControl = ({
         className="col-span-2 min-w-0! w-full!"
         defaultValue={initValue}
         onChange={(_, value) => {
-          onChange?.(value as string);
+          onChange?.(value);
         }}
         size="sm"
       >

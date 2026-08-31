@@ -120,8 +120,9 @@ class ShapeGeometryHelper implements GeometryHelper {
         options: SHAPES.map((shape) => ({ label: shape, value: shape })),
         initValue: this._args.shapeName,
         onChange: (value) => {
-          if (this.validateShapeName(value)) {
-            this._args.shapeName = value;
+          const shapeValue = value as string;
+          if (this.validateShapeName(shapeValue)) {
+            this._args.shapeName = shapeValue;
             update(true);
           }
         },

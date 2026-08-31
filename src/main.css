@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+* {
+  /* 파이어폭스 전용 */
+  scrollbar-width: thin;
+
+  /* 크롬, 사파리, 엣지 전용 */
+  &::-webkit-scrollbar {
+    width: 8px; /* 세로 스크롤바 너비 */
+    height: 8px; /* 가로 스크롤바 높이 */
+  }
+}
