@@ -1,10 +1,16 @@
 import * as THREE from "three";
-import type { DEPTH_PACKING, SIDES } from "./MeshMaterialsProject.constants";
+import type {
+  DEPTH_PACKING,
+  GRADIENT_MAP_TEXTURES,
+  SIDES,
+} from "./MeshMaterialsProject.constants";
 
 export type SideType = (typeof SIDES)[keyof typeof SIDES];
 
 export type DepthPackingType =
   (typeof DEPTH_PACKING)[keyof typeof DEPTH_PACKING];
+
+export type GradientMapTextureType = keyof typeof GRADIENT_MAP_TEXTURES;
 
 export interface MaterialHelperType {
   args: {
@@ -117,6 +123,20 @@ export interface MeshNormalMaterialHelperType {
   reset: () => void;
 }
 
+export interface MeshToonMaterialHelperType {
+  args: {
+    color: THREE.Color;
+    fog: boolean;
+    wireframe: boolean;
+    emissive: THREE.Color;
+    emissiveIntensity: number;
+    gradientMap: GradientMapTextureType;
+  };
+  material: THREE.MeshToonMaterial;
+  createControlUI: () => void;
+  reset: () => void;
+}
+
 export interface MaterialDictionaryType {
   values: {
     meshBasic: MeshBasicMaterialHelperType;
@@ -126,6 +146,7 @@ export interface MaterialDictionaryType {
     meshPhysical: MeshPhysicalMaterialHelperType;
     meshDepth: MeshDepthMaterialHelperType;
     meshNormal: MeshNormalMaterialHelperType;
+    meshToon: MeshToonMaterialHelperType;
   };
 }
 
