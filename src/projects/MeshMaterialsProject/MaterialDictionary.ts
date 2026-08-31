@@ -4,6 +4,7 @@ import type { MaterialDictionaryType } from "./MeshMaterialsProject.types";
 import MeshLambertMaterialHelper from "./helpers/MeshLambertMaterialHelper";
 import MeshPhongMaterialHelper from "./helpers/MeshPhongMaterialHelper";
 import MeshStandardMaterialHelper from "./helpers/MeshStandardMaterialHelper";
+import MeshPhysicalMaterialHelper from "./helpers/MeshPhysicalMaterial";
 
 class MaterialDictionary implements MaterialDictionaryType {
   private _values: MaterialDictionaryType["values"];
@@ -14,6 +15,7 @@ class MaterialDictionary implements MaterialDictionaryType {
       meshLambert: new MeshLambertMaterialHelper(controlUI),
       meshPhong: new MeshPhongMaterialHelper(controlUI),
       meshStandard: new MeshStandardMaterialHelper(controlUI),
+      meshPhysical: new MeshPhysicalMaterialHelper(controlUI),
     };
   }
 

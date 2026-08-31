@@ -69,12 +69,39 @@ export interface MeshStandardMaterialHelperType {
   reset: () => void;
 }
 
+export interface MeshPhysicalMaterialHelperType {
+  args: {
+    color: THREE.Color;
+    fog: boolean;
+    wireframe: boolean;
+    emissive: THREE.Color;
+    emissiveIntensity: number;
+    metalness: number;
+    roughness: number;
+    ior: number;
+    reflectivity: number;
+    specularColor: THREE.Color;
+    specularIntensity: number;
+    iridescence: number;
+    iridescenceIOR: number;
+    sheenColor: THREE.Color;
+    sheen: number;
+    sheenRoughness: number;
+    clearcoat: number;
+    clearcoatRoughness: number;
+  };
+  material: THREE.MeshPhysicalMaterial;
+  createControlUI: () => void;
+  reset: () => void;
+}
+
 export interface MaterialDictionaryType {
   values: {
     meshBasic: MeshBasicMaterialHelperType;
     meshLambert: MeshLambertMaterialHelperType;
     meshPhong: MeshPhongMaterialHelperType;
     meshStandard: MeshStandardMaterialHelperType;
+    meshPhysical: MeshPhysicalMaterialHelperType;
   };
 }
 
