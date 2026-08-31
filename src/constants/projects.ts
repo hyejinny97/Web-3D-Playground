@@ -10,6 +10,7 @@ import image_url_lathe_geometry from "@/assets/images/projects/lathe_geometry.pn
 import image_url_parametric_geometry from "@/assets/images/projects/parametric_geometry.png";
 import image_url_wireframe_edges_geometry from "@/assets/images/projects/wireframe_edges_geometry.png";
 import image_url_tube_geometry from "@/assets/images/projects/tube_geometry.png";
+import image_url_mesh_materials from "@/assets/images/projects/mesh_materials.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -98,7 +99,7 @@ const MODEL_PROJECTS = [
   {
     id: "mesh-materials",
     title: "MeshMaterials",
-    imageUrl: "",
+    imageUrl: image_url_mesh_materials,
     tags: [TAGS.material, TAGS.raycaster],
     component: lazy(() => import("@/components/projects/MeshMaterialsCanvas")),
   },
