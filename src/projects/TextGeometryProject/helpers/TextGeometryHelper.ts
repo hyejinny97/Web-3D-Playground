@@ -88,7 +88,7 @@ class TextGeometryHelper implements GeometryHelper {
         })),
         initValue: this._args.font,
         onChange: (value) => {
-          this._args.font = value;
+          this._args.font = value as string;
           update();
         },
       },
