@@ -11,6 +11,7 @@ import image_url_parametric_geometry from "@/assets/images/projects/parametric_g
 import image_url_wireframe_edges_geometry from "@/assets/images/projects/wireframe_edges_geometry.png";
 import image_url_tube_geometry from "@/assets/images/projects/tube_geometry.png";
 import image_url_mesh_materials from "@/assets/images/projects/mesh_materials.png";
+import image_url_line_materials from "@/assets/images/projects/line_materials.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -102,6 +103,13 @@ const MODEL_PROJECTS = [
     imageUrl: image_url_mesh_materials,
     tags: [TAGS.material, TAGS.raycaster],
     component: lazy(() => import("@/components/projects/MeshMaterialsCanvas")),
+  },
+  {
+    id: "line-materials",
+    title: "LineMaterials",
+    imageUrl: image_url_line_materials,
+    tags: [TAGS.material, TAGS.raycaster],
+    component: lazy(() => import("@/components/projects/LineMaterialsCanvas")),
   },
 ];
 
