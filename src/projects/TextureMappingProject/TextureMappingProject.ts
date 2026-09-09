@@ -8,6 +8,9 @@ import type { MaterialDictionaryType } from "./TextureMappingProject.types";
 
 type TextureMappingProjectProps = ConstructorProps & {
   selectedTexture: keyof MaterialDictionaryType["values"];
+  loadStart: () => void;
+  loading: (percent: number) => void;
+  loadComplete: () => void;
 };
 
 @RenderLoop()
@@ -16,14 +19,23 @@ class TextureMappingProject extends BaseProject {
   declare private materialDictionary: MaterialDictionary;
   declare private selectedTexture: keyof MaterialDictionaryType["values"];
   private stopRendering = false;
+  private loadStart: TextureMappingProjectProps["loadStart"];
+  private loading: TextureMappingProjectProps["loading"];
+  private loadComplete: TextureMappingProjectProps["loadComplete"];
 
   constructor({
     canvasEl,
     controlUI,
     selectedTexture,
+    loadStart,
+    loading,
+    loadComplete,
   }: TextureMappingProjectProps) {
     super({ canvasEl, controlUI });
     this.selectedTexture = selectedTexture;
+    this.loadStart = loadStart;
+    this.loading = loading;
+    this.loadComplete = loadComplete;
     this.setupModel();
   }
 
@@ -64,7 +76,17 @@ class TextureMappingProject extends BaseProject {
     if (initiated) {
       return helper.material;
     } else {
-      await helper.init();
+      await helper.init({
+        onStart: () => {
+          this.loadStart();
+        },
+        onProgress: (_, loaded, total) => {
+          this.loading((loaded / total) * 100);
+        },
+        onLoad: () => {
+          this.loadComplete();
+        },
+      });
       this.materialDictionary.values[name].initiated = true;
       return helper.material;
     }

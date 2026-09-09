@@ -7,6 +7,8 @@ import Radio from "@jinni-labs/ui/Radio";
 import Label from "@jinni-labs/ui/Label";
 import Stack from "@jinni-labs/ui/Stack";
 import Box from "@jinni-labs/ui/Box";
+import useLoad from "@/hooks/useLoading";
+import Loading from "../Loading";
 
 const TEXTURES = ["Brick", "Ice", "Lava", "Fabric", "Glass"] as const;
 
@@ -16,6 +18,7 @@ const TextureMappingCanvas = () => {
   const [selectedTexture, setSelectedTexture] = useState<
     (typeof TEXTURES)[number]
   >(TEXTURES[0]);
+  const { isLoading, progress, loadStart, loading, loadComplete } = useLoad();
 
   const select = (event: React.ChangeEvent<HTMLInputElement>) => {
     const texture = event.target.value as (typeof TEXTURES)[number];
@@ -35,6 +38,9 @@ const TextureMappingCanvas = () => {
       canvasEl,
       controlUI: { add, remove, removeGroup, clearAll },
       selectedTexture,
+      loadStart,
+      loading,
+      loadComplete,
     });
     if (project.loop) project.renderLoop();
     else project.render();
@@ -43,7 +49,16 @@ const TextureMappingCanvas = () => {
       project.dispose();
       container.removeChild(canvasEl);
     };
-  }, [add, remove, removeGroup, clearAll, selectedTexture]);
+  }, [
+    add,
+    remove,
+    removeGroup,
+    clearAll,
+    loadStart,
+    loading,
+    loadComplete,
+    selectedTexture,
+  ]);
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
@@ -61,6 +76,9 @@ const TextureMappingCanvas = () => {
           </Stack>
         </RadioGroup>
       </Box>
+      {isLoading && (
+        <Loading progress={progress} helpText="Loading Textures..." />
+      )}
     </div>
   );
 };
