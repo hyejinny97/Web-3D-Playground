@@ -100,24 +100,31 @@ const MODEL_PROJECTS = [
   },
   {
     id: "mesh-materials",
-    title: "MeshMaterials",
+    title: "Mesh Materials",
     imageUrl: image_url_mesh_materials,
     tags: [TAGS.material, TAGS.raycaster],
     component: lazy(() => import("@/components/projects/MeshMaterialsCanvas")),
   },
   {
     id: "line-materials",
-    title: "LineMaterials",
+    title: "Line Materials",
     imageUrl: image_url_line_materials,
     tags: [TAGS.material, TAGS.raycaster],
     component: lazy(() => import("@/components/projects/LineMaterialsCanvas")),
   },
   {
     id: "point-materials",
-    title: "PointMaterials",
+    title: "Point Materials",
     imageUrl: image_url_point_materials,
     tags: [TAGS.material],
     component: lazy(() => import("@/components/projects/PointMaterialsCanvas")),
+  },
+  {
+    id: "texture-mapping",
+    title: "Texture Mapping",
+    imageUrl: "",
+    tags: [TAGS.material],
+    component: lazy(() => import("@/components/projects/TextureMappingCanvas")),
   },
 ];
 
