@@ -1,11 +1,26 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import TextureMappingProject from "@/projects/TextureMappingProject";
 import type { Project } from "@/types/project";
 import useControl from "@/hooks/useControl";
+import RadioGroup from "@jinni-labs/ui/RadioGroup";
+import Radio from "@jinni-labs/ui/Radio";
+import Label from "@jinni-labs/ui/Label";
+import Stack from "@jinni-labs/ui/Stack";
+import Box from "@jinni-labs/ui/Box";
+
+const TEXTURES = ["Brick", "Ice", "Lava", "Fabric", "Glass"] as const;
 
 const TextureMappingCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { add, remove, removeGroup, clearAll } = useControl();
+  const [selectedTexture, setSelectedTexture] = useState<
+    (typeof TEXTURES)[number]
+  >(TEXTURES[0]);
+
+  const select = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const texture = event.target.value as (typeof TEXTURES)[number];
+    setSelectedTexture(texture);
+  };
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -19,6 +34,7 @@ const TextureMappingCanvas = () => {
     const project: Project = new TextureMappingProject({
       canvasEl,
       controlUI: { add, remove, removeGroup, clearAll },
+      selectedTexture,
     });
     if (project.loop) project.renderLoop();
     else project.render();
@@ -27,9 +43,26 @@ const TextureMappingCanvas = () => {
       project.dispose();
       container.removeChild(canvasEl);
     };
-  }, [add, remove, removeGroup, clearAll]);
+  }, [add, remove, removeGroup, clearAll, selectedTexture]);
 
-  return <div ref={containerRef} className="w-full h-full" />;
+  return (
+    <div ref={containerRef} className="relative w-full h-full">
+      <Box
+        className="absolute bottom-[10px] left-1/2 -translate-1/2 p-[10px] bg-[#fffa]"
+        round="sm"
+      >
+        <RadioGroup name="texture" value={selectedTexture} onChange={select}>
+          <Stack direction="row" spacing={10}>
+            {TEXTURES.map((texture) => (
+              <Label key={texture} content={texture}>
+                <Radio value={texture} />
+              </Label>
+            ))}
+          </Stack>
+        </RadioGroup>
+      </Box>
+    </div>
+  );
 };
 
 export default TextureMappingCanvas;

@@ -30,6 +30,10 @@ export interface TextureLoadingType {
 
 export interface MaterialDictionaryType {
   values: {
-    brick: { helper: BrickMaterialHelperType; initiated: boolean };
+    Brick: { helper: BrickMaterialHelperType; initiated: boolean };
+    Ice: { helper: BrickMaterialHelperType; initiated: boolean };
+    Lava: { helper: BrickMaterialHelperType; initiated: boolean };
+    Fabric: { helper: BrickMaterialHelperType; initiated: boolean };
+    Glass: { helper: BrickMaterialHelperType; initiated: boolean };
   };
 }

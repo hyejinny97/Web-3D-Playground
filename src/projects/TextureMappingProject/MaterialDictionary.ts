@@ -7,7 +7,23 @@ class MaterialDictionary implements MaterialDictionaryType {
 
   constructor(controlUI: ControlUIType) {
     this._values = {
-      brick: {
+      Brick: {
+        helper: new BrickMaterialHelper(controlUI),
+        initiated: false,
+      },
+      Ice: {
+        helper: new BrickMaterialHelper(controlUI),
+        initiated: false,
+      },
+      Lava: {
+        helper: new BrickMaterialHelper(controlUI),
+        initiated: false,
+      },
+      Fabric: {
+        helper: new BrickMaterialHelper(controlUI),
+        initiated: false,
+      },
+      Glass: {
         helper: new BrickMaterialHelper(controlUI),
         initiated: false,
       },
