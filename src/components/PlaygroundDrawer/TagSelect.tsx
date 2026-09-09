@@ -26,7 +26,6 @@ const TagSelect = () => {
       multiple
       variant="underlined"
       placeholder="Select Tags"
-      MenuProps={{ style: { width: "251px" } }}
       renderValue={(selectedOptions) => (
         <Stack
           direction="row"
