@@ -1,12 +1,12 @@
 import * as THREE from "three";
 import type { ControlUIType } from "@/types/project";
 import type {
-  BrickMaterialHelperType,
-  BrickTextureType,
+  IceMaterialHelperType,
+  IceTextureType,
   TextureLoadingType,
 } from "../TextureMappingProject.types";
 import {
-  BRICK_TEXTURES,
+  ICE_TEXTURES,
   PROPERTIES_NEED_UPDATE,
   TEXTURE_MIN_FILTER,
   TEXTURE_REPEAT_X,
@@ -14,6 +14,7 @@ import {
   TEXTURE_WRAP_S,
   TEXTURE_WRAP_T,
 } from "../TextureMappingProject.constants";
+import type { HEX } from "@jinni-labs/ui/types";
 
 const DEFAULT_ARGS = {
   aoMap: true,
@@ -23,15 +24,16 @@ const DEFAULT_ARGS = {
   displacementScale: 0.1,
   map: true,
   normalMap: true,
-  roughnessMap: true,
-  roughness: 1,
+  specularMap: true,
+  specular: new THREE.Color(0x999999),
+  shininess: 30,
 } as const;
 
-class BrickMaterialHelper implements BrickMaterialHelperType {
-  private controlUIGroupName = "MeshStandardMaterial";
-  private _args: BrickMaterialHelperType["args"];
-  private _material = new THREE.MeshStandardMaterial();
-  textures: Partial<Record<BrickTextureType, THREE.Texture>> = {};
+class IceMaterialHelper implements IceMaterialHelperType {
+  private controlUIGroupName = "MeshPhongMaterial";
+  private _args: IceMaterialHelperType["args"];
+  private _material = new THREE.MeshPhongMaterial();
+  textures: Partial<Record<IceTextureType, THREE.Texture>> = {};
   controlUI: ControlUIType;
 
   constructor(controlUI: ControlUIType) {
@@ -58,9 +60,9 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
     manager.onStart = onStart;
     const loader = new THREE.TextureLoader(manager);
     await Promise.allSettled(
-      Object.keys(BRICK_TEXTURES).map(async (key) => {
-        const name = key as BrickTextureType;
-        const { url, colorSpace } = BRICK_TEXTURES[name];
+      Object.keys(ICE_TEXTURES).map(async (key) => {
+        const name = key as IceTextureType;
+        const { url, colorSpace } = ICE_TEXTURES[name];
         const texture = await loader.loadAsync(url);
         texture.colorSpace = colorSpace;
         texture.wrapS = TEXTURE_WRAP_S;
@@ -72,7 +74,7 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
     );
   }
 
-  update(properties: THREE.MeshStandardMaterialParameters) {
+  update(properties: THREE.MeshPhongMaterialParameters) {
     this._material.setValues(properties);
     if (
       Object.keys(properties).some((targetPro) =>
@@ -84,7 +86,7 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
   }
 
   setMaterialArgs() {
-    const { aoMap, displacementMap, map, normalMap, roughnessMap, ...rest } =
+    const { aoMap, displacementMap, map, normalMap, specularMap, ...rest } =
       this._args;
     this.update({
       ...rest,
@@ -92,7 +94,7 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
       displacementMap: displacementMap ? this.textures.displacementMap : null,
       map: map ? this.textures.map : null,
       normalMap: normalMap ? this.textures.normalMap : null,
-      roughnessMap: roughnessMap ? this.textures.roughnessMap : null,
+      specularMap: specularMap ? this.textures.specularMap : null,
     });
   }
 
@@ -101,7 +103,7 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
       {
         type: "texture",
         label: "aoMap",
-        imageUrl: BRICK_TEXTURES.aoMap.url,
+        imageUrl: ICE_TEXTURES.aoMap.url,
         initChecked: this._args.aoMap,
         onChange: (value) => {
           this._args.aoMap = value;
@@ -124,7 +126,7 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
       {
         type: "texture",
         label: "displacementMap",
-        imageUrl: BRICK_TEXTURES.displacementMap.url,
+        imageUrl: ICE_TEXTURES.displacementMap.url,
         initChecked: this._args.displacementMap,
         onChange: (value) => {
           this._args.displacementMap = value;
@@ -162,7 +164,7 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
       {
         type: "texture",
         label: "map",
-        imageUrl: BRICK_TEXTURES.map.url,
+        imageUrl: ICE_TEXTURES.map.url,
         initChecked: this._args.map,
         onChange: (value) => {
           this._args.map = value;
@@ -174,7 +176,7 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
       {
         type: "texture",
         label: "normalMap",
-        imageUrl: BRICK_TEXTURES.normalMap.url,
+        imageUrl: ICE_TEXTURES.normalMap.url,
         initChecked: this._args.normalMap,
         onChange: (value) => {
           this._args.normalMap = value;
@@ -185,29 +187,39 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
       },
       {
         type: "texture",
-        label: "roughnessMap",
-        imageUrl: BRICK_TEXTURES.roughnessMap.url,
-        initChecked: this._args.roughnessMap,
+        label: "specularMap",
+        imageUrl: ICE_TEXTURES.specularMap.url,
+        initChecked: this._args.specularMap,
         onChange: (value) => {
-          this._args.roughnessMap = value;
+          this._args.specularMap = value;
           this.update({
-            roughnessMap: this._args.roughnessMap
-              ? this.textures.roughnessMap
+            specularMap: this._args.specularMap
+              ? this.textures.specularMap
               : null,
           });
         },
       },
       {
-        type: "range",
-        label: "roughness",
-        min: 0,
-        max: 1,
-        step: 0.1,
-        marks: true,
-        initValue: this._args.roughness,
+        type: "color",
+        label: "specular",
+        initValue: `#${this._args.specular.getHexString()}` as HEX,
         onChange: (value) => {
-          this._args.roughness = value;
-          this.update({ roughness: this._args.roughness });
+          const valueRemovedAlpha =
+            value.length === 9 ? value.slice(0, 7) : value;
+          this._args.specular = new THREE.Color().setStyle(valueRemovedAlpha);
+          this.update({ specular: this._args.specular });
+        },
+      },
+      {
+        type: "range",
+        label: "shininess",
+        min: 0,
+        max: 100,
+        step: 1,
+        initValue: this._args.shininess,
+        onChange: (value) => {
+          this._args.shininess = value;
+          this.update({ shininess: this._args.shininess });
         },
       },
     ]);
@@ -220,4 +232,4 @@ class BrickMaterialHelper implements BrickMaterialHelperType {
   }
 }
 
-export default BrickMaterialHelper;
+export default IceMaterialHelper;
