@@ -12,17 +12,20 @@ import Loading from "../Loading";
 
 const TEXTURES = ["Brick", "Ice", "Lava", "Fabric", "Glass"] as const;
 
+const INIT_TEXTURE = TEXTURES[0];
+
 const TextureMappingCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const projectRef = useRef<TextureMappingProject>(undefined);
   const { add, remove, removeGroup, clearAll } = useControl();
-  const [selectedTexture, setSelectedTexture] = useState<
-    (typeof TEXTURES)[number]
-  >(TEXTURES[0]);
+  const [selectedTexture, setSelectedTexture] =
+    useState<(typeof TEXTURES)[number]>(INIT_TEXTURE);
   const { isLoading, progress, loadStart, loading, loadComplete } = useLoad();
 
   const select = (event: React.ChangeEvent<HTMLInputElement>) => {
     const texture = event.target.value as (typeof TEXTURES)[number];
     setSelectedTexture(texture);
+    projectRef.current?.onTextureChange(texture);
   };
 
   useLayoutEffect(() => {
@@ -34,42 +37,34 @@ const TextureMappingCanvas = () => {
     canvasEl.id = String(Date.now());
     container.appendChild(canvasEl);
 
-    const project: Project = new TextureMappingProject({
+    const project = new TextureMappingProject({
       canvasEl,
       controlUI: { add, remove, removeGroup, clearAll },
-      selectedTexture,
+      initTexture: INIT_TEXTURE,
       loadStart,
       loading,
       loadComplete,
-    });
-    if (project.loop) project.renderLoop();
+    }) satisfies Project;
+    if ((project as Project).loop) project.renderLoop();
     else project.render();
+    projectRef.current = project;
 
     return () => {
       project.dispose();
       container.removeChild(canvasEl);
     };
-  }, [
-    add,
-    remove,
-    removeGroup,
-    clearAll,
-    loadStart,
-    loading,
-    loadComplete,
-    selectedTexture,
-  ]);
+  }, [add, remove, removeGroup, clearAll, loadStart, loading, loadComplete]);
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
       <Box
-        className="absolute bottom-[10px] left-1/2 -translate-1/2 p-[10px] bg-[#fffa]"
+        className="absolute bottom-2.5 left-1/2 -translate-1/2 p-2.5 bg-[#fffa]"
         round="sm"
       >
         <RadioGroup name="texture" value={selectedTexture} onChange={select}>
           <Stack direction="row" spacing={10}>
             {TEXTURES.map((texture) => (
-              <Label key={texture} content={texture}>
+              <Label key={texture} content={texture} disabled={isLoading}>
                 <Radio value={texture} />
               </Label>
             ))}

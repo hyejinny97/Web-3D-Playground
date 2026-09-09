@@ -1,14 +1,25 @@
+import cn from "classnames";
 import CircularProgress from "@jinni-labs/ui/CircularProgress";
 import Text from "@jinni-labs/ui/Text";
 
 interface LoadingProps {
   progress: number;
   helpText?: string;
+  className?: string;
 }
 
-const Loading = ({ progress, helpText = "Loading..." }: LoadingProps) => {
+const Loading = ({
+  progress,
+  helpText = "Loading...",
+  className,
+}: LoadingProps) => {
   return (
-    <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black">
+    <div
+      className={cn(
+        "absolute top-0 left-0 w-full h-full flex justify-center items-center",
+        className,
+      )}
+    >
       <div className="relative">
         <CircularProgress
           size={60}

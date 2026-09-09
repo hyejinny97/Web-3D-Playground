@@ -7,7 +7,7 @@ import type { ConstructorProps } from "@/types/project";
 import type { MaterialDictionaryType } from "./TextureMappingProject.types";
 
 type TextureMappingProjectProps = ConstructorProps & {
-  selectedTexture: keyof MaterialDictionaryType["values"];
+  initTexture: keyof MaterialDictionaryType["values"];
   loadStart: () => void;
   loading: (percent: number) => void;
   loadComplete: () => void;
@@ -26,13 +26,13 @@ class TextureMappingProject extends BaseProject {
   constructor({
     canvasEl,
     controlUI,
-    selectedTexture,
+    initTexture,
     loadStart,
     loading,
     loadComplete,
   }: TextureMappingProjectProps) {
     super({ canvasEl, controlUI });
-    this.selectedTexture = selectedTexture;
+    this.selectedTexture = initTexture;
     this.loadStart = loadStart;
     this.loading = loading;
     this.loadComplete = loadComplete;
@@ -64,8 +64,6 @@ class TextureMappingProject extends BaseProject {
     const material = await this.getMaterial(name);
     const mesh = new THREE.Mesh(this.geometry, material);
     mesh.name = name;
-
-    this.removeAllMesh();
     this.scene?.add(mesh);
   }
 
@@ -92,7 +90,7 @@ class TextureMappingProject extends BaseProject {
     }
   }
 
-  removeAllMesh() {
+  removeAllModels() {
     this.scene?.children
       .filter((obj) => obj instanceof THREE.Mesh)
       .forEach((obj) => this.scene?.remove(obj));
@@ -111,6 +109,19 @@ class TextureMappingProject extends BaseProject {
   addMaterialControlUI(name: keyof MaterialDictionaryType["values"]) {
     const { helper } = this.materialDictionary.values[name];
     helper.createControlUI();
+  }
+
+  async onTextureChange(name: keyof MaterialDictionaryType["values"]) {
+    if (this.selectedTexture === name) return;
+
+    const { helper } = this.materialDictionary.values[this.selectedTexture];
+    helper.reset();
+    this.removeAllModels();
+
+    await this.createModel(name);
+    this.zoomFit({ obj: this.scene! });
+    this.addMaterialControlUI(name);
+    this.selectedTexture = name;
   }
 
   dispose() {

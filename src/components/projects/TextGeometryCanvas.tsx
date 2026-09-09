@@ -37,7 +37,13 @@ const TextGeometryCanvas = () => {
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
-      {isLoading && <Loading progress={progress} helpText="Loading Fonts..." />}
+      {isLoading && (
+        <Loading
+          className="bg-black"
+          progress={progress}
+          helpText="Loading Fonts..."
+        />
+      )}
     </div>
   );
 };
