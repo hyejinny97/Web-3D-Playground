@@ -1,27 +1,14 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 import TextGeometryProject from "@/projects/TextGeometryProject";
 import type { Project } from "@/types/project";
-import CircularProgress from "@jinni-labs/ui/CircularProgress";
-import Text from "@jinni-labs/ui/Text";
 import useControl from "@/hooks/useControl";
+import Loading from "../Loading";
+import useLoad from "@/hooks/useLoading";
 
 const TextGeometryCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { add, remove, removeGroup, clearAll } = useControl();
-  const [isFontLoading, setFontLoading] = useState(false);
-  const [progress, setProgress] = useState<number>(0);
-
-  const loadStart = useCallback(() => {
-    setFontLoading(true);
-  }, []);
-
-  const loading = useCallback((percent: number) => {
-    setProgress(percent);
-  }, []);
-
-  const loadComplete = useCallback(() => {
-    setFontLoading(false);
-  }, []);
+  const { isLoading, progress, loadStart, loading, loadComplete } = useLoad();
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -50,26 +37,12 @@ const TextGeometryCanvas = () => {
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
-      {isFontLoading && (
-        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black">
-          <div className="relative">
-            <CircularProgress
-              size={60}
-              value={progress}
-              aria-label="파일 업로드 진행률"
-            />
-            <Text
-              className="absolute bottom-[120%] left-[50%] transform-translate -translate-x-1/2 min-w-max typo-title-medium text-white!"
-              noMargin
-            >
-              Loading Fonts...
-            </Text>
-            <Text
-              className="absolute top-[50%] left-[50%] transform-translate -translate-1/2 typo-label-medium text-white!"
-              noMargin
-            >{`${progress}%`}</Text>
-          </div>
-        </div>
+      {isLoading && (
+        <Loading
+          className="bg-black"
+          progress={progress}
+          helpText="Loading Fonts..."
+        />
       )}
     </div>
   );

@@ -13,6 +13,7 @@ import image_url_tube_geometry from "@/assets/images/projects/tube_geometry.png"
 import image_url_mesh_materials from "@/assets/images/projects/mesh_materials.png";
 import image_url_line_materials from "@/assets/images/projects/line_materials.png";
 import image_url_point_materials from "@/assets/images/projects/point_materials.png";
+import image_url_texture_mapping from "@/assets/images/projects/texture_mapping.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -100,24 +101,31 @@ const MODEL_PROJECTS = [
   },
   {
     id: "mesh-materials",
-    title: "MeshMaterials",
+    title: "Mesh Materials",
     imageUrl: image_url_mesh_materials,
     tags: [TAGS.material, TAGS.raycaster],
     component: lazy(() => import("@/components/projects/MeshMaterialsCanvas")),
   },
   {
     id: "line-materials",
-    title: "LineMaterials",
+    title: "Line Materials",
     imageUrl: image_url_line_materials,
     tags: [TAGS.material, TAGS.raycaster],
     component: lazy(() => import("@/components/projects/LineMaterialsCanvas")),
   },
   {
     id: "point-materials",
-    title: "PointMaterials",
+    title: "Point Materials",
     imageUrl: image_url_point_materials,
     tags: [TAGS.material],
     component: lazy(() => import("@/components/projects/PointMaterialsCanvas")),
+  },
+  {
+    id: "texture-mapping",
+    title: "Texture Mapping",
+    imageUrl: image_url_texture_mapping,
+    tags: [TAGS.material],
+    component: lazy(() => import("@/components/projects/TextureMappingCanvas")),
   },
 ];
 

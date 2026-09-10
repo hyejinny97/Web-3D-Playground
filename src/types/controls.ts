@@ -46,10 +46,19 @@ export type ColorControlType = {
   onChange?: (value: HEX) => void;
 };
 
+export type TextureControlType = {
+  type: "texture";
+  label: string;
+  imageUrl: string;
+  initChecked: boolean;
+  onChange?: (checked: boolean) => void;
+};
+
 export type ControlType =
   | RangeControlType
   | CheckboxControlType
   | PlainTextControlType
   | TextInputControlType
   | SelectControlType
-  | ColorControlType;
+  | ColorControlType
+  | TextureControlType;
