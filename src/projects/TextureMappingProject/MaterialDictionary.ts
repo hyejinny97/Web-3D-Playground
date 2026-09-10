@@ -4,6 +4,7 @@ import BrickMaterialHelper from "./helpers/BrickMaterialHelper";
 import IceMaterialHelper from "./helpers/IceMaterialHelper";
 import LavaMaterialHelper from "./helpers/LavaMaterialHelper";
 import FabricMaterialHelper from "./helpers/FabricMaterialHelper";
+import GlassMaterialHelper from "./helpers/GlassMaterialHelper";
 
 class MaterialDictionary implements MaterialDictionaryType {
   private _values: MaterialDictionaryType["values"];
@@ -27,7 +28,7 @@ class MaterialDictionary implements MaterialDictionaryType {
         initiated: false,
       },
       Glass: {
-        helper: new BrickMaterialHelper(controlUI),
+        helper: new GlassMaterialHelper(controlUI),
         initiated: false,
       },
     };

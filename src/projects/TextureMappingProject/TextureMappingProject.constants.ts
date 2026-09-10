@@ -8,6 +8,8 @@ export const PROPERTIES_NEED_UPDATE = [
   "roughnessMap",
   "specularMap",
   "alphaMap",
+  "metalnessMap",
+  "transmissionMap",
 ] as const;
 
 export const BRICK_TEXTURES = {
@@ -106,6 +108,41 @@ export const FABRIC_TEXTURES = {
   },
   roughnessMap: {
     url: "/textures/fabric/fabric_roughness.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+} as const;
+
+export const GLASS_TEXTURES = {
+  alphaMap: {
+    url: "/textures/glass/glass_alpha.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+  aoMap: {
+    url: "/textures/glass/glass_ao.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+  displacementMap: {
+    url: "/textures/glass/glass_height.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+  map: {
+    url: "/textures/glass/glass_color.png",
+    colorSpace: THREE.SRGBColorSpace,
+  },
+  normalMap: {
+    url: "/textures/glass/glass_normal.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+  metalnessMap: {
+    url: "/textures/glass/glass_metalness.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+  roughnessMap: {
+    url: "/textures/glass/glass_roughness.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+  transmissionMap: {
+    url: "/textures/glass/glass_transmission.png",
     colorSpace: THREE.NoColorSpace,
   },
 } as const;
