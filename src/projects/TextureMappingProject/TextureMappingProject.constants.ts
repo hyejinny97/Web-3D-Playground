@@ -83,6 +83,33 @@ export const LAVA_TEXTURES = {
   },
 } as const;
 
+export const FABRIC_TEXTURES = {
+  aoMap: {
+    url: "/textures/fabric/fabric_ao.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  displacementMap: {
+    url: "/textures/fabric/fabric_height.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+  map: {
+    url: "/textures/fabric/fabric_color.jpg",
+    colorSpace: THREE.SRGBColorSpace,
+  },
+  normalMap: {
+    url: "/textures/fabric/fabric_normal.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  metalnessMap: {
+    url: "/textures/fabric/fabric_metalness.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  roughnessMap: {
+    url: "/textures/fabric/fabric_roughness.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+} as const;
+
 export const TEXTURE_WRAP_S = THREE.RepeatWrapping;
 
 export const TEXTURE_WRAP_T = THREE.RepeatWrapping;
