@@ -3,7 +3,6 @@ import type { ControlUIType } from "@/types/project";
 import type {
   GlassMaterialHelperType,
   GlassTextureType,
-  TextureLoadingType,
 } from "../TextureMappingProject.types";
 import {
   GLASS_TEXTURES,
@@ -36,12 +35,17 @@ class GlassMaterialHelper implements GlassMaterialHelperType {
   private controlUIGroupName = "MeshPhysicalMaterial";
   private _args: GlassMaterialHelperType["args"];
   private _material = new THREE.MeshPhysicalMaterial();
+  private loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>;
   textures: Partial<Record<GlassTextureType, THREE.Texture>> = {};
   controlUI: ControlUIType;
 
-  constructor(controlUI: ControlUIType) {
+  constructor(
+    controlUI: ControlUIType,
+    loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>,
+  ) {
     this.controlUI = controlUI;
     this._args = { ...DEFAULT_ARGS };
+    this.loadTextureImages = loadTextureImages;
   }
 
   get args() {
@@ -52,29 +56,27 @@ class GlassMaterialHelper implements GlassMaterialHelperType {
     return this._material;
   }
 
-  async init(textureLoad?: TextureLoadingType) {
-    await this.loadTextures(textureLoad);
+  async init() {
+    await this.loadTextures();
     this.setMaterialArgs();
   }
 
-  async loadTextures(textureLoad?: TextureLoadingType) {
-    const { onStart, onLoad, onProgress, onError } = textureLoad ?? {};
-    const manager = new THREE.LoadingManager(onLoad, onProgress, onError);
-    manager.onStart = onStart;
-    const loader = new THREE.TextureLoader(manager);
-    await Promise.allSettled(
-      Object.keys(GLASS_TEXTURES).map(async (key) => {
-        const name = key as GlassTextureType;
-        const { url, colorSpace } = GLASS_TEXTURES[name];
-        const texture = await loader.loadAsync(url);
-        texture.colorSpace = colorSpace;
-        texture.wrapS = TEXTURE_WRAP_S;
-        texture.wrapT = TEXTURE_WRAP_T;
-        texture.repeat.set(TEXTURE_REPEAT_X, TEXTURE_REPEAT_Y);
-        texture.minFilter = TEXTURE_MIN_FILTER;
-        this.textures[name] = texture;
-      }),
+  async loadTextures() {
+    const textures = Object.entries(GLASS_TEXTURES);
+    const imgEls = await this.loadTextureImages(
+      textures.map((texture) => texture[1].url),
     );
+    imgEls.forEach((imgEl, idx) => {
+      const texture = new THREE.Texture(imgEl);
+      const [name, { colorSpace }] = textures[idx];
+      texture.colorSpace = colorSpace;
+      texture.wrapS = TEXTURE_WRAP_S;
+      texture.wrapT = TEXTURE_WRAP_T;
+      texture.repeat.set(TEXTURE_REPEAT_X, TEXTURE_REPEAT_Y);
+      texture.minFilter = TEXTURE_MIN_FILTER;
+      texture.needsUpdate = true;
+      this.textures[name as GlassTextureType] = texture;
+    });
   }
 
   update(properties: THREE.MeshPhysicalMaterialParameters) {

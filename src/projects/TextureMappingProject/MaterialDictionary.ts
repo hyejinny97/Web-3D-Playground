@@ -9,26 +9,29 @@ import GlassMaterialHelper from "./helpers/GlassMaterialHelper";
 class MaterialDictionary implements MaterialDictionaryType {
   private _values: MaterialDictionaryType["values"];
 
-  constructor(controlUI: ControlUIType) {
+  constructor(
+    controlUI: ControlUIType,
+    loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>,
+  ) {
     this._values = {
       Brick: {
-        helper: new BrickMaterialHelper(controlUI),
+        helper: new BrickMaterialHelper(controlUI, loadTextureImages),
         initiated: false,
       },
       Ice: {
-        helper: new IceMaterialHelper(controlUI),
+        helper: new IceMaterialHelper(controlUI, loadTextureImages),
         initiated: false,
       },
       Lava: {
-        helper: new LavaMaterialHelper(controlUI),
+        helper: new LavaMaterialHelper(controlUI, loadTextureImages),
         initiated: false,
       },
       Fabric: {
-        helper: new FabricMaterialHelper(controlUI),
+        helper: new FabricMaterialHelper(controlUI, loadTextureImages),
         initiated: false,
       },
       Glass: {
-        helper: new GlassMaterialHelper(controlUI),
+        helper: new GlassMaterialHelper(controlUI, loadTextureImages),
         initiated: false,
       },
     };

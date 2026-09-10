@@ -3,7 +3,6 @@ import type { ControlUIType } from "@/types/project";
 import type {
   IceMaterialHelperType,
   IceTextureType,
-  TextureLoadingType,
 } from "../TextureMappingProject.types";
 import {
   ICE_TEXTURES,
@@ -33,12 +32,17 @@ class IceMaterialHelper implements IceMaterialHelperType {
   private controlUIGroupName = "MeshPhongMaterial";
   private _args: IceMaterialHelperType["args"];
   private _material = new THREE.MeshPhongMaterial();
+  private loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>;
   textures: Partial<Record<IceTextureType, THREE.Texture>> = {};
   controlUI: ControlUIType;
 
-  constructor(controlUI: ControlUIType) {
+  constructor(
+    controlUI: ControlUIType,
+    loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>,
+  ) {
     this.controlUI = controlUI;
     this._args = { ...DEFAULT_ARGS };
+    this.loadTextureImages = loadTextureImages;
   }
 
   get args() {
@@ -49,29 +53,27 @@ class IceMaterialHelper implements IceMaterialHelperType {
     return this._material;
   }
 
-  async init(textureLoad?: TextureLoadingType) {
-    await this.loadTextures(textureLoad);
+  async init() {
+    await this.loadTextures();
     this.setMaterialArgs();
   }
 
-  async loadTextures(textureLoad?: TextureLoadingType) {
-    const { onStart, onLoad, onProgress, onError } = textureLoad ?? {};
-    const manager = new THREE.LoadingManager(onLoad, onProgress, onError);
-    manager.onStart = onStart;
-    const loader = new THREE.TextureLoader(manager);
-    await Promise.allSettled(
-      Object.keys(ICE_TEXTURES).map(async (key) => {
-        const name = key as IceTextureType;
-        const { url, colorSpace } = ICE_TEXTURES[name];
-        const texture = await loader.loadAsync(url);
-        texture.colorSpace = colorSpace;
-        texture.wrapS = TEXTURE_WRAP_S;
-        texture.wrapT = TEXTURE_WRAP_T;
-        texture.repeat.set(TEXTURE_REPEAT_X, TEXTURE_REPEAT_Y);
-        texture.minFilter = TEXTURE_MIN_FILTER;
-        this.textures[name] = texture;
-      }),
+  async loadTextures() {
+    const textures = Object.entries(ICE_TEXTURES);
+    const imgEls = await this.loadTextureImages(
+      textures.map((texture) => texture[1].url),
     );
+    imgEls.forEach((imgEl, idx) => {
+      const texture = new THREE.Texture(imgEl);
+      const [name, { colorSpace }] = textures[idx];
+      texture.colorSpace = colorSpace;
+      texture.wrapS = TEXTURE_WRAP_S;
+      texture.wrapT = TEXTURE_WRAP_T;
+      texture.repeat.set(TEXTURE_REPEAT_X, TEXTURE_REPEAT_Y);
+      texture.minFilter = TEXTURE_MIN_FILTER;
+      texture.needsUpdate = true;
+      this.textures[name as IceTextureType] = texture;
+    });
   }
 
   update(properties: THREE.MeshPhongMaterialParameters) {

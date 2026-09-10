@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import TextureMappingProject from "@/projects/TextureMappingProject";
 import type { Project } from "@/types/project";
 import useControl from "@/hooks/useControl";
@@ -9,6 +9,7 @@ import Stack from "@jinni-labs/ui/Stack";
 import Box from "@jinni-labs/ui/Box";
 import useLoad from "@/hooks/useLoading";
 import Loading from "../Loading";
+import useImageLoad from "@/hooks/useImageLoad";
 
 const TEXTURES = ["Brick", "Ice", "Lava", "Fabric", "Glass"] as const;
 
@@ -21,6 +22,17 @@ const TextureMappingCanvas = () => {
   const [selectedTexture, setSelectedTexture] =
     useState<(typeof TEXTURES)[number]>(INIT_TEXTURE);
   const { isLoading, progress, loadStart, loading, loadComplete } = useLoad();
+  const { loadImages } = useImageLoad();
+
+  const loadTextureImages = useCallback(
+    (urls: string[]): Promise<HTMLImageElement[]> =>
+      loadImages(urls, {
+        onStart: loadStart,
+        onProgress: loading,
+        onLoad: loadComplete,
+      }),
+    [loadImages, loadStart, loading, loadComplete],
+  );
 
   const select = (event: React.ChangeEvent<HTMLInputElement>) => {
     const texture = event.target.value as (typeof TEXTURES)[number];
@@ -41,9 +53,7 @@ const TextureMappingCanvas = () => {
       canvasEl,
       controlUI: { add, remove, removeGroup, clearAll },
       initTexture: INIT_TEXTURE,
-      loadStart,
-      loading,
-      loadComplete,
+      loadTextureImages,
     }) satisfies Project;
     if ((project as Project).loop) project.renderLoop();
     else project.render();
@@ -53,7 +63,7 @@ const TextureMappingCanvas = () => {
       project.dispose();
       container.removeChild(canvasEl);
     };
-  }, [add, remove, removeGroup, clearAll, loadStart, loading, loadComplete]);
+  }, [add, remove, removeGroup, clearAll, loadTextureImages]);
 
   return (
     <div ref={containerRef} className="relative w-full h-full">

@@ -8,9 +8,7 @@ import type { MaterialDictionaryType } from "./TextureMappingProject.types";
 
 type TextureMappingProjectProps = ConstructorProps & {
   initTexture: keyof MaterialDictionaryType["values"];
-  loadStart: () => void;
-  loading: (percent: number) => void;
-  loadComplete: () => void;
+  loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>;
 };
 
 @RenderLoop()
@@ -19,23 +17,17 @@ class TextureMappingProject extends BaseProject {
   declare private materialDictionary: MaterialDictionary;
   declare private selectedTexture: keyof MaterialDictionaryType["values"];
   private stopRendering = false;
-  private loadStart: TextureMappingProjectProps["loadStart"];
-  private loading: TextureMappingProjectProps["loading"];
-  private loadComplete: TextureMappingProjectProps["loadComplete"];
+  private loadTextureImages: TextureMappingProjectProps["loadTextureImages"];
 
   constructor({
     canvasEl,
     controlUI,
     initTexture,
-    loadStart,
-    loading,
-    loadComplete,
+    loadTextureImages,
   }: TextureMappingProjectProps) {
     super({ canvasEl, controlUI });
     this.selectedTexture = initTexture;
-    this.loadStart = loadStart;
-    this.loading = loading;
-    this.loadComplete = loadComplete;
+    this.loadTextureImages = loadTextureImages;
     this.setupModel();
   }
 
@@ -58,7 +50,10 @@ class TextureMappingProject extends BaseProject {
   async setupModel() {
     if (!this.controlUI) throw new Error("controlUI 값이 없습니다.");
 
-    this.materialDictionary = new MaterialDictionary(this.controlUI);
+    this.materialDictionary = new MaterialDictionary(
+      this.controlUI,
+      this.loadTextureImages,
+    );
 
     await this.createModel(this.selectedTexture);
     if (this.stopRendering) return;
@@ -81,17 +76,7 @@ class TextureMappingProject extends BaseProject {
     if (initiated) {
       return helper.material;
     } else {
-      await helper.init({
-        onStart: () => {
-          this.loadStart();
-        },
-        onProgress: (_, loaded, total) => {
-          this.loading((loaded / total) * 100);
-        },
-        onLoad: () => {
-          this.loadComplete();
-        },
-      });
+      await helper.init();
       this.materialDictionary.values[name].initiated = true;
       return helper.material;
     }

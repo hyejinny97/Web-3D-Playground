@@ -30,7 +30,7 @@ export interface BrickMaterialHelperType {
     roughness: number;
   };
   material: THREE.MeshStandardMaterial;
-  init: (textureLoad?: TextureLoadingType) => Promise<void>;
+  init: () => Promise<void>;
   createControlUI: () => void;
   reset: () => void;
 }
@@ -49,7 +49,7 @@ export interface IceMaterialHelperType {
     shininess: number;
   };
   material: THREE.MeshPhongMaterial;
-  init: (textureLoad?: TextureLoadingType) => Promise<void>;
+  init: () => Promise<void>;
   createControlUI: () => void;
   reset: () => void;
 }
@@ -68,7 +68,7 @@ export interface LavaMaterialHelperType {
     roughness: number;
   };
   material: THREE.MeshStandardMaterial;
-  init: (textureLoad?: TextureLoadingType) => Promise<void>;
+  init: () => Promise<void>;
   createControlUI: () => void;
   reset: () => void;
 }
@@ -88,7 +88,7 @@ export interface FabricMaterialHelperType {
     roughness: number;
   };
   material: THREE.MeshStandardMaterial;
-  init: (textureLoad?: TextureLoadingType) => Promise<void>;
+  init: () => Promise<void>;
   createControlUI: () => void;
   reset: () => void;
 }
@@ -111,16 +111,9 @@ export interface GlassMaterialHelperType {
     transmission: number;
   };
   material: THREE.MeshPhysicalMaterial;
-  init: (textureLoad?: TextureLoadingType) => Promise<void>;
+  init: () => Promise<void>;
   createControlUI: () => void;
   reset: () => void;
-}
-
-export interface TextureLoadingType {
-  onStart?: THREE.LoadingManager["onStart"];
-  onLoad?: THREE.LoadingManager["onLoad"];
-  onProgress?: THREE.LoadingManager["onProgress"];
-  onError?: THREE.LoadingManager["onError"];
 }
 
 export interface MaterialDictionaryType {

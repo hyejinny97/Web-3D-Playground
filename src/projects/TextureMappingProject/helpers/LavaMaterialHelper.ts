@@ -3,7 +3,6 @@ import type { ControlUIType } from "@/types/project";
 import type {
   LavaMaterialHelperType,
   LavaTextureType,
-  TextureLoadingType,
 } from "../TextureMappingProject.types";
 import {
   LAVA_TEXTURES,
@@ -32,12 +31,17 @@ class LavaMaterialHelper implements LavaMaterialHelperType {
   private controlUIGroupName = "MeshStandardMaterial";
   private _args: LavaMaterialHelperType["args"];
   private _material = new THREE.MeshStandardMaterial();
+  private loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>;
   textures: Partial<Record<LavaTextureType, THREE.Texture>> = {};
   controlUI: ControlUIType;
 
-  constructor(controlUI: ControlUIType) {
+  constructor(
+    controlUI: ControlUIType,
+    loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>,
+  ) {
     this.controlUI = controlUI;
     this._args = { ...DEFAULT_ARGS };
+    this.loadTextureImages = loadTextureImages;
   }
 
   get args() {
@@ -48,29 +52,27 @@ class LavaMaterialHelper implements LavaMaterialHelperType {
     return this._material;
   }
 
-  async init(textureLoad?: TextureLoadingType) {
-    await this.loadTextures(textureLoad);
+  async init() {
+    await this.loadTextures();
     this.setMaterialArgs();
   }
 
-  async loadTextures(textureLoad?: TextureLoadingType) {
-    const { onStart, onLoad, onProgress, onError } = textureLoad ?? {};
-    const manager = new THREE.LoadingManager(onLoad, onProgress, onError);
-    manager.onStart = onStart;
-    const loader = new THREE.TextureLoader(manager);
-    await Promise.allSettled(
-      Object.keys(LAVA_TEXTURES).map(async (key) => {
-        const name = key as LavaTextureType;
-        const { url, colorSpace } = LAVA_TEXTURES[name];
-        const texture = await loader.loadAsync(url);
-        texture.colorSpace = colorSpace;
-        texture.wrapS = TEXTURE_WRAP_S;
-        texture.wrapT = TEXTURE_WRAP_T;
-        texture.repeat.set(TEXTURE_REPEAT_X, TEXTURE_REPEAT_Y);
-        texture.minFilter = TEXTURE_MIN_FILTER;
-        this.textures[name] = texture;
-      }),
+  async loadTextures() {
+    const textures = Object.entries(LAVA_TEXTURES);
+    const imgEls = await this.loadTextureImages(
+      textures.map((texture) => texture[1].url),
     );
+    imgEls.forEach((imgEl, idx) => {
+      const texture = new THREE.Texture(imgEl);
+      const [name, { colorSpace }] = textures[idx];
+      texture.colorSpace = colorSpace;
+      texture.wrapS = TEXTURE_WRAP_S;
+      texture.wrapT = TEXTURE_WRAP_T;
+      texture.repeat.set(TEXTURE_REPEAT_X, TEXTURE_REPEAT_Y);
+      texture.minFilter = TEXTURE_MIN_FILTER;
+      texture.needsUpdate = true;
+      this.textures[name as LavaTextureType] = texture;
+    });
   }
 
   update(properties: THREE.MeshStandardMaterialParameters) {

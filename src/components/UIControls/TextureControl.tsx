@@ -7,6 +7,7 @@ import Box from "@jinni-labs/ui/Box";
 import ButtonBase from "@jinni-labs/ui/ButtonBase";
 import Backdrop from "@jinni-labs/ui/Backdrop";
 import CancelIcon from "../icons/CancelIcon";
+import Image from "../Image";
 
 const TextureControl = ({
   label,
@@ -32,9 +33,9 @@ const TextureControl = ({
         </Text>
         <ButtonBase onClick={openImageViewer} aria-label="Open image viewer">
           <Box className="col-span-1 h-8 overflow-hidden" outlined round="xs">
-            <img
+            <Image
               className="w-full h-full object-cover"
-              src={imageUrl}
+              url={imageUrl}
               alt={label}
             />
           </Box>
@@ -58,9 +59,9 @@ const TextureControl = ({
           >
             <CancelIcon className="fill-white w-10 h-10" />
           </ButtonBase>
-          <img
+          <Image
             className="w-full h-full object-contain"
-            src={imageUrl}
+            url={imageUrl}
             alt={label}
           />
         </Backdrop>
