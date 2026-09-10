@@ -10,7 +10,7 @@ const useLoad = () => {
   }, []);
 
   const loading = useCallback((percent: number) => {
-    setProgress(percent);
+    setProgress(Math.trunc(percent));
   }, []);
 
   const loadComplete = useCallback(() => {

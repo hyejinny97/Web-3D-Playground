@@ -7,6 +7,7 @@ export const PROPERTIES_NEED_UPDATE = [
   "normalMap",
   "roughnessMap",
   "specularMap",
+  "alphaMap",
 ] as const;
 
 export const BRICK_TEXTURES = {
@@ -52,6 +53,33 @@ export const ICE_TEXTURES = {
   specularMap: {
     url: "/textures/ice/ice_specular.jpg",
     colorSpace: THREE.SRGBColorSpace,
+  },
+} as const;
+
+export const LAVA_TEXTURES = {
+  alphaMap: {
+    url: "/textures/lava/lava_alpha.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  aoMap: {
+    url: "/textures/lava/lava_ao.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  displacementMap: {
+    url: "/textures/lava/lava_height.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+  map: {
+    url: "/textures/lava/lava_color.jpg",
+    colorSpace: THREE.SRGBColorSpace,
+  },
+  normalMap: {
+    url: "/textures/lava/lava_normal.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  roughnessMap: {
+    url: "/textures/lava/lava_roughness.jpg",
+    colorSpace: THREE.NoColorSpace,
   },
 } as const;
 

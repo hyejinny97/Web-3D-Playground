@@ -2,11 +2,14 @@ import * as THREE from "three";
 import {
   BRICK_TEXTURES,
   ICE_TEXTURES,
+  LAVA_TEXTURES,
 } from "./TextureMappingProject.constants";
 
 export type BrickTextureType = keyof typeof BRICK_TEXTURES;
 
 export type IceTextureType = keyof typeof ICE_TEXTURES;
+
+export type LavaTextureType = keyof typeof LAVA_TEXTURES;
 
 export interface BrickMaterialHelperType {
   args: {
@@ -45,6 +48,25 @@ export interface IceMaterialHelperType {
   reset: () => void;
 }
 
+export interface LavaMaterialHelperType {
+  args: {
+    alphaMap: boolean;
+    aoMap: boolean;
+    aoMapIntensity: number;
+    displacementMap: boolean;
+    displacementBias: number;
+    displacementScale: number;
+    map: boolean;
+    normalMap: boolean;
+    roughnessMap: boolean;
+    roughness: number;
+  };
+  material: THREE.MeshStandardMaterial;
+  init: (textureLoad?: TextureLoadingType) => Promise<void>;
+  createControlUI: () => void;
+  reset: () => void;
+}
+
 export interface TextureLoadingType {
   onStart?: THREE.LoadingManager["onStart"];
   onLoad?: THREE.LoadingManager["onLoad"];
@@ -56,7 +78,7 @@ export interface MaterialDictionaryType {
   values: {
     Brick: { helper: BrickMaterialHelperType; initiated: boolean };
     Ice: { helper: IceMaterialHelperType; initiated: boolean };
-    Lava: { helper: BrickMaterialHelperType; initiated: boolean };
+    Lava: { helper: LavaMaterialHelperType; initiated: boolean };
     Fabric: { helper: BrickMaterialHelperType; initiated: boolean };
     Glass: { helper: BrickMaterialHelperType; initiated: boolean };
   };

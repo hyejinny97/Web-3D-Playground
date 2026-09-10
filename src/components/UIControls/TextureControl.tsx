@@ -31,11 +31,7 @@ const TextureControl = ({
           {label}
         </Text>
         <ButtonBase onClick={openImageViewer} aria-label="Open image viewer">
-          <Box
-            className="col-span-1 h-[32px] overflow-hidden"
-            outlined
-            round="xs"
-          >
+          <Box className="col-span-1 h-8 overflow-hidden" outlined round="xs">
             <img
               className="w-full h-full object-cover"
               src={imageUrl}
@@ -54,13 +50,13 @@ const TextureControl = ({
         />
       </ControlGrid>
       {open && (
-        <Backdrop id="image viewer" className="z-[4000]!">
+        <Backdrop id="image viewer" className="z-4000!">
           <ButtonBase
-            className="absolute! top-[10px] right-[10px]"
+            className="absolute! top-3 right-3"
             onClick={closeImageViewer}
             aria-label="Close image viewer"
           >
-            <CancelIcon className="fill-white" />
+            <CancelIcon className="fill-white w-10 h-10" />
           </ButtonBase>
           <img
             className="w-full h-full object-contain"

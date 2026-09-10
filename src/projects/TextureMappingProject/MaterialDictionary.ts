@@ -2,6 +2,7 @@ import type { ControlUIType } from "@/types/project";
 import type { MaterialDictionaryType } from "./TextureMappingProject.types";
 import BrickMaterialHelper from "./helpers/BrickMaterialHelper";
 import IceMaterialHelper from "./helpers/IceMaterialHelper";
+import LavaMaterialHelper from "./helpers/LavaMaterialHelper";
 
 class MaterialDictionary implements MaterialDictionaryType {
   private _values: MaterialDictionaryType["values"];
@@ -17,7 +18,7 @@ class MaterialDictionary implements MaterialDictionaryType {
         initiated: false,
       },
       Lava: {
-        helper: new BrickMaterialHelper(controlUI),
+        helper: new LavaMaterialHelper(controlUI),
         initiated: false,
       },
       Fabric: {
