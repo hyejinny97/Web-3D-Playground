@@ -48,6 +48,13 @@ class TextureMappingProject extends BaseProject {
     this.setupResizeObserver();
   }
 
+  setupLight() {
+    super.setupLight();
+    const directionalLight = new THREE.DirectionalLight("white", 1);
+    directionalLight.position.set(-2, 2, 2);
+    this.scene?.add(directionalLight);
+  }
+
   async setupModel() {
     if (!this.controlUI) throw new Error("controlUI 값이 없습니다.");
 
