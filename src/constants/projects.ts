@@ -127,6 +127,15 @@ const MODEL_PROJECTS = [
     tags: [TAGS.material],
     component: lazy(() => import("@/components/projects/TextureMappingCanvas")),
   },
+  {
+    id: "texture-properties",
+    title: "Texture Properties",
+    imageUrl: "",
+    tags: [TAGS.material],
+    component: lazy(
+      () => import("@/components/projects/TexturePropertiesCanvas"),
+    ),
+  },
 ];
 
 export const ALL_PROJECTS = [BASIC_PROJECT, ...MODEL_PROJECTS];
