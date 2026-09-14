@@ -14,6 +14,7 @@ import image_url_mesh_materials from "@/assets/images/projects/mesh_materials.pn
 import image_url_line_materials from "@/assets/images/projects/line_materials.png";
 import image_url_point_materials from "@/assets/images/projects/point_materials.png";
 import image_url_texture_mapping from "@/assets/images/projects/texture_mapping.png";
+import image_url_texture_properties from "@/assets/images/projects/texture_properties.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -130,7 +131,7 @@ const MODEL_PROJECTS = [
   {
     id: "texture-properties",
     title: "Texture Properties",
-    imageUrl: "",
+    imageUrl: image_url_texture_properties,
     tags: [TAGS.material],
     component: lazy(
       () => import("@/components/projects/TexturePropertiesCanvas"),
