@@ -18,14 +18,13 @@ export interface TextureMaterialHelperType {
     minFilter: THREE.MinificationTextureFilter;
     magFilter: THREE.MagnificationTextureFilter;
   };
-  texture: THREE.Texture;
   material: THREE.MeshPhongMaterial;
   createControlUI: () => void;
   reset: () => void;
 }
 
 export type TexturePropertiesType = THREE.TextureParameters & {
-  image?: ImageType;
+  image?: never;
   repeatX?: number;
   repeatY?: number;
   offsetX?: number;

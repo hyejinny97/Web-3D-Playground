@@ -62,6 +62,11 @@ class TexturePropertiesProject extends BaseProject {
       margin,
     });
   }
+
+  dispose() {
+    super.dispose();
+    this.materialHelper.disposeTextures();
+  }
 }
 
 export default TexturePropertiesProject;

@@ -11,6 +11,7 @@ import {
   MIN_FILTER,
   WRAPPING,
 } from "../TexturePropertiesProject.constants";
+import { omit } from "../TexturePropertiesProject.utils";
 
 const DEFAULT_ARGS = {
   image: "UV Grid",
@@ -30,9 +31,8 @@ const DEFAULT_ARGS = {
 class TextureMaterialHelper implements TextureMaterialHelperType {
   private controlUIGroupName = "Texture";
   private _args: TextureMaterialHelperType["args"];
-  private _texture: THREE.Texture;
   private _material: THREE.MeshPhongMaterial;
-  private images: Partial<Record<ImageType, HTMLImageElement>> = {};
+  private textures: Partial<Record<ImageType, THREE.Texture>> = {};
   private loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>;
   controlUI: ControlUIType;
 
@@ -42,12 +42,8 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
   ) {
     this.controlUI = controlUI;
     this.loadTextureImages = loadTextureImages;
-
     this._args = { ...DEFAULT_ARGS };
-    this._texture = new THREE.Texture();
-    this._texture.colorSpace = THREE.SRGBColorSpace;
-    this._material = new THREE.MeshPhongMaterial({ map: this._texture });
-
+    this._material = new THREE.MeshPhongMaterial();
     this.init();
   }
 
@@ -55,52 +51,52 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
     return this._args;
   }
 
-  get texture() {
-    return this._texture;
-  }
-
   get material() {
     return this._material;
   }
 
   async init() {
-    await this.loadImages();
-    this.updateTexture(this._args);
+    await this.createTextures();
+    Object.keys(this.textures).forEach((name) =>
+      this.updateTexture(name as ImageType, omit(this._args, ["image"])),
+    );
+    this.mapTextureToMaterial(this._args.image);
   }
 
-  async loadImages() {
+  async createTextures() {
     const imageNames = Object.keys(IMAGES) as ImageType[];
     const imgEls = await this.loadTextureImages(
       imageNames.map((name) => IMAGES[name]),
     );
     imgEls.forEach((imgEl, idx) => {
       const name = imageNames[idx];
-      this.images[name] = imgEl;
+      const texture = new THREE.Texture(imgEl);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.generateMipmaps = true;
+      this.textures[name] = texture;
     });
   }
 
-  updateTexture(properties: TexturePropertiesType) {
-    const {
-      image,
-      repeatX,
-      repeatY,
-      offsetX,
-      offsetY,
-      centerX,
-      centerY,
-      ...rest
-    } = properties;
+  updateTexture(name: ImageType, properties: TexturePropertiesType) {
+    const texture = this.textures[name]!;
+    const { repeatX, repeatY, offsetX, offsetY, centerX, centerY, ...rest } =
+      properties;
 
-    if (image) this._texture.image = this.images[image];
-    if (typeof repeatX === "number") this._texture.repeat.x = repeatX;
-    if (typeof repeatY === "number") this._texture.repeat.y = repeatY;
-    if (typeof offsetX === "number") this._texture.offset.x = offsetX;
-    if (typeof offsetY === "number") this._texture.offset.y = offsetY;
-    if (typeof centerX === "number") this._texture.center.x = centerX;
-    if (typeof centerY === "number") this._texture.center.y = centerY;
+    if (typeof repeatX === "number") texture.repeat.x = repeatX;
+    if (typeof repeatY === "number") texture.repeat.y = repeatY;
+    if (typeof offsetX === "number") texture.offset.x = offsetX;
+    if (typeof offsetY === "number") texture.offset.y = offsetY;
+    if (typeof centerX === "number") texture.center.x = centerX;
+    if (typeof centerY === "number") texture.center.y = centerY;
 
-    this._texture.setValues(rest);
-    this._texture.needsUpdate = true;
+    texture.setValues(rest);
+    texture.needsUpdate = true;
+  }
+
+  mapTextureToMaterial(name: ImageType) {
+    const texture = this.textures[name]!;
+    this._material.map = texture;
+    this._material.needsUpdate = true;
   }
 
   createControlUI() {
@@ -115,7 +111,8 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: this._args.image,
         onChange: (value) => {
           this._args.image = value as ImageType;
-          this.updateTexture({ image: this._args.image });
+          this.updateTexture(this._args.image, omit(this._args, ["image"]));
+          this.mapTextureToMaterial(this._args.image);
         },
       },
       {
@@ -128,7 +125,7 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: this._args.wrapS,
         onChange: (value) => {
           this._args.wrapS = value as THREE.Wrapping;
-          this.updateTexture({ wrapS: this._args.wrapS });
+          this.updateTexture(this._args.image, { wrapS: this._args.wrapS });
         },
       },
       {
@@ -141,7 +138,7 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: this._args.wrapT,
         onChange: (value) => {
           this._args.wrapT = value as THREE.Wrapping;
-          this.updateTexture({ wrapT: this._args.wrapT });
+          this.updateTexture(this._args.image, { wrapT: this._args.wrapT });
         },
       },
       {
@@ -154,7 +151,7 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: this._args.repeatX,
         onChange: (value) => {
           this._args.repeatX = value;
-          this.updateTexture({ repeatX: this._args.repeatX });
+          this.updateTexture(this._args.image, { repeatX: this._args.repeatX });
         },
       },
       {
@@ -167,31 +164,31 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: this._args.repeatY,
         onChange: (value) => {
           this._args.repeatY = value;
-          this.updateTexture({ repeatY: this._args.repeatY });
+          this.updateTexture(this._args.image, { repeatY: this._args.repeatY });
         },
       },
       {
         type: "range",
         label: "offsetX",
-        min: 0,
-        max: 2,
+        min: -1,
+        max: 1,
         step: 0.1,
         initValue: this._args.offsetX,
         onChange: (value) => {
           this._args.offsetX = value;
-          this.updateTexture({ offsetX: this._args.offsetX });
+          this.updateTexture(this._args.image, { offsetX: this._args.offsetX });
         },
       },
       {
         type: "range",
         label: "offsetY",
-        min: 0,
-        max: 2,
+        min: -1,
+        max: 1,
         step: 0.1,
         initValue: this._args.offsetY,
         onChange: (value) => {
           this._args.offsetY = value;
-          this.updateTexture({ offsetY: this._args.offsetY });
+          this.updateTexture(this._args.image, { offsetY: this._args.offsetY });
         },
       },
       {
@@ -204,7 +201,7 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: this._args.centerX,
         onChange: (value) => {
           this._args.centerX = value;
-          this.updateTexture({ centerX: this._args.centerX });
+          this.updateTexture(this._args.image, { centerX: this._args.centerX });
         },
       },
       {
@@ -217,7 +214,7 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: this._args.centerY,
         onChange: (value) => {
           this._args.centerY = value;
-          this.updateTexture({ centerY: this._args.centerY });
+          this.updateTexture(this._args.image, { centerY: this._args.centerY });
         },
       },
       {
@@ -229,7 +226,9 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: THREE.MathUtils.radToDeg(this._args.rotation),
         onChange: (value) => {
           this._args.rotation = THREE.MathUtils.degToRad(value);
-          this.updateTexture({ rotation: this._args.rotation });
+          this.updateTexture(this._args.image, {
+            rotation: this._args.rotation,
+          });
         },
       },
       {
@@ -242,7 +241,9 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: this._args.minFilter,
         onChange: (value) => {
           this._args.minFilter = value as THREE.MinificationTextureFilter;
-          this.updateTexture({ minFilter: this._args.minFilter });
+          this.updateTexture(this._args.image, {
+            minFilter: this._args.minFilter,
+          });
         },
       },
       {
@@ -255,7 +256,9 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
         initValue: this._args.magFilter,
         onChange: (value) => {
           this._args.magFilter = value as THREE.MagnificationTextureFilter;
-          this.updateTexture({ magFilter: this._args.magFilter });
+          this.updateTexture(this._args.image, {
+            magFilter: this._args.magFilter,
+          });
         },
       },
     ]);
@@ -263,8 +266,15 @@ class TextureMaterialHelper implements TextureMaterialHelperType {
 
   reset() {
     this._args = { ...DEFAULT_ARGS };
-    this.updateTexture(this._args);
+    Object.keys(this.textures).forEach((name) =>
+      this.updateTexture(name as ImageType, omit(this._args, ["image"])),
+    );
+    this.mapTextureToMaterial(this._args.image);
     this.controlUI.removeGroup(this.controlUIGroupName);
+  }
+
+  disposeTextures() {
+    Object.values(this.textures).forEach((texture) => texture.dispose());
   }
 }
 

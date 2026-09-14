@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export const IMAGES = {
-  "UV Grid": "/textures/uv_grid.jpg",
+  "UV Grid": "/textures/uv_grid.png",
   "UV Tile": "/textures/tile.png",
 } as const;
 
