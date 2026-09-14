@@ -54,6 +54,12 @@ export type TextureControlType = {
   onChange?: (checked: boolean) => void;
 };
 
+export type ImageViewControlType = {
+  type: "image-view";
+  label: string;
+  imageUrl: string;
+};
+
 export type ControlType =
   | RangeControlType
   | CheckboxControlType
@@ -61,4 +67,5 @@ export type ControlType =
   | TextInputControlType
   | SelectControlType
   | ColorControlType
-  | TextureControlType;
+  | TextureControlType
+  | ImageViewControlType;

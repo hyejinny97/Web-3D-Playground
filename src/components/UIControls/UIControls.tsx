@@ -14,6 +14,7 @@ import TextInputControl from "./TextInputControl";
 import SelectControl from "./SelectControl";
 import ColorControl from "./ColorControl";
 import TextureControl from "./TextureControl";
+import ImageViewControl from "./ImageViewControl";
 
 const UIControls = (props: BoxProps) => {
   const { controls } = useControl();
@@ -34,6 +35,8 @@ const UIControls = (props: BoxProps) => {
         return <ColorControl {...control} />;
       case "texture":
         return <TextureControl {...control} />;
+      case "image-view":
+        return <ImageViewControl {...control} />;
     }
   };
 
