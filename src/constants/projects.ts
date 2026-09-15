@@ -16,6 +16,7 @@ import image_url_point_materials from "@/assets/images/projects/point_materials.
 import image_url_texture_mapping from "@/assets/images/projects/texture_mapping.png";
 import image_url_texture_properties from "@/assets/images/projects/texture_properties.png";
 import image_url_texture_mipmaps from "@/assets/images/projects/texture_mipmaps.png";
+import image_url_basic_transform from "@/assets/images/projects/basic_transform.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -144,6 +145,13 @@ const MODEL_PROJECTS = [
     imageUrl: image_url_texture_mipmaps,
     tags: [TAGS.material],
     component: lazy(() => import("@/components/projects/TextureMipmapsCanvas")),
+  },
+  {
+    id: "basic-transform",
+    title: "Basics of transform",
+    imageUrl: image_url_basic_transform,
+    tags: [TAGS.transform],
+    component: lazy(() => import("@/components/projects/BasicTransformCanvas")),
   },
 ];
 
