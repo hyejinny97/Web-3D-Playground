@@ -153,6 +153,13 @@ const MODEL_PROJECTS = [
     tags: [TAGS.transform],
     component: lazy(() => import("@/components/projects/BasicTransformCanvas")),
   },
+  {
+    id: "solar-system",
+    title: "Solar system",
+    imageUrl: "",
+    tags: [TAGS.transform],
+    component: lazy(() => import("@/components/projects/SolarSystemCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [BASIC_PROJECT, ...MODEL_PROJECTS];
