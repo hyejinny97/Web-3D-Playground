@@ -58,8 +58,14 @@ class PlanetRing extends AstronicObject {
     const material = new THREE.MeshPhongMaterial({
       map: this.texture,
       color: 0xffffff,
+      side: THREE.DoubleSide,
     });
     this.mesh = new THREE.Mesh(geometry, material);
+  }
+
+  update(time: number) {
+    super.update(time);
+    this.locateRootToParent();
   }
 }
 

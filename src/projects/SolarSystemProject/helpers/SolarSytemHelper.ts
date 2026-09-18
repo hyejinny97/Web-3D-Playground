@@ -4,6 +4,7 @@ import Planet from "./Planet";
 import type AstronicObject from "./AstronicObject";
 import { IMAGES } from "../SolarSystemProject.constants";
 import type { AstronicObjectNameType } from "../SolarSystemProject.types";
+import PlanetRing from "./PlanetRing";
 
 class SolarSystemHelper {
   root = new THREE.Object3D();
@@ -104,6 +105,27 @@ class SolarSystemHelper {
       meshRotation: 0.032,
     });
 
+    const saturnRing = new PlanetRing({
+      name: "saturn-ring",
+      parent: saturn.mesh,
+      distance: 0,
+      innerRadius: 10,
+      outerRadius: 20,
+      texture: textures.saturnRing,
+      rootYTilt: -Math.PI / 2,
+      rootRotation: 0.002,
+    });
+    const uranusRing = new PlanetRing({
+      name: "uranus-ring",
+      parent: uranus.mesh,
+      distance: 0,
+      innerRadius: 7,
+      outerRadius: 12,
+      texture: textures.uranusRing,
+      rootYTilt: -Math.PI / 2,
+      rootRotation: 0.002,
+    });
+
     this.children.push(
       sun,
       mercury,
@@ -114,6 +136,8 @@ class SolarSystemHelper {
       saturn,
       uranus,
       neptune,
+      saturnRing,
+      uranusRing,
     );
     this.children.forEach((child) => this.root.add(child.root));
   }
