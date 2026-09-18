@@ -60,11 +60,17 @@ class SolarSystemProject extends BaseProject {
   }
 
   async setupModel() {
-    this.solarSystemHelper = new SolarSystemHelper(this.loadTextureImages);
+    if (!this.controlUI) throw new Error("controlUI 값이 없습니다.");
+
+    this.solarSystemHelper = new SolarSystemHelper(
+      this.controlUI,
+      this.loadTextureImages,
+    );
     await this.solarSystemHelper.init();
     if (this.stopRender) return;
 
     this.scene?.add(this.solarSystemHelper.root);
+    this.solarSystemHelper.createControlUI();
   }
 
   update(time: number) {

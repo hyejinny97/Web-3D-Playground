@@ -13,7 +13,7 @@ abstract class AstronicObject implements AstronicObjectType {
   then: number = 0;
 
   private rotateAround(delta: number) {
-    this.root.rotation.x = THREE.MathUtils.degToRad(this.rootYTilt % 360);
+    this.root.rotation.x = this.rootYTilt % (2 * Math.PI);
     this.root.rotation.y += THREE.MathUtils.radToDeg(this.rootRotation * delta);
   }
 

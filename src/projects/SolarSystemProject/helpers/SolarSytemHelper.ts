@@ -3,31 +3,74 @@ import Star from "./Star";
 import Planet from "./Planet";
 import type AstronicObject from "./AstronicObject";
 import { IMAGES } from "../SolarSystemProject.constants";
-import type { AstronicObjectNameType } from "../SolarSystemProject.types";
+import type {
+  AstronicObjectNameType,
+  SolarSystemHelperType,
+} from "../SolarSystemProject.types";
 import PlanetRing from "./PlanetRing";
 import Setellite from "./Setellite";
+import type { ControlUIType } from "@/types/project";
 
-class SolarSystemHelper {
-  root = new THREE.Object3D();
+const DEFAULT_ARGS = {
+  showAxis: false,
+  showOrbit: false,
+} as const;
+
+class SolarSystemHelper implements SolarSystemHelperType {
+  private controlUIGroupName = "Solar System";
+  private _args: SolarSystemHelperType["args"];
+  declare private textures: Record<AstronicObjectNameType, THREE.Texture>;
   private children: AstronicObject[] = [];
-  private loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>;
+  private axesGroup: THREE.AxesHelper[] = [];
+  private orbitGroup: THREE.Line[] = [];
+  root = new THREE.Object3D();
+  loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>;
+  controlUI: ControlUIType;
 
   constructor(
+    controlUI: ControlUIType,
     loadTextureImages: (urls: string[]) => Promise<HTMLImageElement[]>,
   ) {
+    this.controlUI = controlUI;
     this.loadTextureImages = loadTextureImages;
+    this._args = { ...DEFAULT_ARGS };
     this.root.name = "solar system";
   }
 
-  async init() {
-    const textures = await this.generateTextures();
+  get args() {
+    return this._args;
+  }
 
+  async init() {
+    await this.createTextures();
+    this.createModels();
+    this.createAxis();
+    this.createOrbit();
+  }
+
+  private async createTextures() {
+    const names = Object.keys(IMAGES) as AstronicObjectNameType[];
+    const urls = names.map((name) => IMAGES[name]);
+    const images = await this.loadTextureImages(urls);
+
+    const textures: Partial<Record<AstronicObjectNameType, THREE.Texture>> = {};
+    images.forEach((img, idx) => {
+      const name = names[idx];
+      const texture = new THREE.Texture(img);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.needsUpdate = true;
+      textures[name] = texture;
+    });
+    this.textures = textures as Record<AstronicObjectNameType, THREE.Texture>;
+  }
+
+  private createModels() {
     const sun = new Star({
       name: "sun",
       parent: this.root,
       distance: 0,
       radius: 16,
-      texture: textures.sun,
+      texture: this.textures.sun,
       meshRotation: 0.004,
       lightDistance: 200,
       lightIntensity: 100000,
@@ -38,7 +81,7 @@ class SolarSystemHelper {
       parent: sun.root,
       distance: 28,
       radius: 3.2,
-      texture: textures.mercury,
+      texture: this.textures.mercury,
       rootRotation: 0.04,
       meshRotation: 0.004,
     });
@@ -47,7 +90,7 @@ class SolarSystemHelper {
       parent: sun.root,
       distance: 44,
       radius: 5.8,
-      texture: textures.venus,
+      texture: this.textures.venus,
       rootRotation: 0.015,
       meshRotation: 0.002,
     });
@@ -56,7 +99,7 @@ class SolarSystemHelper {
       parent: sun.root,
       distance: 62,
       radius: 6,
-      texture: textures.earth,
+      texture: this.textures.earth,
       rootRotation: 0.01,
       meshRotation: 0.02,
     });
@@ -65,7 +108,7 @@ class SolarSystemHelper {
       parent: sun.root,
       distance: 78,
       radius: 4,
-      texture: textures.mars,
+      texture: this.textures.mars,
       rootRotation: 0.008,
       meshRotation: 0.018,
     });
@@ -74,7 +117,7 @@ class SolarSystemHelper {
       parent: sun.root,
       distance: 100,
       radius: 12,
-      texture: textures.jupiter,
+      texture: this.textures.jupiter,
       rootRotation: 0.002,
       meshRotation: 0.04,
     });
@@ -83,7 +126,7 @@ class SolarSystemHelper {
       parent: sun.root,
       distance: 138,
       radius: 10,
-      texture: textures.saturn,
+      texture: this.textures.saturn,
       rootRotation: 0.0009,
       meshRotation: 0.038,
     });
@@ -92,7 +135,7 @@ class SolarSystemHelper {
       parent: sun.root,
       distance: 176,
       radius: 7,
-      texture: textures.uranus,
+      texture: this.textures.uranus,
       rootRotation: 0.0004,
       meshRotation: 0.03,
     });
@@ -101,7 +144,7 @@ class SolarSystemHelper {
       parent: sun.root,
       distance: 200,
       radius: 7,
-      texture: textures.neptune,
+      texture: this.textures.neptune,
       rootRotation: 0.0001,
       meshRotation: 0.032,
     });
@@ -112,7 +155,7 @@ class SolarSystemHelper {
       distance: 0,
       innerRadius: 10,
       outerRadius: 20,
-      texture: textures.saturnRing,
+      texture: this.textures.saturnRing,
       rootYTilt: -Math.PI / 2,
       rootRotation: 0.002,
     });
@@ -122,7 +165,7 @@ class SolarSystemHelper {
       distance: 0,
       innerRadius: 7,
       outerRadius: 12,
-      texture: textures.uranusRing,
+      texture: this.textures.uranusRing,
       rootYTilt: -Math.PI / 2,
       rootRotation: 0.002,
     });
@@ -132,7 +175,7 @@ class SolarSystemHelper {
       parent: earth.mesh,
       distance: 10,
       radius: 0.4,
-      texture: textures.moon,
+      texture: this.textures.moon,
       rootRotation: 0.001,
       meshRotation: 0.001,
     });
@@ -141,7 +184,7 @@ class SolarSystemHelper {
       parent: jupiter.mesh,
       distance: 15,
       radius: 0.36,
-      texture: textures.ganymede,
+      texture: this.textures.ganymede,
       rootRotation: 0.008,
       meshRotation: 0.002,
     });
@@ -150,7 +193,7 @@ class SolarSystemHelper {
       parent: jupiter.mesh,
       distance: 17,
       radius: 0.48,
-      texture: textures.io,
+      texture: this.textures.io,
       rootRotation: 0.03,
       meshRotation: 0.01,
     });
@@ -174,22 +217,74 @@ class SolarSystemHelper {
     this.children.forEach((child) => this.root.add(child.root));
   }
 
-  async generateTextures(): Promise<
-    Record<AstronicObjectNameType, THREE.Texture>
-  > {
-    const names = Object.keys(IMAGES) as AstronicObjectNameType[];
-    const urls = names.map((name) => IMAGES[name]);
-    const images = await this.loadTextureImages(urls);
-
-    const textures: Partial<Record<AstronicObjectNameType, THREE.Texture>> = {};
-    images.forEach((img, idx) => {
-      const name = names[idx];
-      const texture = new THREE.Texture(img);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.needsUpdate = true;
-      textures[name] = texture;
+  private createAxis() {
+    this.children.forEach((child) => {
+      if (child instanceof PlanetRing) return;
+      const { mesh } = child;
+      if (mesh.geometry instanceof THREE.SphereGeometry) {
+        const radius = mesh.geometry.parameters.radius;
+        const axes = new THREE.AxesHelper(radius + radius * 1.5);
+        axes.visible = false;
+        mesh.add(axes);
+        this.axesGroup.push(axes);
+      }
     });
-    return textures as Record<AstronicObjectNameType, THREE.Texture>;
+  }
+
+  private createOrbit() {
+    const SEGMENTS = 100;
+    this.children.forEach((child) => {
+      if (child instanceof Planet || child instanceof Setellite) {
+        const { root, distance } = child;
+
+        const points: THREE.Vector3[] = [];
+        for (let idx = 0; idx <= SEGMENTS; idx++) {
+          const theta = (idx / SEGMENTS) * Math.PI * 2;
+          const x = distance * Math.cos(theta);
+          const y = distance * Math.sin(theta);
+          const z = 0;
+          points.push(new THREE.Vector3(x, y, z));
+        }
+
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const material = new THREE.LineBasicMaterial({
+          color: new THREE.Color(0x666666),
+        });
+        const line = new THREE.Line(geometry, material);
+
+        line.rotation.x = -Math.PI / 2;
+        line.visible = false;
+        root.add(line);
+        this.orbitGroup.push(line);
+      }
+    });
+  }
+
+  createControlUI() {
+    this.controlUI.add(this.controlUIGroupName, [
+      {
+        type: "checkbox",
+        label: "showAxis",
+        initChecked: this._args.showAxis,
+        onChange: (value) => {
+          this._args.showAxis = value;
+          this.axesGroup.forEach((axes) => {
+            axes.visible = this._args.showAxis;
+          });
+        },
+      },
+      {
+        type: "checkbox",
+        label: "showOrbit",
+        initChecked: this._args.showOrbit,
+        onChange: (value) => {
+          this._args.showOrbit = value;
+          this.orbitGroup.forEach((orbit) => {
+            orbit.visible = this._args.showOrbit;
+          });
+        },
+      },
+    ]);
   }
 
   update(time: number) {
