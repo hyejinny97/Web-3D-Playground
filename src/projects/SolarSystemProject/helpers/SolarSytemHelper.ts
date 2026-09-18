@@ -5,6 +5,7 @@ import type AstronicObject from "./AstronicObject";
 import { IMAGES } from "../SolarSystemProject.constants";
 import type { AstronicObjectNameType } from "../SolarSystemProject.types";
 import PlanetRing from "./PlanetRing";
+import Setellite from "./Setellite";
 
 class SolarSystemHelper {
   root = new THREE.Object3D();
@@ -126,6 +127,34 @@ class SolarSystemHelper {
       rootRotation: 0.002,
     });
 
+    const moon = new Setellite({
+      name: "moon",
+      parent: earth.mesh,
+      distance: 10,
+      radius: 0.4,
+      texture: textures.moon,
+      rootRotation: 0.001,
+      meshRotation: 0.001,
+    });
+    const ganymede = new Setellite({
+      name: "ganymede",
+      parent: jupiter.mesh,
+      distance: 15,
+      radius: 0.36,
+      texture: textures.ganymede,
+      rootRotation: 0.008,
+      meshRotation: 0.002,
+    });
+    const io = new Setellite({
+      name: "io",
+      parent: jupiter.mesh,
+      distance: 17,
+      radius: 0.48,
+      texture: textures.io,
+      rootRotation: 0.03,
+      meshRotation: 0.01,
+    });
+
     this.children.push(
       sun,
       mercury,
@@ -138,6 +167,9 @@ class SolarSystemHelper {
       neptune,
       saturnRing,
       uranusRing,
+      moon,
+      ganymede,
+      io,
     );
     this.children.forEach((child) => this.root.add(child.root));
   }

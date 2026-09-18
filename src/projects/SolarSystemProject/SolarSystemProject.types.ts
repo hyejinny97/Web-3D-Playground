@@ -11,7 +11,10 @@ export type AstronicObjectNameType =
   | "uranus"
   | "neptune"
   | "saturnRing"
-  | "uranusRing";
+  | "uranusRing"
+  | "moon"
+  | "ganymede"
+  | "io";
 
 export interface AstronicObjectType {
   name: string;

@@ -43,6 +43,7 @@ class Setellite extends AstronicObject {
     this.root.name = name;
     this.locateRootToParent();
 
+    this.createMesh();
     this.root.add(this.mesh);
     this.mesh.position.x = distance;
   }
@@ -58,6 +59,11 @@ class Setellite extends AstronicObject {
       color: 0xffffff,
     });
     this.mesh = new THREE.Mesh(geometry, material);
+  }
+
+  update(time: number) {
+    super.update(time);
+    this.locateRootToParent();
   }
 }
 

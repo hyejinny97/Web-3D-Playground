@@ -12,4 +12,7 @@ export const IMAGES: Record<AstronicObjectNameType, string> = {
   uranus: "/textures/solar-system/uranus.jpeg",
   uranusRing: "/textures/solar-system/uranus-ring.png",
   neptune: "/textures/solar-system/neptune.jpeg",
+  moon: "/textures/solar-system/moon.jpg",
+  ganymede: "/textures/solar-system/ganymede.jpg",
+  io: "/textures/solar-system/io.jpg",
 };
