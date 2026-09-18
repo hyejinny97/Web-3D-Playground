@@ -43,6 +43,17 @@ class SolarSystemProject extends BaseProject {
     }
   }
 
+  setupScene() {
+    super.setupScene();
+    if (this.scene) {
+      const universeImgUrl = "/textures/solar-system/universe.jpeg";
+      const loader = new THREE.CubeTextureLoader();
+      const cubeTexture = loader.load(Array(6).fill(universeImgUrl));
+      cubeTexture.colorSpace = THREE.SRGBColorSpace;
+      this.scene.background = cubeTexture;
+    }
+  }
+
   setupLight() {
     const ambientLight = new THREE.AmbientLight("white", 1);
     this.scene?.add(ambientLight);
