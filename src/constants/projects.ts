@@ -17,6 +17,7 @@ import image_url_texture_mapping from "@/assets/images/projects/texture_mapping.
 import image_url_texture_properties from "@/assets/images/projects/texture_properties.png";
 import image_url_texture_mipmaps from "@/assets/images/projects/texture_mipmaps.png";
 import image_url_basic_transform from "@/assets/images/projects/basic_transform.png";
+import image_url_solar_system from "@/assets/images/projects/solar_system.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -156,7 +157,7 @@ const MODEL_PROJECTS = [
   {
     id: "solar-system",
     title: "Solar system",
-    imageUrl: "",
+    imageUrl: image_url_solar_system,
     tags: [TAGS.transform],
     component: lazy(() => import("@/components/projects/SolarSystemCanvas")),
   },
