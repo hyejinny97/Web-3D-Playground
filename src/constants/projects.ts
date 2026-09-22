@@ -163,8 +163,23 @@ const MODEL_PROJECTS = [
   },
 ];
 
-export const ALL_PROJECTS = [BASIC_PROJECT, ...MODEL_PROJECTS];
+const THREE_D_FILE_PROJECTS = [
+  {
+    id: "gltf-model",
+    title: "GLTF Model",
+    imageUrl: "",
+    tags: [TAGS.gltf],
+    component: lazy(() => import("@/components/projects/GLTFModelCanvas")),
+  },
+];
+
+export const ALL_PROJECTS = [
+  BASIC_PROJECT,
+  ...MODEL_PROJECTS,
+  ...THREE_D_FILE_PROJECTS,
+];
 
 export const PROJECTS_BY_DOMAIN = [
   { domain: "Model", projects: MODEL_PROJECTS },
+  { domain: "3D File", projects: THREE_D_FILE_PROJECTS },
 ];
