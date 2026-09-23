@@ -14,11 +14,14 @@ class GLTFModelProject extends BaseProject {
   loadManager: LoadManagerType;
   private stopRender: boolean = false;
   declare private carHelper: CarHelper;
+  declare private handleKeyDown: (e: KeyboardEvent) => void;
+  declare private handleKeyUp: (e: KeyboardEvent) => void;
 
   constructor({ canvasEl, controlUI, loadManager }: GLTFModelProjectProps) {
     super({ canvasEl, controlUI });
     this.loadManager = loadManager;
     this.setupModel();
+    this.setupEvent();
   }
 
   init() {
@@ -55,9 +58,58 @@ class GLTFModelProject extends BaseProject {
     this.carHelper?.update(time);
   }
 
+  setupEvent() {
+    this.handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "d":
+          this.carHelper.gear?.drive();
+          break;
+        case "r":
+          this.carHelper.gear?.reverse();
+          break;
+        case "p":
+          this.carHelper.gear?.parking();
+          break;
+        case "ArrowUp":
+          this.carHelper.pedal?.accelerate();
+          break;
+        case "ArrowDown":
+          this.carHelper.pedal?.brake();
+          break;
+        case "ArrowLeft":
+          this.carHelper.steeringWheel?.turnLeft();
+          break;
+        case "ArrowRight":
+          this.carHelper.steeringWheel?.turnRight();
+          break;
+        case "l":
+          this.carHelper.frontLamps?.toggleLight();
+          break;
+      }
+    };
+
+    this.handleKeyUp = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "ArrowUp":
+        case "ArrowDown":
+          this.carHelper.pedal?.notPressed();
+          break;
+        case "ArrowLeft":
+        case "ArrowRight":
+          this.carHelper.steeringWheel?.notTurned();
+          break;
+      }
+    };
+
+    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keyup", this.handleKeyUp);
+  }
+
   dispose() {
     super.dispose();
     this.stopRender = true;
+    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("keyup", this.handleKeyUp);
   }
 }
 

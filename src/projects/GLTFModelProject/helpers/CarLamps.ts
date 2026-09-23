@@ -4,6 +4,7 @@ import type { CarLampsType } from "../GLTFModelProject.types";
 class CarLamps implements CarLampsType {
   private lamps: THREE.Mesh;
   private lightColor: THREE.Color;
+  on: boolean = false;
 
   constructor({
     lamps,
@@ -19,12 +20,22 @@ class CarLamps implements CarLampsType {
   lightOn() {
     if (this.lamps.material instanceof THREE.MeshStandardMaterial) {
       this.lamps.material.emissive = this.lightColor;
+      this.on = true;
     }
   }
 
   lightOff() {
     if (this.lamps.material instanceof THREE.MeshStandardMaterial) {
       this.lamps.material.emissive = new THREE.Color(0x000000);
+      this.on = false;
+    }
+  }
+
+  toggleLight() {
+    if (this.on) {
+      this.lightOff();
+    } else {
+      this.lightOn();
     }
   }
 }

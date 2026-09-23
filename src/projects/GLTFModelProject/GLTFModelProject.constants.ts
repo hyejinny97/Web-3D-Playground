@@ -18,11 +18,11 @@ export const MIN_SPEED = 0;
 
 export const MAX_SPEED = 900;
 
-export const RECOVERY_ACCELERATION = 5; // 단위: angle/s^2
+export const RECOVERY_ACCELERATION = 30; // 단위: angle/s^2
 
-export const ACCEL_ACCELERATION = 20;
+export const ACCEL_ACCELERATION = 50;
 
-export const BRAKE_ACCELERATION = 20;
+export const BRAKE_ACCELERATION = 60;
 
 export const CAR_STEERING_WHEEL_STATES = ["idle", "left", "right"] as const;
 

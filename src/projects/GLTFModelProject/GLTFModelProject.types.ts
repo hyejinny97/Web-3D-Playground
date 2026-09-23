@@ -31,8 +31,10 @@ export interface FiniteStateMachineType<S extends Record<string, StateInfo>> {
 }
 
 export interface CarLampsType {
+  on: boolean;
   lightOn: () => void;
   lightOff: () => void;
+  toggleLight: () => void;
 }
 
 export interface CarGearType {

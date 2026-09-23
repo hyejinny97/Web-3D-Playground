@@ -23,9 +23,7 @@ class CarGear implements CarGearType {
     this.stateMachine = new FiniteStateMachine({
       statesInfo: {
         parking: {
-          update: () => {
-            tireWheels.forEach((wheel) => wheel.rotation.set(0, 0, 0));
-          },
+          update: () => {},
         },
         drive: {
           update: (delta: number) => {
