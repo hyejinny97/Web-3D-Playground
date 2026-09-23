@@ -169,7 +169,9 @@ const THREE_D_FILE_PROJECTS = [
     title: "GLTF Model",
     imageUrl: "",
     tags: [TAGS.gltf],
-    component: lazy(() => import("@/components/projects/GLTFModelCanvas")),
+    component: lazy(
+      () => import("@/components/projects/GLTFModelCanvas/index"),
+    ),
   },
 ];
 
