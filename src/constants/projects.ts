@@ -18,6 +18,7 @@ import image_url_texture_properties from "@/assets/images/projects/texture_prope
 import image_url_texture_mipmaps from "@/assets/images/projects/texture_mipmaps.png";
 import image_url_basic_transform from "@/assets/images/projects/basic_transform.png";
 import image_url_solar_system from "@/assets/images/projects/solar_system.png";
+import image_url_gltf_model from "@/assets/images/projects/gltf_model.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -163,8 +164,25 @@ const MODEL_PROJECTS = [
   },
 ];
 
-export const ALL_PROJECTS = [BASIC_PROJECT, ...MODEL_PROJECTS];
+const THREE_D_FILE_PROJECTS = [
+  {
+    id: "gltf-model",
+    title: "GLTF Model",
+    imageUrl: image_url_gltf_model,
+    tags: [TAGS.gltf],
+    component: lazy(
+      () => import("@/components/projects/GLTFModelCanvas/index"),
+    ),
+  },
+];
+
+export const ALL_PROJECTS = [
+  BASIC_PROJECT,
+  ...MODEL_PROJECTS,
+  ...THREE_D_FILE_PROJECTS,
+];
 
 export const PROJECTS_BY_DOMAIN = [
   { domain: "Model", projects: MODEL_PROJECTS },
+  { domain: "3D File", projects: THREE_D_FILE_PROJECTS },
 ];
