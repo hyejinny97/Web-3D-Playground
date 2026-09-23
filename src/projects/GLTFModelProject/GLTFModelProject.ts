@@ -5,10 +5,12 @@ import CarHelper from "./helpers/CarHelper";
 import type { LoadManagerType } from "./GLTFModelProject.types";
 import type { ConstructorProps } from "@/types/project";
 import type { ActionType } from "@/components/projects/GLTFModelCanvas/GLTFModelCanvas.types";
+import { TIRE_RADIUS } from "./GLTFModelProject.constants";
 
 type GLTFModelProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
   dispatch: React.ActionDispatch<[action: ActionType]>;
+  setSpeed: React.Dispatch<React.SetStateAction<number>>;
 };
 
 @RenderLoop()
@@ -17,6 +19,7 @@ class GLTFModelProject extends BaseProject {
   private stopRender: boolean = false;
   declare private carHelper: CarHelper;
   private dispatch: React.ActionDispatch<[action: ActionType]>;
+  private setSpeed: React.Dispatch<React.SetStateAction<number>>;
   declare private handleKeyDown: (e: KeyboardEvent) => void;
   declare private handleKeyUp: (e: KeyboardEvent) => void;
 
@@ -25,10 +28,12 @@ class GLTFModelProject extends BaseProject {
     controlUI,
     loadManager,
     dispatch,
+    setSpeed,
   }: GLTFModelProjectProps) {
     super({ canvasEl, controlUI });
     this.loadManager = loadManager;
     this.dispatch = dispatch;
+    this.setSpeed = setSpeed;
     this.setupModel();
     this.setupEvent();
   }
@@ -64,7 +69,16 @@ class GLTFModelProject extends BaseProject {
   }
 
   update(time: number) {
-    this.carHelper?.update(time);
+    if (!this.carHelper) return;
+    this.carHelper.update(time);
+
+    const { gear, pedal } = this.carHelper;
+    if (!gear || !pedal) return;
+    if (gear.state === "drive" || gear.state === "reverse") {
+      this.setSpeed(Math.trunc(pedal.speed * TIRE_RADIUS));
+    } else {
+      this.setSpeed(0);
+    }
   }
 
   setupEvent() {

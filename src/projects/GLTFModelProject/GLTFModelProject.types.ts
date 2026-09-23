@@ -38,6 +38,7 @@ export interface CarLampsType {
 }
 
 export interface CarGearType {
+  state: CarGearStateType;
   update: (time: number) => void;
   parking: () => void;
   drive: () => void;

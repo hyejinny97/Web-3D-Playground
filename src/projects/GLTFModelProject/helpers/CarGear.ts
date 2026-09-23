@@ -12,6 +12,7 @@ class CarGear implements CarGearType {
   private stateMachine: FiniteStateMachineType<
     Record<CarGearStateType, StateInfo>
   >;
+  private _state: CarGearStateType = "parking";
 
   constructor({
     pedal,
@@ -23,13 +24,16 @@ class CarGear implements CarGearType {
     this.stateMachine = new FiniteStateMachine({
       statesInfo: {
         parking: {
-          update: () => {},
+          update: () => {
+            this._state = "parking";
+          },
         },
         drive: {
           update: (delta: number) => {
             tireWheels.forEach((wheel) => {
               wheel.rotation.x -= THREE.MathUtils.degToRad(pedal.speed * delta);
             });
+            this._state = "drive";
           },
         },
         reverse: {
@@ -37,11 +41,16 @@ class CarGear implements CarGearType {
             tireWheels.forEach((wheel) => {
               wheel.rotation.x += THREE.MathUtils.degToRad(pedal.speed * delta);
             });
+            this._state = "reverse";
           },
         },
       },
       initialState: "parking",
     });
+  }
+
+  get state(): CarGearStateType {
+    return this._state;
   }
 
   update(time: number) {
