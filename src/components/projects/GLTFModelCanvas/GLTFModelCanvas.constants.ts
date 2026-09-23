@@ -33,7 +33,7 @@ export const TUTORIALS = [
   {
     type: "lightOn",
     controls: [
-      { id: "light", keyboardKey: "L", description: "Turn on the light" },
+      { id: "light", keyboardKey: "L", description: "Turn on/off the light" },
     ],
   },
 ] as const;
