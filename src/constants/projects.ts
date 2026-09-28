@@ -174,6 +174,15 @@ const THREE_D_FILE_PROJECTS = [
       () => import("@/components/projects/GLTFModelCanvas/index"),
     ),
   },
+  {
+    id: "follow-curve",
+    title: "Follow a curve",
+    imageUrl: "",
+    tags: [TAGS.gltf],
+    component: lazy(
+      () => import("@/components/projects/FollowCurveCanvas/index"),
+    ),
+  },
 ];
 
 export const ALL_PROJECTS = [
