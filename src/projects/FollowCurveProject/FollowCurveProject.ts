@@ -15,6 +15,7 @@ type FollowCurveProjectProps = ConstructorProps & {
 class FollowCurveProject extends BaseProject {
   loadingOptions: LoadingOptionsType;
   declare trackHelper: TrackHelper;
+  declare pathHelper: PathHelper;
   private stopRender: boolean = false;
 
   constructor({ canvasEl, loadingOptions }: FollowCurveProjectProps) {
@@ -50,9 +51,9 @@ class FollowCurveProject extends BaseProject {
     this.scene?.add(this.trackHelper.root);
     this.scene?.add(carHelper.root);
 
-    const pathHelper = new PathHelper();
-    this.scene?.add(pathHelper.path);
-    // pathHelper.visible();
+    this.pathHelper = new PathHelper();
+    this.scene?.add(this.pathHelper.path);
+    this.pathHelper.followPath(carHelper.root);
   }
 
   createLoadManager(): THREE.LoadingManager {
@@ -63,6 +64,10 @@ class FollowCurveProject extends BaseProject {
     );
     manager.onStart = onStart;
     return manager;
+  }
+
+  update(time: number) {
+    this.pathHelper?.update(time);
   }
 
   dispose() {

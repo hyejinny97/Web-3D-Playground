@@ -20,4 +20,6 @@ export interface PathHelperType {
   path: THREE.Line;
   visible: () => void;
   invisible: () => void;
+  followPath: (model: THREE.Object3D) => void;
+  update: (time: number) => void;
 }
