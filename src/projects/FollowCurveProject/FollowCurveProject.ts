@@ -5,7 +5,7 @@ import type { ConstructorProps } from "@/types/project";
 import type { LoadingOptionsType } from "./FollowCurveProject.types";
 import TrackHelper from "./helpers/TrackHelper";
 import CarHelper from "./helpers/CarHelper";
-import DrawLineHelper from "@/helpers/DrawLineHelper";
+import PathHelper from "./helpers/PathHelper";
 
 type FollowCurveProjectProps = ConstructorProps & {
   loadingOptions: LoadingOptionsType;
@@ -15,7 +15,6 @@ type FollowCurveProjectProps = ConstructorProps & {
 class FollowCurveProject extends BaseProject {
   loadingOptions: LoadingOptionsType;
   declare trackHelper: TrackHelper;
-  declare drawLineHelper: DrawLineHelper;
   private stopRender: boolean = false;
 
   constructor({ canvasEl, loadingOptions }: FollowCurveProjectProps) {
@@ -51,7 +50,9 @@ class FollowCurveProject extends BaseProject {
     this.scene?.add(this.trackHelper.root);
     this.scene?.add(carHelper.root);
 
-    this.getPathPoints();
+    const pathHelper = new PathHelper();
+    this.scene?.add(pathHelper.path);
+    // pathHelper.visible();
   }
 
   createLoadManager(): THREE.LoadingManager {
@@ -64,23 +65,8 @@ class FollowCurveProject extends BaseProject {
     return manager;
   }
 
-  getPathPoints() {
-    this.drawLineHelper = new DrawLineHelper({
-      canvasEl: this.canvasEl,
-      camera: this.camera!,
-      target: this.trackHelper.root,
-    });
-    this.scene?.add(this.drawLineHelper.line);
-    this.drawLineHelper.canDraw(() => {
-      console.info(
-        this.drawLineHelper.points.map((point) => [point.x, point.y, point.z]),
-      );
-    });
-  }
-
   dispose() {
     super.dispose();
-    this.drawLineHelper?.dispose();
     this.stopRender = true;
   }
 }
