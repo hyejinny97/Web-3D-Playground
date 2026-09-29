@@ -31,3 +31,26 @@ export const PATH_POINTS = [
 ];
 
 export const CURVE_POINTS_COUNT = 50;
+
+export const CAR_PART = {
+  frontLeftTireWheel: "Circle017",
+  frontRightTireWheel: "Circle015",
+  backLeftTireWheel: "Circle011",
+  backRightTireWheel: "Circle031",
+};
+
+export const CAR_PEDAL_STATES = ["idle", "accelerate", "brake"] as const;
+
+export const BASE_SPEED = 90; // 단위: angle/s
+
+export const MIN_SPEED = 0;
+
+export const MAX_SPEED = 900;
+
+export const RECOVERY_ACCELERATION = 30; // 단위: angle/s^2
+
+export const ACCEL_ACCELERATION = 60;
+
+export const BRAKE_ACCELERATION = 70;
+
+export const TIRE_RADIUS = 0.0054; // 단위: unit
