@@ -2,15 +2,17 @@ import * as THREE from "three";
 import type {
   CarSteeringWheelStateType,
   CarSteeringWheelType,
-  FiniteStateMachineType,
-  StateInfo,
 } from "../GLTFModelProject.types";
-import FiniteStateMachine from "./FiniteStateMachine";
 import {
   CAR_PART,
   STEERING_WHEEL_MAX_TURN,
   STEERING_WHEEL_TURNING_SPEED,
 } from "../GLTFModelProject.constants";
+import type {
+  FiniteStateMachineType,
+  StateInfo,
+} from "@/helpers/FiniteStateMachine";
+import FiniteStateMachine from "@/helpers/FiniteStateMachine";
 
 class CarSteeringWheel implements CarSteeringWheelType {
   private stateMachine: FiniteStateMachineType<

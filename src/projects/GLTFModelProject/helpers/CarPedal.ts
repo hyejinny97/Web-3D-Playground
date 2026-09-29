@@ -9,11 +9,13 @@ import {
 import type {
   CarPedalStateType,
   CarPedalType,
-  FiniteStateMachineType,
-  StateInfo,
 } from "../GLTFModelProject.types";
 import type CarLamps from "./CarLamps";
-import FiniteStateMachine from "./FiniteStateMachine";
+import type {
+  FiniteStateMachineType,
+  StateInfo,
+} from "@/helpers/FiniteStateMachine";
+import FiniteStateMachine from "@/helpers/FiniteStateMachine";
 
 class CarPedal implements CarPedalType {
   private stateMachine: FiniteStateMachineType<
