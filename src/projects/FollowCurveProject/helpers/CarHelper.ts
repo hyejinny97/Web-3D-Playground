@@ -28,7 +28,7 @@ class CarHelper implements CarHelperType {
     const size = new THREE.Vector3();
     box.getSize(size);
 
-    this.root.position.set(-size.z / 2, 0, 0.2);
+    this.root.position.set(-size.z / 2, 0.001, 0.2);
     this.root.rotation.set(0, Math.PI / 2, 0);
   }
 }
