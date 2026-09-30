@@ -53,4 +53,4 @@ export const ACCEL_ACCELERATION = 60;
 
 export const BRAKE_ACCELERATION = 70;
 
-export const TIRE_RADIUS = 0.0054; // 단위: unit
+export const TIRE_RADIUS = 0.034; // 단위: unit

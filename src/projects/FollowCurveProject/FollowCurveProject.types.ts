@@ -25,7 +25,7 @@ export interface CarPedalType {
 export interface CarHelperType {
   root: THREE.Object3D;
   pedal: CarPedalType;
-  speed: number; // distance per second (단위: unit/s)
+  speed: number | null; // distance per second (단위: unit/s)
   init: () => void;
   update: (time: number) => void;
   rpsToSpeed: (rds: number) => number;
@@ -35,6 +35,6 @@ export interface PathHelperType {
   path: THREE.Line;
   visible: () => void;
   invisible: () => void;
-  followPath: (model: THREE.Object3D) => void;
+  followPath: (model: CarHelperType) => void;
   update: (time: number) => void;
 }

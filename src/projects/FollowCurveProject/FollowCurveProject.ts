@@ -81,7 +81,7 @@ class FollowCurveProject extends BaseProject {
 
     this.pathHelper = new PathHelper();
     this.scene?.add(this.pathHelper.path);
-    // this.pathHelper.followPath(this.carHelper.root);
+    this.pathHelper.followPath(this.carHelper);
   }
 
   createLoadManager(): THREE.LoadingManager {
@@ -95,9 +95,9 @@ class FollowCurveProject extends BaseProject {
   }
 
   update(time: number) {
-    this.pathHelper?.update(time);
     this.carHelper.update(time);
-    if (typeof this.carHelper.speed === "number") {
+    this.pathHelper?.update(time);
+    if (this.carHelper.speed !== null) {
       this.setSpeedProgress(
         Math.trunc(
           (this.carHelper.speed /

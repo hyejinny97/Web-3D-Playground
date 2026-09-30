@@ -9,7 +9,7 @@ class CarHelper implements CarHelperType {
   private tireWheels: THREE.Object3D[] = [];
   declare root: THREE.Object3D;
   declare pedal: CarPedal;
-  declare speed: number;
+  speed: number | null = null;
   private then: number = 0;
 
   constructor({ loadManager }: { loadManager: THREE.LoadingManager }) {

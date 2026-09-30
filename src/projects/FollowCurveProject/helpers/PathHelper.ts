@@ -1,5 +1,8 @@
 import * as THREE from "three";
-import type { PathHelperType } from "../FollowCurveProject.types";
+import type {
+  CarHelperType,
+  PathHelperType,
+} from "../FollowCurveProject.types";
 import {
   CURVE_POINTS_COUNT,
   PATH_POINTS,
@@ -14,7 +17,9 @@ class PathHelper implements PathHelperType {
   private curve!: THREE.Curve<THREE.Vector3>;
   private _path!: THREE.Line;
   private isVisible: boolean = false;
-  private model: THREE.Object3D | null = null;
+  private model: CarHelperType | null = null;
+  private modelPoint = 0; // 범위: 0 ~ 1
+  private then: number = 0; // 단위: s
 
   constructor(props?: PathHelperProps) {
     const { pathColor = new THREE.Color(0xff0000) } = props || {};
@@ -52,20 +57,28 @@ class PathHelper implements PathHelperType {
     this._path.visible = this.isVisible;
   }
 
-  followPath(model: THREE.Object3D) {
+  followPath(model: CarHelperType) {
     this.model = model;
   }
 
   update(time: number) {
-    if (!this.model) return;
+    if (!this.model || this.model.speed === null) return;
 
-    const t = ((time / 200) % CURVE_POINTS_COUNT) / CURVE_POINTS_COUNT;
+    time *= 0.001;
+    const delta = time - this.then;
+    this.then = time;
+
+    const t =
+      (this.modelPoint + (this.model.speed * delta) / this.curve.getLength()) %
+      1;
+    this.modelPoint = t;
+
     const position = this.curve.getPointAt(t);
     const tangent = this.curve.getTangentAt(t).normalize();
 
     if (this.model) {
-      this.model.position.copy(position);
-      this.model.lookAt(position.clone().add(tangent));
+      this.model.root.position.copy(position);
+      this.model.root.lookAt(position.clone().add(tangent));
     }
   }
 }
