@@ -1,3 +1,12 @@
+import type {
+  FiniteStateMachineType,
+  StateInfo,
+} from "@/helpers/FiniteStateMachine";
+import FiniteStateMachine from "@/helpers/FiniteStateMachine";
+import type {
+  CarPedalStateType,
+  CarPedalType,
+} from "../FollowCurveProject.types";
 import {
   ACCEL_ACCELERATION,
   BASE_SPEED,
@@ -5,63 +14,47 @@ import {
   MAX_SPEED,
   MIN_SPEED,
   RECOVERY_ACCELERATION,
-} from "../GLTFModelProject.constants";
-import type {
-  CarPedalStateType,
-  CarPedalType,
-} from "../GLTFModelProject.types";
-import type CarLamps from "./CarLamps";
-import type {
-  FiniteStateMachineType,
-  StateInfo,
-} from "@/helpers/FiniteStateMachine";
-import FiniteStateMachine from "@/helpers/FiniteStateMachine";
+} from "../FollowCurveProject.constants";
 
 class CarPedal implements CarPedalType {
   private stateMachine: FiniteStateMachineType<
     Record<CarPedalStateType, StateInfo>
   >;
-  private _speed: number = BASE_SPEED;
+  private _rps: number = BASE_SPEED;
 
-  constructor({ backLamps }: { backLamps: CarLamps }) {
+  constructor() {
     this.stateMachine = new FiniteStateMachine({
       statesInfo: {
         idle: {
           update: (delta: number) => {
-            if (this._speed > BASE_SPEED) {
-              this._speed -= Math.min(
+            if (this._rps > BASE_SPEED) {
+              this._rps -= Math.min(
                 RECOVERY_ACCELERATION * delta,
-                this._speed - BASE_SPEED,
+                this._rps - BASE_SPEED,
               );
             }
-            if (this._speed < BASE_SPEED) {
-              this._speed += Math.min(
+            if (this._rps < BASE_SPEED) {
+              this._rps += Math.min(
                 RECOVERY_ACCELERATION * delta,
-                BASE_SPEED - this._speed,
+                BASE_SPEED - this._rps,
               );
             }
           },
         },
         accelerate: {
           update: (delta: number) => {
-            this._speed = Math.min(
-              this._speed + ACCEL_ACCELERATION * delta,
+            this._rps = Math.min(
+              this._rps + ACCEL_ACCELERATION * delta,
               MAX_SPEED,
             );
           },
         },
         brake: {
-          enter: () => {
-            backLamps.lightOn();
-          },
           update: (delta: number) => {
-            this._speed = Math.max(
-              this._speed - BRAKE_ACCELERATION * delta,
+            this._rps = Math.max(
+              this._rps - BRAKE_ACCELERATION * delta,
               MIN_SPEED,
             );
-          },
-          exit: () => {
-            backLamps.lightOff();
           },
         },
       },
@@ -69,8 +62,8 @@ class CarPedal implements CarPedalType {
     });
   }
 
-  get speed(): number {
-    return this._speed;
+  get rps(): number {
+    return this._rps;
   }
 
   update(time: number) {

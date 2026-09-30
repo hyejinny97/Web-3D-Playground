@@ -1,7 +1,7 @@
 import type {
   FiniteStateMachineType,
   StateInfo,
-} from "../GLTFModelProject.types";
+} from "./FiniteStateMachine.types";
 
 class FiniteStateMachine<
   S extends Record<string, StateInfo>,

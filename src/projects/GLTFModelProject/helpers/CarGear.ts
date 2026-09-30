@@ -1,12 +1,11 @@
 import * as THREE from "three";
+import type { CarGearStateType, CarGearType } from "../GLTFModelProject.types";
+import type CarPedal from "./CarPedal";
 import type {
-  CarGearStateType,
-  CarGearType,
   FiniteStateMachineType,
   StateInfo,
-} from "../GLTFModelProject.types";
-import FiniteStateMachine from "./FiniteStateMachine";
-import type CarPedal from "./CarPedal";
+} from "@/helpers/FiniteStateMachine";
+import FiniteStateMachine from "@/helpers/FiniteStateMachine";
 
 class CarGear implements CarGearType {
   private stateMachine: FiniteStateMachineType<

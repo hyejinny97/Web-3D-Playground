@@ -1,22 +1,20 @@
 import { useLayoutEffect, useReducer, useRef, useState } from "react";
-import GLTFModelProject from "@/projects/GLTFModelProject";
+import FollowCurveProject from "@/projects/FollowCurveProject";
 import type { Project } from "@/types/project";
-import useControl from "@/hooks/useControl";
 import useLoad from "@/hooks/useLoading";
+import Loading from "@/components/Loading";
 import Stack from "@jinni-labs/ui/Stack";
 import Divider from "@jinni-labs/ui/Divider";
-import Loading from "@/components/Loading";
-import { reducer } from "./GLTFModelCanvas.utils";
-import { INITIAL_STATE, TUTORIALS } from "./GLTFModelCanvas.constants";
-import KeyboardTutorial from "../../KeyboardTutorial";
-import CarSpeedProgress from "./CarSpeedProgress";
+import LinearProgress from "@jinni-labs/ui/LinearProgress";
+import { INITIAL_STATE, TUTORIALS } from "./FollowCurveCanvas.constants";
+import KeyboardTutorial from "@/components/KeyboardTutorial";
+import { reducer } from "./FollowCurveCanvas.utils";
 
-const GLTFModelCanvas = () => {
+const FollowCurveCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { add, remove, removeGroup, clearAll } = useControl();
   const { isLoading, progress, loadStart, loading, loadComplete } = useLoad();
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  const [speed, setSpeed] = useState(0); // 단위: m/s
+  const [speedProgress, setSpeedProgress] = useState(0); // 단위: %
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -27,16 +25,15 @@ const GLTFModelCanvas = () => {
     canvasEl.id = String(Date.now());
     container.appendChild(canvasEl);
 
-    const project: Project = new GLTFModelProject({
+    const project: Project = new FollowCurveProject({
       canvasEl,
-      controlUI: { add, remove, removeGroup, clearAll },
-      loadManager: {
+      loadingOptions: {
         onStart: loadStart,
         onProgress: loading,
         onLoad: loadComplete,
       },
       dispatch,
-      setSpeed,
+      setSpeedProgress,
     });
     if (project.loop) project.renderLoop();
     else project.render();
@@ -45,7 +42,7 @@ const GLTFModelCanvas = () => {
       project.dispose();
       container.removeChild(canvasEl);
     };
-  }, [add, remove, removeGroup, clearAll, loadStart, loading, loadComplete]);
+  }, [loadStart, loading, loadComplete]);
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
@@ -67,16 +64,22 @@ const GLTFModelCanvas = () => {
                     keyboardKey={keyboardKey}
                     description={description}
                     isPressed={
-                      type === "lightOn" ? state[type] : state[type] === id
+                      type === "cameraZoom" ? state[type] : state[type] === id
                     }
                   />
                 ))}
               </Stack>
             ))}
           </Stack>
-          <CarSpeedProgress
-            className="absolute bottom-5 right-3"
-            speed={speed}
+          <LinearProgress
+            className="absolute! bottom-5 right-3 h-75!"
+            value={speedProgress}
+            aria-label="car speed"
+            orientation="vertical"
+            thickness={10}
+            lineCap="round"
+            trackColor="#fff5"
+            progressColor="blue-300"
           />
         </>
       )}
@@ -84,4 +87,4 @@ const GLTFModelCanvas = () => {
   );
 };
 
-export default GLTFModelCanvas;
+export default FollowCurveCanvas;

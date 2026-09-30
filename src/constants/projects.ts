@@ -19,6 +19,7 @@ import image_url_texture_mipmaps from "@/assets/images/projects/texture_mipmaps.
 import image_url_basic_transform from "@/assets/images/projects/basic_transform.png";
 import image_url_solar_system from "@/assets/images/projects/solar_system.png";
 import image_url_gltf_model from "@/assets/images/projects/gltf_model.png";
+import image_url_follow_curve from "@/assets/images/projects/follow_curve.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -172,6 +173,15 @@ const THREE_D_FILE_PROJECTS = [
     tags: [TAGS.gltf],
     component: lazy(
       () => import("@/components/projects/GLTFModelCanvas/index"),
+    ),
+  },
+  {
+    id: "follow-curve",
+    title: "Follow a curve",
+    imageUrl: image_url_follow_curve,
+    tags: [TAGS.gltf],
+    component: lazy(
+      () => import("@/components/projects/FollowCurveCanvas/index"),
     ),
   },
 ];
