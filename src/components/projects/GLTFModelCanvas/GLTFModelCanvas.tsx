@@ -8,7 +8,7 @@ import Divider from "@jinni-labs/ui/Divider";
 import Loading from "@/components/Loading";
 import { reducer } from "./GLTFModelCanvas.utils";
 import { INITIAL_STATE, TUTORIALS } from "./GLTFModelCanvas.constants";
-import KeyboardTutorial from "./KeyboardTutorial";
+import KeyboardTutorial from "../../KeyboardTutorial";
 import CarSpeedProgress from "./CarSpeedProgress";
 
 const GLTFModelCanvas = () => {

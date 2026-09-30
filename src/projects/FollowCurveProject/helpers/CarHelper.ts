@@ -21,7 +21,7 @@ class CarHelper implements CarHelperType {
     this.transform();
 
     this.pedal = new CarPedal();
-    this.speed = this.rdsToSpeed(this.pedal.rps);
+    this.speed = this.rpsToSpeed(this.pedal.rps);
     this.tireWheels = this.getCarTireWheels();
   }
 
@@ -70,10 +70,6 @@ class CarHelper implements CarHelperType {
     ].filter((obj) => !!obj);
   }
 
-  private rdsToSpeed(rds: number): number {
-    return THREE.MathUtils.degToRad(rds) * TIRE_RADIUS;
-  }
-
   private rotateTire(time: number) {
     time *= 0.001; // 단위: s
     const delta = time - this.then;
@@ -84,10 +80,14 @@ class CarHelper implements CarHelperType {
     });
   }
 
+  rpsToSpeed(rps: number): number {
+    return THREE.MathUtils.degToRad(rps) * TIRE_RADIUS;
+  }
+
   update(time: number) {
     if (this.pedal) {
       this.pedal.update(time);
-      this.speed = this.rdsToSpeed(this.pedal.rps);
+      this.speed = this.rpsToSpeed(this.pedal.rps);
       this.rotateTire(time);
     }
   }

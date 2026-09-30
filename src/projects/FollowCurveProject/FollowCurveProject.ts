@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import type { ActionDispatch, Dispatch } from "react";
 import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
 import type { ConstructorProps } from "@/types/project";
@@ -6,9 +7,13 @@ import type { LoadingOptionsType } from "./FollowCurveProject.types";
 import TrackHelper from "./helpers/TrackHelper";
 import CarHelper from "./helpers/CarHelper";
 import PathHelper from "./helpers/PathHelper";
+import type { ActionType } from "@/components/projects/FollowCurveCanvas/FollowCurveCanvas.types";
+import { MAX_SPEED, MIN_SPEED } from "./FollowCurveProject.constants";
 
 type FollowCurveProjectProps = ConstructorProps & {
   loadingOptions: LoadingOptionsType;
+  dispatch: ActionDispatch<[action: ActionType]>;
+  setSpeedProgress: Dispatch<React.SetStateAction<number>>;
 };
 
 @RenderLoop()
@@ -20,12 +25,21 @@ class FollowCurveProject extends BaseProject {
   private stopRender: boolean = false;
   declare private handleKeyDown: (e: KeyboardEvent) => void;
   declare private handleKeyUp: (e: KeyboardEvent) => void;
+  declare private dispatch: ActionDispatch<[action: ActionType]>;
+  declare private setSpeedProgress: Dispatch<React.SetStateAction<number>>;
 
-  constructor({ canvasEl, loadingOptions }: FollowCurveProjectProps) {
+  constructor({
+    canvasEl,
+    loadingOptions,
+    dispatch,
+    setSpeedProgress,
+  }: FollowCurveProjectProps) {
     super({ canvasEl });
     this.loadingOptions = loadingOptions;
     this.setupModel();
     this.setupEvent();
+    this.dispatch = dispatch;
+    this.setSpeedProgress = setSpeedProgress;
   }
 
   init() {
@@ -83,6 +97,15 @@ class FollowCurveProject extends BaseProject {
   update(time: number) {
     this.pathHelper?.update(time);
     this.carHelper.update(time);
+    if (typeof this.carHelper.speed === "number") {
+      this.setSpeedProgress(
+        Math.trunc(
+          (this.carHelper.speed /
+            this.carHelper.rpsToSpeed(MAX_SPEED - MIN_SPEED)) *
+            100,
+        ),
+      );
+    }
   }
 
   setupEvent() {
@@ -90,9 +113,11 @@ class FollowCurveProject extends BaseProject {
       switch (e.key) {
         case "ArrowUp":
           this.carHelper.pedal?.accelerate();
+          this.dispatch({ type: "pedal", value: "accelerate" });
           break;
         case "ArrowDown":
           this.carHelper.pedal?.brake();
+          this.dispatch({ type: "pedal", value: "brake" });
           break;
       }
     };
@@ -102,6 +127,7 @@ class FollowCurveProject extends BaseProject {
         case "ArrowUp":
         case "ArrowDown":
           this.carHelper.pedal?.notPressed();
+          this.dispatch({ type: "pedal", value: "idle" });
           break;
       }
     };

@@ -28,6 +28,7 @@ export interface CarHelperType {
   speed: number; // distance per second (단위: unit/s)
   init: () => void;
   update: (time: number) => void;
+  rpsToSpeed: (rds: number) => number;
 }
 
 export interface PathHelperType {
