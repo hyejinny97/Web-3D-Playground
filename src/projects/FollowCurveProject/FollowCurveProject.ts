@@ -23,6 +23,7 @@ class FollowCurveProject extends BaseProject {
   declare carHelper: CarHelper;
   declare pathHelper: PathHelper;
   private stopRender: boolean = false;
+  private zoomToCar: boolean = false;
   declare private handleKeyDown: (e: KeyboardEvent) => void;
   declare private handleKeyUp: (e: KeyboardEvent) => void;
   declare private dispatch: ActionDispatch<[action: ActionType]>;
@@ -94,6 +95,48 @@ class FollowCurveProject extends BaseProject {
     return manager;
   }
 
+  zoomIn() {
+    if (!this.camera || !this.carHelper.root) return;
+    if (this.controls) {
+      this.controls.enabled = false;
+    }
+
+    const car = this.carHelper.root;
+    const carPosition = car.position;
+
+    const box = new THREE.Box3().setFromObject(car);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const carHalfWidth = size.z / 2;
+
+    const direction = new THREE.Vector3();
+    const oppositeDirection = new THREE.Vector3();
+    car.getWorldDirection(direction);
+    oppositeDirection.copy(new THREE.Vector3(-direction.x, 0.3, -direction.z));
+
+    const DISTANCE_FROM_CAR = 0.05;
+    const cameraPosition = oppositeDirection
+      .multiplyScalar(carHalfWidth + DISTANCE_FROM_CAR)
+      .add(carPosition);
+
+    this.camera.position.set(
+      cameraPosition.x,
+      cameraPosition.y,
+      cameraPosition.z,
+    );
+    this.camera.lookAt(direction.x, direction.y, direction.z);
+  }
+
+  zoomOut() {
+    if (!this.camera) return;
+    if (this.controls) {
+      this.controls.enabled = true;
+    }
+
+    this.camera.position.set(0, 0.4, 0.4);
+    this.camera.lookAt(0, 0, 0);
+  }
+
   update(time: number) {
     this.carHelper.update(time);
     this.pathHelper?.update(time);
@@ -105,6 +148,9 @@ class FollowCurveProject extends BaseProject {
             100,
         ),
       );
+    }
+    if (this.zoomToCar) {
+      this.zoomIn();
     }
   }
 
@@ -119,6 +165,11 @@ class FollowCurveProject extends BaseProject {
           this.carHelper.pedal?.brake();
           this.dispatch({ type: "pedal", value: "brake" });
           break;
+        case "z":
+          this.zoomToCar = !this.zoomToCar;
+          this.dispatch({ type: "cameraZoom", value: this.zoomToCar });
+          if (this.zoomToCar) this.zoomIn();
+          else this.zoomOut();
       }
     };
 
