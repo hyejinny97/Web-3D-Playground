@@ -53,7 +53,7 @@ class Serengeti implements SerengetiType {
       normalMap: this.grassTextures.normalMap,
       roughnessMap: this.grassTextures.roughnessMap,
       displacementScale: 1,
-      displacementBias: -0.5,
+      displacementBias: -0.3,
       side: THREE.DoubleSide,
     });
     const mesh = new THREE.Mesh(geometry, material);

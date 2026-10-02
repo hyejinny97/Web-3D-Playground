@@ -13,3 +13,9 @@ export interface SerengetiType {
   root: THREE.Object3D;
   init: () => void;
 }
+
+export interface AnimalType {
+  root: THREE.Object3D;
+  init: () => void;
+  update: (time: number) => void;
+}

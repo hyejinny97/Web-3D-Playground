@@ -1,0 +1,11 @@
+Model Information:
+* title:	BUFFALO - Realistic 3D Model (DEMO FREE)
+* source:	https://sketchfab.com/3d-models/buffalo-realistic-3d-model-demo-free-dc33860c95ff40b99107336746705984
+* author:	WildMesh 3D (https://sketchfab.com/WildMesh_3D)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "BUFFALO - Realistic 3D Model (DEMO FREE)" (https://sketchfab.com/3d-models/buffalo-realistic-3d-model-demo-free-dc33860c95ff40b99107336746705984) by WildMesh 3D (https://sketchfab.com/WildMesh_3D) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
