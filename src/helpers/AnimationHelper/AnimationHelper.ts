@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import type { AnimationHelperType } from "../AnimatedModelProject.types";
 import type { GLTF } from "three/examples/jsm/Addons.js";
+import type { AnimationHelperType } from "./AnimationHelper.types";
 
 class AnimationHelper implements AnimationHelperType {
   private mixer: THREE.AnimationMixer;
