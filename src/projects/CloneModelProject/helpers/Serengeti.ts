@@ -62,7 +62,7 @@ class Serengeti implements SerengetiType {
   }
 
   private placeTree() {
-    this.tree.scale.set(0.2, 0.2, 0.2);
+    this.tree.scale.set(0.3, 0.3, 0.3);
     this.tree.position.set(-1, 0, -1);
     this.root.add(this.tree);
   }

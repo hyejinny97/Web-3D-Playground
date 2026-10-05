@@ -11,7 +11,7 @@ class AnimationHelper implements AnimationHelperType {
     model,
     clips,
   }: {
-    model: THREE.Object3D;
+    model: THREE.Object3D | THREE.AnimationObjectGroup;
     clips: THREE.AnimationClip[];
   }) {
     this.mixer = new THREE.AnimationMixer(model);

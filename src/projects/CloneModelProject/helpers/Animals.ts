@@ -12,6 +12,7 @@ class Animals implements AnimalsType {
   private url: string;
   private loadingManager: THREE.LoadingManager;
   private count: number;
+  private groupAnimation: boolean;
   protected animations: AnimationHelperType[] = [];
   private gltf!: GLTF;
   root: THREE.Object3D[] = [];
@@ -20,14 +21,17 @@ class Animals implements AnimalsType {
     url,
     count = 1,
     loadingManager,
+    groupAnimation = false,
   }: {
     url: string;
     count?: number;
     loadingManager: THREE.LoadingManager;
+    groupAnimation?: boolean;
   }) {
     this.url = url;
     this.count = count;
     this.loadingManager = loadingManager;
+    this.groupAnimation = groupAnimation;
   }
 
   async init() {
@@ -49,11 +53,18 @@ class Animals implements AnimalsType {
   }
 
   private setupAnimations() {
-    this.root.forEach((model) => {
-      this.animations.push(
-        new AnimationHelper({ model, clips: this.gltf.animations }),
-      );
-    });
+    if (this.groupAnimation) {
+      const group = new THREE.AnimationObjectGroup(...this.root);
+      this.animations = [
+        new AnimationHelper({ model: group, clips: this.gltf.animations }),
+      ];
+    } else {
+      this.root.forEach((model) => {
+        this.animations.push(
+          new AnimationHelper({ model, clips: this.gltf.animations }),
+        );
+      });
+    }
   }
 
   protected transform() {}

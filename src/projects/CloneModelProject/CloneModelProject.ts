@@ -8,6 +8,7 @@ import type Animals from "./helpers/Animals";
 import Serengeti from "./helpers/Serengeti";
 import Buffalo from "./helpers/Buffalo";
 import Deers from "./helpers/Deers";
+import Rabbits from "./helpers/Rabbits";
 
 type CloneModelProjectProps = ConstructorProps & {
   loadingOptions: LoadingOptionsType;
@@ -41,28 +42,27 @@ class CloneModelProject extends BaseProject {
     }
   }
 
-  setupLight() {
-    const ambientLight = new THREE.AmbientLight("white", 0.5);
-    const directionalLight = new THREE.DirectionalLight("white", 1);
-    directionalLight.position.set(2, 2, 2);
-    this.scene?.add(ambientLight);
-    this.scene?.add(directionalLight);
-  }
-
   async setupModel() {
     const loadingManager = this.createLoadingManager();
     const serengeti = new Serengeti({ loadingManager });
     const buffalo = new Buffalo({ loadingManager });
     const deers = new Deers({ loadingManager });
+    const rabbits = new Rabbits({ loadingManager });
 
-    await Promise.allSettled([serengeti.init(), buffalo.init(), deers.init()]);
+    await Promise.allSettled([
+      serengeti.init(),
+      buffalo.init(),
+      deers.init(),
+      rabbits.init(),
+    ]);
     if (this.stopRender) return;
 
     this.scene?.add(serengeti.root);
     this.scene?.add(buffalo.root);
     this.scene?.add(...deers.root);
+    this.scene?.add(...rabbits.root);
 
-    this.animals.push(buffalo, deers);
+    this.animals.push(buffalo, deers, rabbits);
   }
 
   createLoadingManager(): THREE.LoadingManager {
