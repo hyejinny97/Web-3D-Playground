@@ -19,3 +19,9 @@ export interface AnimalType {
   init: () => void;
   update: (time: number) => void;
 }
+
+export interface AnimalsType {
+  root: THREE.Object3D[];
+  init: () => void;
+  update: (time: number) => void;
+}

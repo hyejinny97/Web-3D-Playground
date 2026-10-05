@@ -8,6 +8,12 @@ class Buffalo extends Animal {
 
   protected transform() {
     this.root.scale.set(0.4, 0.4, 0.4);
+    this.root.position.set(-0.6, 0, 0);
+    this.root.rotateY(-Math.PI / 4);
+  }
+
+  protected animate() {
+    this.animation.play({ name: "Idle" });
   }
 }
 

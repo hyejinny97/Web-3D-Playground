@@ -34,10 +34,11 @@ class AnimationHelper implements AnimationHelperType {
 
     const safeStartAt = Math.max(0, Math.min(1, startAt));
     const action = this.mixer.clipAction(clip);
-    action.time = clip.duration * safeStartAt;
 
     if (this.playingAction) this.playingAction.fadeOut(0.5);
-    action.reset().fadeIn(0.5).play();
+    action.reset().fadeIn(0.5);
+    action.time = clip.duration * safeStartAt;
+    action.play();
     this.playingAction = action;
   }
 

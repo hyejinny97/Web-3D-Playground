@@ -7,7 +7,7 @@ import type { AnimalType } from "../CloneModelProjec.types";
 class Animal implements AnimalType {
   private url: string;
   private loadingManager: THREE.LoadingManager;
-  private animation!: AnimationHelperType;
+  protected animation!: AnimationHelperType;
   private gltf!: GLTF;
   root!: THREE.Object3D;
 
@@ -24,12 +24,9 @@ class Animal implements AnimalType {
 
   async init() {
     await this.loadModel();
+    this.setupAnimation();
     this.transform();
-    this.animation = new AnimationHelper({
-      model: this.gltf.scene,
-      clips: this.gltf.animations,
-    });
-    this.animation.play({ name: "Idle" });
+    this.animate();
   }
 
   private async loadModel() {
@@ -38,7 +35,16 @@ class Animal implements AnimalType {
     this.root = this.gltf.scene;
   }
 
+  private setupAnimation() {
+    this.animation = new AnimationHelper({
+      model: this.gltf.scene,
+      clips: this.gltf.animations,
+    });
+  }
+
   protected transform() {}
+
+  protected animate() {}
 
   update(time: number) {
     this.animation.update(time);

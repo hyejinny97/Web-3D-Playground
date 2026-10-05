@@ -3,9 +3,11 @@ import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
 import type { LoadingOptionsType } from "./CloneModelProjec.types";
 import type { ConstructorProps } from "@/types/project";
+import type Animal from "./helpers/Animal";
+import type Animals from "./helpers/Animals";
 import Serengeti from "./helpers/Serengeti";
 import Buffalo from "./helpers/Buffalo";
-import type Animal from "./helpers/Animal";
+import Deers from "./helpers/Deers";
 
 type CloneModelProjectProps = ConstructorProps & {
   loadingOptions: LoadingOptionsType;
@@ -15,7 +17,7 @@ type CloneModelProjectProps = ConstructorProps & {
 class CloneModelProject extends BaseProject {
   private loadingOptions: LoadingOptionsType;
   private stopRender: boolean = false;
-  private animals: Animal[] = [];
+  private animals: (Animal | Animals)[] = [];
 
   constructor({ canvasEl, loadingOptions }: CloneModelProjectProps) {
     super({ canvasEl });
@@ -51,16 +53,16 @@ class CloneModelProject extends BaseProject {
     const loadingManager = this.createLoadingManager();
     const serengeti = new Serengeti({ loadingManager });
     const buffalo = new Buffalo({ loadingManager });
+    const deers = new Deers({ loadingManager });
 
-    await Promise.allSettled([serengeti.init(), buffalo.init()]);
+    await Promise.allSettled([serengeti.init(), buffalo.init(), deers.init()]);
     if (this.stopRender) return;
-
-    buffalo.root.position.set(-0.6, 0, 0);
-    buffalo.root.rotateY(-Math.PI / 4);
 
     this.scene?.add(serengeti.root);
     this.scene?.add(buffalo.root);
-    this.animals.push(buffalo);
+    this.scene?.add(...deers.root);
+
+    this.animals.push(buffalo, deers);
   }
 
   createLoadingManager(): THREE.LoadingManager {
