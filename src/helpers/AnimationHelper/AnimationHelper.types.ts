@@ -1,5 +1,5 @@
 export interface AnimationHelperType {
   getAnimationNames: () => string[];
-  play: (name: string) => void;
+  play: ({ name, startAt }: { name: string; startAt?: number }) => void;
   update: (time: number) => void;
 }

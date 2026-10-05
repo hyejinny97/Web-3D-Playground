@@ -29,7 +29,7 @@ class Animal implements AnimalType {
       model: this.gltf.scene,
       clips: this.gltf.animations,
     });
-    this.animation.play("Idle");
+    this.animation.play({ name: "Idle" });
   }
 
   private async loadModel() {
