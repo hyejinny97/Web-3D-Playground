@@ -21,6 +21,7 @@ import image_url_solar_system from "@/assets/images/projects/solar_system.png";
 import image_url_gltf_model from "@/assets/images/projects/gltf_model.png";
 import image_url_follow_curve from "@/assets/images/projects/follow_curve.png";
 import image_url_animated_model from "@/assets/images/projects/animated_model.png";
+import image_url_clone_model from "@/assets/images/projects/clone_model.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -195,7 +196,7 @@ const THREE_D_FILE_PROJECTS = [
   {
     id: "clone-model",
     title: "Clone Model",
-    imageUrl: "",
+    imageUrl: image_url_clone_model,
     tags: [TAGS.gltf, TAGS.animation],
     component: lazy(() => import("@/components/projects/CloneModelCanvas")),
   },
