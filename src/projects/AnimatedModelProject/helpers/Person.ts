@@ -1,10 +1,8 @@
 import * as THREE from "three";
-import type {
-  AnimationHelperType,
-  LoadingOptionsType,
-} from "../AnimatedModelProject.types";
+import type { LoadingOptionsType } from "../AnimatedModelProject.types";
 import { GLTFLoader, type GLTF } from "three/examples/jsm/Addons.js";
-import AnimationHelper from "./AnimationHelper";
+import AnimationHelper from "@/helpers/AnimationHelper";
+import type { AnimationHelperType } from "@/helpers/AnimationHelper";
 
 class Person {
   private loadingOptions: LoadingOptionsType;
@@ -19,7 +17,10 @@ class Person {
   async init() {
     await this.loadModel();
     this.transform();
-    this.animation = new AnimationHelper({ model: this.gltf });
+    this.animation = new AnimationHelper({
+      model: this.gltf.scene,
+      clips: this.gltf.animations,
+    });
   }
 
   private async loadModel() {

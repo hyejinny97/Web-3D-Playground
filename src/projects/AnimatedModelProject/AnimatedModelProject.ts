@@ -50,7 +50,7 @@ class AnimatedModelProject extends BaseProject {
   }
 
   changeAnimation(name: AnimationNameType) {
-    this.person.animation.play(name);
+    this.person.animation.play({ name });
   }
 
   update(time: number) {
