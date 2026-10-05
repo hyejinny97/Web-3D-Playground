@@ -25,7 +25,10 @@ class Animal implements AnimalType {
   async init() {
     await this.loadModel();
     this.transform();
-    this.animation = new AnimationHelper({ model: this.gltf });
+    this.animation = new AnimationHelper({
+      model: this.gltf.scene,
+      clips: this.gltf.animations,
+    });
     this.animation.play("Idle");
   }
 

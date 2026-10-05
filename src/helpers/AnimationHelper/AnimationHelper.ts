@@ -1,24 +1,29 @@
 import * as THREE from "three";
-import type { GLTF } from "three/examples/jsm/Addons.js";
 import type { AnimationHelperType } from "./AnimationHelper.types";
 
 class AnimationHelper implements AnimationHelperType {
   private mixer: THREE.AnimationMixer;
-  private animations: THREE.AnimationClip[];
+  private clips: THREE.AnimationClip[];
   private playingAction: THREE.AnimationAction | null = null;
   private timer = new THREE.Timer();
 
-  constructor({ model }: { model: GLTF }) {
-    this.mixer = new THREE.AnimationMixer(model.scene);
-    this.animations = model.animations;
+  constructor({
+    model,
+    clips,
+  }: {
+    model: THREE.Object3D;
+    clips: THREE.AnimationClip[];
+  }) {
+    this.mixer = new THREE.AnimationMixer(model);
+    this.clips = clips;
   }
 
   getAnimationNames(): string[] {
-    return this.animations.map((animation) => animation.name);
+    return this.clips.map((clip) => clip.name);
   }
 
   play(name: string) {
-    const clip = THREE.AnimationClip.findByName(this.animations, name);
+    const clip = THREE.AnimationClip.findByName(this.clips, name);
     if (!clip) {
       console.warn(`'${name}' 이름의 animation은 없습니다.`);
       return;
