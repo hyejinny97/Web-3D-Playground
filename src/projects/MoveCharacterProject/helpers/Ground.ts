@@ -44,11 +44,11 @@ class Ground implements GroundType {
     this.texture.minFilter = THREE.NearestFilter;
     this.texture.wrapS = THREE.RepeatWrapping;
     this.texture.wrapT = THREE.RepeatWrapping;
-    this.texture.repeat.set(20, 10);
+    this.texture.repeat.set(20, 20);
   }
 
   private createGround() {
-    const geometry = new THREE.PlaneGeometry(50, 10);
+    const geometry = new THREE.PlaneGeometry(50, 30);
     const material = new THREE.MeshPhongMaterial({
       map: this.texture,
       side: THREE.DoubleSide,
