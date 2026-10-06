@@ -200,6 +200,13 @@ const THREE_D_FILE_PROJECTS = [
     tags: [TAGS.gltf, TAGS.animation],
     component: lazy(() => import("@/components/projects/CloneModelCanvas")),
   },
+  {
+    id: "move-character",
+    title: "Move a character",
+    imageUrl: "",
+    tags: [TAGS.gltf, TAGS.animation],
+    component: lazy(() => import("@/components/projects/MoveCharacterCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [
