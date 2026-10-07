@@ -1,10 +1,14 @@
 import * as THREE from "three";
 import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
-import type { LoadingOptionsType } from "./MoveCharacterProject.types";
+import type {
+  DirectionKeyType,
+  LoadingOptionsType,
+} from "./MoveCharacterProject.types";
 import type { ConstructorProps } from "@/types/project";
 import Ground from "./helpers/Ground";
 import Character from "./helpers/Character";
+import { isDirectionKey } from "./MoveCharacterProject.utils";
 
 type MoveCharacterProjectProps = ConstructorProps & {
   loadingOptions: LoadingOptionsType;
@@ -73,13 +77,10 @@ class MoveCharacterProject extends BaseProject {
   }
 
   setupEvent() {
-    const pressedKeys = new Set<string>();
+    const pressedKeys = new Set<DirectionKeyType>();
+    let isShiftKeyPressed: boolean = false;
 
-    this.handleKeyDown = (event: KeyboardEvent) => {
-      if (!this.character.direction) return;
-      if (!["w", "s", "a", "d"].includes(event.key)) return;
-      pressedKeys.add(event.key);
-
+    const rotateCharacter = () => {
       if (pressedKeys.has("w")) {
         if (pressedKeys.has("a")) this.character.direction.changeTo("WA");
         else if (pressedKeys.has("d")) this.character.direction.changeTo("WD");
@@ -95,8 +96,40 @@ class MoveCharacterProject extends BaseProject {
       }
     };
 
+    this.handleKeyDown = (event: KeyboardEvent) => {
+      if (!this.character.direction || !this.character.speed) return;
+      const keyInLowerCase = event.key.toLowerCase();
+
+      if (isDirectionKey(keyInLowerCase)) {
+        pressedKeys.add(keyInLowerCase);
+        rotateCharacter();
+      }
+      if (keyInLowerCase === "shift") {
+        isShiftKeyPressed = true;
+      }
+
+      if (pressedKeys.size > 0) {
+        if (isShiftKeyPressed) this.character.speed.changeTo("RUN");
+        else this.character.speed.changeTo("WALK");
+      }
+    };
+
     this.handleKeyUp = (event: KeyboardEvent) => {
-      pressedKeys.delete(event.key);
+      if (!this.character.speed) return;
+      const keyInLowerCase = event.key.toLowerCase();
+
+      if (isDirectionKey(keyInLowerCase)) {
+        pressedKeys.delete(keyInLowerCase);
+        rotateCharacter();
+        if (pressedKeys.size === 0) this.character.speed.changeTo("IDLE");
+      }
+
+      if (keyInLowerCase === "shift") {
+        isShiftKeyPressed = false;
+        if (pressedKeys.size > 0) {
+          this.character.speed.changeTo("WALK");
+        }
+      }
     };
 
     this.handleBlur = () => {

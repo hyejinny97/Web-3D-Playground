@@ -1,7 +1,15 @@
 import * as THREE from "three";
-import type { DIRECTION } from "./MoveCharacterProject.constants";
+import type {
+  DIRECTION,
+  DIRECTION_KEYS,
+  SPEED,
+} from "./MoveCharacterProject.constants";
 
 export type DirectionType = keyof typeof DIRECTION;
+
+export type DirectionKeyType = (typeof DIRECTION_KEYS)[number];
+
+export type SpeedType = keyof typeof SPEED;
 
 export interface LoadingOptionsType {
   onStart: () => void;
@@ -18,9 +26,15 @@ export interface CharacterDirectionType {
   update: () => void;
 }
 
+export interface CharacterSpeedType {
+  changeTo: (speed: SpeedType) => void;
+  update: (time: number) => void;
+}
+
 export interface CharacterType {
   root: THREE.Object3D;
   direction: CharacterDirectionType;
+  speed: CharacterSpeedType;
   init: () => void;
   update(time: number): void;
 }

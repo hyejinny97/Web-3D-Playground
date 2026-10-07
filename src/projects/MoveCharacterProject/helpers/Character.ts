@@ -3,6 +3,7 @@ import type { CharacterType } from "../MoveCharacterProject.types";
 import { GLTFLoader, type GLTF } from "three/examples/jsm/Addons.js";
 import AnimationHelper from "@/helpers/AnimationHelper";
 import CharacterDirection from "./CharacterDirection";
+import CharacterSpeed from "./CharacterSpeed";
 
 class Character implements CharacterType {
   private loadingManager: THREE.LoadingManager;
@@ -11,6 +12,7 @@ class Character implements CharacterType {
   private gltf!: GLTF;
   root!: THREE.Object3D;
   direction!: CharacterDirection;
+  speed!: CharacterSpeed;
 
   constructor({
     loadingManager,
@@ -27,10 +29,12 @@ class Character implements CharacterType {
     await this.loadModel();
     this.transform();
     this.setupAnimation();
+
     this.direction = new CharacterDirection({
       camera: this.camera,
       character: this.root,
     });
+    this.speed = new CharacterSpeed({ character: this.root });
   }
 
   private async loadModel() {
@@ -59,6 +63,7 @@ class Character implements CharacterType {
   update(time: number) {
     this.animation?.update(time);
     this.direction?.update();
+    this.speed?.update(time);
   }
 }
 
