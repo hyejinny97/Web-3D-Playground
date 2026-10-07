@@ -2,21 +2,35 @@ import * as THREE from "three";
 import type { CharacterType } from "../MoveCharacterProject.types";
 import { GLTFLoader, type GLTF } from "three/examples/jsm/Addons.js";
 import AnimationHelper from "@/helpers/AnimationHelper";
+import CharacterDirection from "./CharacterDirection";
 
 class Character implements CharacterType {
   private loadingManager: THREE.LoadingManager;
+  private camera: THREE.Camera;
   private animation!: AnimationHelper;
   private gltf!: GLTF;
   root!: THREE.Object3D;
+  direction!: CharacterDirection;
 
-  constructor({ loadingManager }: { loadingManager: THREE.LoadingManager }) {
+  constructor({
+    loadingManager,
+    camera,
+  }: {
+    loadingManager: THREE.LoadingManager;
+    camera: THREE.Camera;
+  }) {
     this.loadingManager = loadingManager;
+    this.camera = camera;
   }
 
   async init() {
     await this.loadModel();
     this.transform();
     this.setupAnimation();
+    this.direction = new CharacterDirection({
+      camera: this.camera,
+      character: this.root,
+    });
   }
 
   private async loadModel() {
@@ -44,6 +58,7 @@ class Character implements CharacterType {
 
   update(time: number) {
     this.animation?.update(time);
+    this.direction?.update();
   }
 }
 

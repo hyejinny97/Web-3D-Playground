@@ -15,11 +15,15 @@ class MoveCharacterProject extends BaseProject {
   private loadingOptions: LoadingOptionsType;
   private stopRender: boolean = false;
   private character!: Character;
+  private handleKeyDown!: (event: KeyboardEvent) => void;
+  private handleKeyUp!: (event: KeyboardEvent) => void;
+  private handleBlur!: (event: FocusEvent) => void;
 
   constructor({ canvasEl, loadingOptions }: MoveCharacterProjectProps) {
     super({ canvasEl });
     this.loadingOptions = loadingOptions;
     this.setupModel();
+    this.setupEvent();
   }
 
   init() {
@@ -49,7 +53,7 @@ class MoveCharacterProject extends BaseProject {
   async setupModel() {
     const loadingManager = this.createLoadingManager();
     const ground = new Ground();
-    this.character = new Character({ loadingManager });
+    this.character = new Character({ loadingManager, camera: this.camera! });
 
     await this.character.init();
     if (this.stopRender) return;
@@ -68,12 +72,51 @@ class MoveCharacterProject extends BaseProject {
     return manager;
   }
 
+  setupEvent() {
+    const pressedKeys = new Set<string>();
+
+    this.handleKeyDown = (event: KeyboardEvent) => {
+      if (!this.character.direction) return;
+      if (!["w", "s", "a", "d"].includes(event.key)) return;
+      pressedKeys.add(event.key);
+
+      if (pressedKeys.has("w")) {
+        if (pressedKeys.has("a")) this.character.direction.changeTo("WA");
+        else if (pressedKeys.has("d")) this.character.direction.changeTo("WD");
+        else this.character.direction.changeTo("W");
+      } else if (pressedKeys.has("s")) {
+        if (pressedKeys.has("a")) this.character.direction.changeTo("SA");
+        else if (pressedKeys.has("d")) this.character.direction.changeTo("SD");
+        else this.character.direction.changeTo("S");
+      } else if (pressedKeys.has("a")) {
+        this.character.direction.changeTo("A");
+      } else if (pressedKeys.has("d")) {
+        this.character.direction.changeTo("D");
+      }
+    };
+
+    this.handleKeyUp = (event: KeyboardEvent) => {
+      pressedKeys.delete(event.key);
+    };
+
+    this.handleBlur = () => {
+      pressedKeys.clear();
+    };
+
+    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keyup", this.handleKeyUp);
+    window.addEventListener("blur", this.handleBlur);
+  }
+
   update(time: number) {
     this.character.update(time);
   }
 
   dispose() {
     super.dispose();
+    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("keyup", this.handleKeyUp);
+    window.removeEventListener("blur", this.handleBlur);
     this.stopRender = true;
   }
 }
