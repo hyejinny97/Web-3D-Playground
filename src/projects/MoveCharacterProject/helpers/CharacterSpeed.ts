@@ -3,20 +3,33 @@ import type {
   CharacterSpeedType,
   SpeedType,
 } from "../MoveCharacterProject.types";
-import { SPEED } from "../MoveCharacterProject.constants";
+import { DIRECTION, SPEED } from "../MoveCharacterProject.constants";
+import type CharacterDirection from "./CharacterDirection";
 
 class CharacterSpeed implements CharacterSpeedType {
+  private camera: THREE.Camera;
   private model: THREE.Object3D;
-  private modelDirection = new THREE.Vector3();
-  private speed: number = SPEED.IDLE; // 단위: world unit/s
+  private direction: CharacterDirection;
+  private moveDirection = new THREE.Vector3();
   private then: number = 0; // 단위: s
+  value: SpeedType = "IDLE";
 
-  constructor({ character }: { character: THREE.Object3D }) {
+  constructor({
+    camera,
+    character,
+    direction,
+  }: {
+    camera: THREE.Camera;
+    character: THREE.Object3D;
+    direction: CharacterDirection;
+  }) {
+    this.camera = camera;
     this.model = character;
+    this.direction = direction;
   }
 
   changeTo(speed: SpeedType) {
-    this.speed = SPEED[speed];
+    this.value = speed;
   }
 
   update(time: number) {
@@ -24,14 +37,15 @@ class CharacterSpeed implements CharacterSpeedType {
     const delta = time - this.then;
     this.then = time;
 
-    this.model.getWorldDirection(this.modelDirection);
-    this.modelDirection.y = 0;
-    this.modelDirection.normalize();
+    const offset = DIRECTION[this.direction.value];
+    const speed = SPEED[this.value];
 
-    this.model.position.addScaledVector(
-      this.modelDirection,
-      this.speed * delta,
-    );
+    this.camera.getWorldDirection(this.moveDirection);
+    this.moveDirection.y = 0;
+    this.moveDirection.normalize();
+    this.moveDirection.applyAxisAngle(new THREE.Vector3(0, 1, 0), offset);
+
+    this.model.position.addScaledVector(this.moveDirection, speed * delta);
   }
 }
 

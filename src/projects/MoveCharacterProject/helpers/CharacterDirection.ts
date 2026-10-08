@@ -11,7 +11,7 @@ import type {
 class CharacterDirection implements CharacterDirectionType {
   private camera: THREE.Camera;
   private model: THREE.Object3D;
-  private offset: number = DIRECTION.S; // 단위: radian
+  value: DirectionType = "S";
 
   constructor({
     camera,
@@ -34,14 +34,15 @@ class CharacterDirection implements CharacterDirectionType {
   }
 
   changeTo(direction: DirectionType) {
-    this.offset = DIRECTION[direction];
+    this.value = direction;
   }
 
   update() {
+    const offset = DIRECTION[this.value];
     const targetQuaternion = new THREE.Quaternion();
     targetQuaternion.setFromAxisAngle(
       new THREE.Vector3(0, 1, 0),
-      this.getRelativeYawToCamera() + this.offset,
+      this.getRelativeYawToCamera() + offset,
     );
 
     this.model.quaternion.rotateTowards(

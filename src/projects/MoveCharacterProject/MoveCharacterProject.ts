@@ -3,6 +3,7 @@ import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
 import type {
   DirectionKeyType,
+  DirectionType,
   LoadingOptionsType,
 } from "./MoveCharacterProject.types";
 import type { ConstructorProps } from "@/types/project";
@@ -80,20 +81,31 @@ class MoveCharacterProject extends BaseProject {
     const pressedKeys = new Set<DirectionKeyType>();
     let isShiftKeyPressed: boolean = false;
 
-    const rotateCharacter = () => {
-      if (pressedKeys.has("w")) {
-        if (pressedKeys.has("a")) this.character.direction.changeTo("WA");
-        else if (pressedKeys.has("d")) this.character.direction.changeTo("WD");
-        else this.character.direction.changeTo("W");
-      } else if (pressedKeys.has("s")) {
-        if (pressedKeys.has("a")) this.character.direction.changeTo("SA");
-        else if (pressedKeys.has("d")) this.character.direction.changeTo("SD");
-        else this.character.direction.changeTo("S");
-      } else if (pressedKeys.has("a")) {
-        this.character.direction.changeTo("A");
-      } else if (pressedKeys.has("d")) {
-        this.character.direction.changeTo("D");
+    const moveCharacter = () => {
+      if (pressedKeys.size > 0) {
+        if (isShiftKeyPressed) this.character.speed.changeTo("RUN");
+        else this.character.speed.changeTo("WALK");
+      } else {
+        this.character.speed.changeTo("IDLE");
       }
+    };
+
+    const rotateCharacter = () => {
+      let newDirection: DirectionType = this.character.direction.value;
+      if (pressedKeys.has("w")) {
+        if (pressedKeys.has("a")) newDirection = "WA";
+        else if (pressedKeys.has("d")) newDirection = "WD";
+        else newDirection = "W";
+      } else if (pressedKeys.has("s")) {
+        if (pressedKeys.has("a")) newDirection = "SA";
+        else if (pressedKeys.has("d")) newDirection = "SD";
+        else newDirection = "S";
+      } else if (pressedKeys.has("a")) {
+        newDirection = "A";
+      } else if (pressedKeys.has("d")) {
+        newDirection = "D";
+      }
+      this.character.direction.changeTo(newDirection);
     };
 
     this.handleKeyDown = (event: KeyboardEvent) => {
@@ -103,33 +115,23 @@ class MoveCharacterProject extends BaseProject {
       if (isDirectionKey(keyInLowerCase)) {
         pressedKeys.add(keyInLowerCase);
         rotateCharacter();
-      }
-      if (keyInLowerCase === "shift") {
+      } else if (keyInLowerCase === "shift") {
         isShiftKeyPressed = true;
       }
-
-      if (pressedKeys.size > 0) {
-        if (isShiftKeyPressed) this.character.speed.changeTo("RUN");
-        else this.character.speed.changeTo("WALK");
-      }
+      moveCharacter();
     };
 
     this.handleKeyUp = (event: KeyboardEvent) => {
-      if (!this.character.speed) return;
+      if (!this.character.direction || !this.character.speed) return;
       const keyInLowerCase = event.key.toLowerCase();
 
       if (isDirectionKey(keyInLowerCase)) {
         pressedKeys.delete(keyInLowerCase);
         rotateCharacter();
-        if (pressedKeys.size === 0) this.character.speed.changeTo("IDLE");
-      }
-
-      if (keyInLowerCase === "shift") {
+      } else if (keyInLowerCase === "shift") {
         isShiftKeyPressed = false;
-        if (pressedKeys.size > 0) {
-          this.character.speed.changeTo("WALK");
-        }
       }
+      moveCharacter();
     };
 
     this.handleBlur = () => {

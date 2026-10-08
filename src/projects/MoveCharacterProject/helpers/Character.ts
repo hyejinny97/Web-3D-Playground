@@ -34,7 +34,11 @@ class Character implements CharacterType {
       camera: this.camera,
       character: this.root,
     });
-    this.speed = new CharacterSpeed({ character: this.root });
+    this.speed = new CharacterSpeed({
+      camera: this.camera,
+      character: this.root,
+      direction: this.direction,
+    });
   }
 
   private async loadModel() {

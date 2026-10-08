@@ -22,11 +22,13 @@ export interface GroundType {
 }
 
 export interface CharacterDirectionType {
+  value: DirectionType;
   changeTo: (direction: DirectionType) => void;
   update: () => void;
 }
 
 export interface CharacterSpeedType {
+  value: SpeedType;
   changeTo: (speed: SpeedType) => void;
   update: (time: number) => void;
 }
