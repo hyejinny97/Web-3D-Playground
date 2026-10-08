@@ -85,10 +85,33 @@ class Character implements CharacterType {
     }
   }
 
+  jump() {
+    this.animation.play({
+      name: "Jump",
+      loop: THREE.LoopOnce,
+      onFinished: () => {
+        switch (this.speed.value) {
+          case "IDLE":
+            this.animation.play({ name: "Idle" });
+            break;
+          case "WALK":
+            this.animation.play({ name: "Walk" });
+            break;
+          case "RUN":
+            this.animation.play({ name: "Run" });
+        }
+      },
+    });
+  }
+
   update(time: number) {
     this.animation?.update(time);
     this.direction?.update();
     this.speed?.update(time);
+  }
+
+  dispose() {
+    this.animation?.dispose();
   }
 }
 

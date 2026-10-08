@@ -115,10 +115,13 @@ class MoveCharacterProject extends BaseProject {
       if (isDirectionKey(keyInLowerCase)) {
         pressedKeys.add(keyInLowerCase);
         rotateCharacter();
+        moveCharacter();
       } else if (keyInLowerCase === "shift") {
         isShiftKeyPressed = true;
+        moveCharacter();
+      } else if (keyInLowerCase === " ") {
+        this.character.jump();
       }
-      moveCharacter();
     };
 
     this.handleKeyUp = (event: KeyboardEvent) => {
@@ -128,10 +131,11 @@ class MoveCharacterProject extends BaseProject {
       if (isDirectionKey(keyInLowerCase)) {
         pressedKeys.delete(keyInLowerCase);
         rotateCharacter();
+        moveCharacter();
       } else if (keyInLowerCase === "shift") {
         isShiftKeyPressed = false;
+        moveCharacter();
       }
-      moveCharacter();
     };
 
     this.handleBlur = () => {
@@ -149,6 +153,7 @@ class MoveCharacterProject extends BaseProject {
 
   dispose() {
     super.dispose();
+    this.character?.dispose();
     document.removeEventListener("keydown", this.handleKeyDown);
     document.removeEventListener("keyup", this.handleKeyUp);
     window.removeEventListener("blur", this.handleBlur);

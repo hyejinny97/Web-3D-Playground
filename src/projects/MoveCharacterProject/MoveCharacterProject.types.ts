@@ -40,5 +40,6 @@ export interface CharacterType {
   idle: () => void;
   walk: () => void;
   run: () => void;
+  jump: () => void;
   update(time: number): void;
 }
