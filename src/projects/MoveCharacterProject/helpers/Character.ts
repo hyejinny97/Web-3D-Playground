@@ -8,11 +8,11 @@ import CharacterSpeed from "./CharacterSpeed";
 class Character implements CharacterType {
   private loadingManager: THREE.LoadingManager;
   private camera: THREE.Camera;
-  private animation!: AnimationHelper;
   private gltf!: GLTF;
   root!: THREE.Object3D;
   direction!: CharacterDirection;
-  speed!: CharacterSpeed;
+  private speed!: CharacterSpeed;
+  private animation!: AnimationHelper;
 
   constructor({
     loadingManager,
@@ -62,6 +62,27 @@ class Character implements CharacterType {
       clips: this.gltf.animations,
     });
     this.animation.play({ name: "Idle" });
+  }
+
+  idle() {
+    if (this.speed.value !== "IDLE") {
+      this.speed.changeTo("IDLE");
+      this.animation.play({ name: "Idle" });
+    }
+  }
+
+  walk() {
+    if (this.speed.value !== "WALK") {
+      this.speed.changeTo("WALK");
+      this.animation.play({ name: "Walk" });
+    }
+  }
+
+  run() {
+    if (this.speed.value !== "RUN") {
+      this.speed.changeTo("RUN");
+      this.animation.play({ name: "Run" });
+    }
   }
 
   update(time: number) {

@@ -83,10 +83,10 @@ class MoveCharacterProject extends BaseProject {
 
     const moveCharacter = () => {
       if (pressedKeys.size > 0) {
-        if (isShiftKeyPressed) this.character.speed.changeTo("RUN");
-        else this.character.speed.changeTo("WALK");
+        if (isShiftKeyPressed) this.character.run();
+        else this.character.walk();
       } else {
-        this.character.speed.changeTo("IDLE");
+        this.character.idle();
       }
     };
 
@@ -109,7 +109,7 @@ class MoveCharacterProject extends BaseProject {
     };
 
     this.handleKeyDown = (event: KeyboardEvent) => {
-      if (!this.character.direction || !this.character.speed) return;
+      if (!this.character.direction) return;
       const keyInLowerCase = event.key.toLowerCase();
 
       if (isDirectionKey(keyInLowerCase)) {
@@ -122,7 +122,7 @@ class MoveCharacterProject extends BaseProject {
     };
 
     this.handleKeyUp = (event: KeyboardEvent) => {
-      if (!this.character.direction || !this.character.speed) return;
+      if (!this.character.direction) return;
       const keyInLowerCase = event.key.toLowerCase();
 
       if (isDirectionKey(keyInLowerCase)) {

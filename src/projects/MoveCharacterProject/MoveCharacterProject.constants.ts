@@ -17,6 +17,6 @@ export const DIRECTION_KEYS = ["w", "s", "a", "d"] as const;
 
 export const SPEED = {
   IDLE: 0,
-  WALK: 1,
-  RUN: 3,
+  WALK: 3,
+  RUN: 7,
 } as const; // 단위: world unit/s

@@ -36,7 +36,9 @@ export interface CharacterSpeedType {
 export interface CharacterType {
   root: THREE.Object3D;
   direction: CharacterDirectionType;
-  speed: CharacterSpeedType;
   init: () => void;
+  idle: () => void;
+  walk: () => void;
+  run: () => void;
   update(time: number): void;
 }
