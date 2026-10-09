@@ -20,3 +20,5 @@ export const SPEED = {
   WALK: 3,
   RUN: 7,
 } as const; // 단위: world unit/s
+
+export const DISTANCE_FROM_CHARACTER = 5;

@@ -10,6 +10,7 @@ import type { ConstructorProps } from "@/types/project";
 import Ground from "./helpers/Ground";
 import Character from "./helpers/Character";
 import { isDirectionKey } from "./MoveCharacterProject.utils";
+import { DISTANCE_FROM_CHARACTER } from "./MoveCharacterProject.constants";
 
 type MoveCharacterProjectProps = ConstructorProps & {
   loadingOptions: LoadingOptionsType;
@@ -23,6 +24,8 @@ class MoveCharacterProject extends BaseProject {
   private handleKeyDown!: (event: KeyboardEvent) => void;
   private handleKeyUp!: (event: KeyboardEvent) => void;
   private handleBlur!: (event: FocusEvent) => void;
+  private distance = new THREE.Vector3();
+  private positionFromCharacter = new THREE.Vector3();
 
   constructor({ canvasEl, loadingOptions }: MoveCharacterProjectProps) {
     super({ canvasEl });
@@ -44,6 +47,17 @@ class MoveCharacterProject extends BaseProject {
     super.setupCamera();
     if (this.camera) {
       this.camera.position.set(0, 3, 5);
+    }
+  }
+
+  setupControls() {
+    super.setupControls();
+    if (this.controls) {
+      this.controls.enablePan = false;
+      this.controls.minDistance = 5;
+      this.controls.maxDistance = 15;
+      this.controls.maxPolarAngle = Math.PI / 2 - 0.05;
+      this.controls.update();
     }
   }
 
@@ -147,8 +161,32 @@ class MoveCharacterProject extends BaseProject {
     window.addEventListener("blur", this.handleBlur);
   }
 
+  followCharacter() {
+    if (this.camera && this.controls && this.character.root) {
+      this.camera.getWorldDirection(this.distance);
+      this.distance.y = 0;
+      this.distance.normalize();
+      this.distance.negate();
+
+      this.distance.multiplyScalar(DISTANCE_FROM_CHARACTER);
+      this.distance.y = 0.5;
+
+      this.positionFromCharacter
+        .copy(this.character.root.position)
+        .add(this.distance);
+      this.camera.position.copy(this.positionFromCharacter);
+      this.controls.target.set(
+        this.character.root.position.x,
+        this.character.root.position.y,
+        this.character.root.position.z,
+      );
+      this.controls.update();
+    }
+  }
+
   update(time: number) {
     this.character.update(time);
+    this.followCharacter();
   }
 
   dispose() {
