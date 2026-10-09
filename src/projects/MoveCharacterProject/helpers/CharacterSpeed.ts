@@ -3,7 +3,11 @@ import type {
   CharacterSpeedType,
   SpeedType,
 } from "../MoveCharacterProject.types";
-import { DIRECTION, SPEED } from "../MoveCharacterProject.constants";
+import {
+  DIRECTION,
+  JUMP_ACCELERATION,
+  SPEED,
+} from "../MoveCharacterProject.constants";
 import type CharacterDirection from "./CharacterDirection";
 
 class CharacterSpeed implements CharacterSpeedType {
@@ -12,6 +16,8 @@ class CharacterSpeed implements CharacterSpeedType {
   private direction: CharacterDirection;
   private moveDirection = new THREE.Vector3();
   private then: number = 0; // 단위: s
+  private jumped: boolean = false;
+  private prevSpeed: number = 0;
   value: SpeedType = "IDLE";
 
   constructor({
@@ -32,13 +38,25 @@ class CharacterSpeed implements CharacterSpeedType {
     this.value = speed;
   }
 
+  jumpStart() {
+    this.jumped = true;
+  }
+
+  jumpEnd() {
+    this.jumped = false;
+  }
+
   update(time: number) {
     time *= 0.001; // 단위: s
     const delta = time - this.then;
     this.then = time;
 
     const offset = DIRECTION[this.direction.value];
-    const speed = SPEED[this.value];
+    let speed: number = SPEED[this.value];
+    if (this.jumped) {
+      speed = Math.max(0, this.prevSpeed + JUMP_ACCELERATION * delta);
+    }
+    this.prevSpeed = speed;
 
     this.camera.getWorldDirection(this.moveDirection);
     this.moveDirection.y = 0;

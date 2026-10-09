@@ -86,10 +86,12 @@ class Character implements CharacterType {
   }
 
   jump() {
+    this.speed.jumpStart();
     this.animation.play({
       name: "Jump",
       loop: THREE.LoopOnce,
       onFinished: () => {
+        this.speed.jumpEnd();
         switch (this.speed.value) {
           case "IDLE":
             this.animation.play({ name: "Idle" });

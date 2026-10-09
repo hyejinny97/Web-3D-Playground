@@ -30,6 +30,8 @@ export interface CharacterDirectionType {
 export interface CharacterSpeedType {
   value: SpeedType;
   changeTo: (speed: SpeedType) => void;
+  jumpStart: () => void;
+  jumpEnd: () => void;
   update: (time: number) => void;
 }
 

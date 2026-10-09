@@ -21,4 +21,6 @@ export const SPEED = {
   RUN: 7,
 } as const; // 단위: world unit/s
 
+export const JUMP_ACCELERATION = -1.2; // 단위: world unit/s^2
+
 export const DISTANCE_FROM_CHARACTER = 5;
