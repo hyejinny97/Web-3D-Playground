@@ -9,7 +9,7 @@ class AnimationHelper implements AnimationHelperType {
   private mixer: THREE.AnimationMixer;
   private clips: THREE.AnimationClip[];
   private playingAction: THREE.AnimationAction | null = null;
-  private timer = new THREE.Timer();
+  private then: number = 0;
   private handleFinished: (event: FinishEvent) => void;
   private finishedEventHandlers: {
     name: string;
@@ -87,8 +87,10 @@ class AnimationHelper implements AnimationHelperType {
   }
 
   update(time: number) {
-    this.timer.update(time);
-    const delta = this.timer.getDelta();
+    time *= 0.001; // 단위: s
+    const delta = time - this.then;
+    this.then = time;
+
     if (this.mixer) this.mixer.update(delta);
   }
 
