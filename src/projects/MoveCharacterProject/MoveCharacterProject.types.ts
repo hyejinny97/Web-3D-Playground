@@ -17,8 +17,9 @@ export interface LoadingOptionsType {
   onLoad: () => void;
 }
 
-export interface GroundType {
+export interface InfiniteGroundType {
   root: THREE.Object3D;
+  update: () => void;
 }
 
 export interface CharacterDirectionType {

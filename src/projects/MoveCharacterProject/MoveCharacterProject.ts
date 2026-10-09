@@ -7,7 +7,7 @@ import type {
   LoadingOptionsType,
 } from "./MoveCharacterProject.types";
 import type { ConstructorProps } from "@/types/project";
-import Ground from "./helpers/Ground";
+import InfiniteGround from "./helpers/InfiniteGround";
 import Character from "./helpers/Character";
 import { isDirectionKey } from "./MoveCharacterProject.utils";
 import { DISTANCE_FROM_CHARACTER } from "./MoveCharacterProject.constants";
@@ -20,6 +20,7 @@ type MoveCharacterProjectProps = ConstructorProps & {
 class MoveCharacterProject extends BaseProject {
   private loadingOptions: LoadingOptionsType;
   private stopRender: boolean = false;
+  private ground!: InfiniteGround;
   private character!: Character;
   private handleKeyDown!: (event: KeyboardEvent) => void;
   private handleKeyUp!: (event: KeyboardEvent) => void;
@@ -69,15 +70,22 @@ class MoveCharacterProject extends BaseProject {
     this.scene?.add(directionalLight);
   }
 
+  setupScene() {
+    super.setupScene();
+    if (this.scene) {
+      this.scene.fog = new THREE.Fog(0x000000, 10, 20);
+    }
+  }
+
   async setupModel() {
     const loadingManager = this.createLoadingManager();
-    const ground = new Ground();
+    this.ground = new InfiniteGround({ camera: this.camera! });
     this.character = new Character({ loadingManager, camera: this.camera! });
 
     await this.character.init();
     if (this.stopRender) return;
 
-    this.scene?.add(ground.root);
+    this.scene?.add(this.ground.root);
     this.scene?.add(this.character.root);
   }
 
@@ -185,6 +193,7 @@ class MoveCharacterProject extends BaseProject {
   }
 
   update(time: number) {
+    this.ground.update();
     this.character.update(time);
     this.followCharacter();
   }

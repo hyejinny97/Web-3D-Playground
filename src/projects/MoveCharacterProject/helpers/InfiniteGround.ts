@@ -1,12 +1,17 @@
 import * as THREE from "three";
-import { TILE_COLOR } from "../MoveCharacterProject.constants";
-import type { GroundType } from "../MoveCharacterProject.types";
+import {
+  GROUND_OFFSET_SPEED_SCALE,
+  TILE_COLOR,
+} from "../MoveCharacterProject.constants";
+import type { InfiniteGroundType } from "../MoveCharacterProject.types";
 
-class Ground implements GroundType {
+class InfiniteGround implements InfiniteGroundType {
+  private camera: THREE.Camera;
   private texture!: THREE.CanvasTexture<HTMLCanvasElement>;
   root!: THREE.Object3D;
 
-  constructor() {
+  constructor({ camera }: { camera: THREE.Camera }) {
+    this.camera = camera;
     this.createTileTexture();
     this.createGround();
     this.transform();
@@ -48,7 +53,7 @@ class Ground implements GroundType {
   }
 
   private createGround() {
-    const geometry = new THREE.PlaneGeometry(50, 30);
+    const geometry = new THREE.PlaneGeometry(50, 50);
     const material = new THREE.MeshPhongMaterial({
       map: this.texture,
       side: THREE.DoubleSide,
@@ -59,6 +64,18 @@ class Ground implements GroundType {
   private transform() {
     this.root.rotateX(-Math.PI / 2);
   }
+
+  update() {
+    if (this.camera && this.texture) {
+      this.root.position.x = this.camera.position.x;
+      this.root.position.z = this.camera.position.z;
+
+      this.texture.offset.x =
+        this.camera.position.x * GROUND_OFFSET_SPEED_SCALE;
+      this.texture.offset.y =
+        -this.camera.position.z * GROUND_OFFSET_SPEED_SCALE;
+    }
+  }
 }
 
-export default Ground;
+export default InfiniteGround;

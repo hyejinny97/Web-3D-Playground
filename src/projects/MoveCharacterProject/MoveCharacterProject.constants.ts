@@ -11,7 +11,7 @@ export const DIRECTION = {
   WD: -Math.PI / 4,
 } as const; // 단위: radian
 
-export const MAX_ROTATION_PER_FRAME = 12; // 단위: degree
+export const MAX_ROTATION_PER_FRAME = 30; // 단위: degree
 
 export const DIRECTION_KEYS = ["w", "s", "a", "d"] as const;
 
@@ -24,3 +24,5 @@ export const SPEED = {
 export const JUMP_ACCELERATION = -1.2; // 단위: world unit/s^2
 
 export const DISTANCE_FROM_CHARACTER = 5;
+
+export const GROUND_OFFSET_SPEED_SCALE = 0.5;
