@@ -11,10 +11,12 @@ class BaseProject implements Project {
   controls: OrbitControls | undefined;
   resizeObserver: ResizeObserver | undefined;
   controlUI: ConstructorProps["controlUI"];
+  timer = new THREE.Timer();
 
   constructor({ canvasEl, controlUI }: ConstructorProps) {
     this.canvasEl = canvasEl;
     this.controlUI = controlUI;
+    this.timer.connect(document);
     this.init();
   }
 
@@ -89,12 +91,23 @@ class BaseProject implements Project {
       this.camera.updateProjectionMatrix();
     }
     this.renderer?.setSize(width, height, false);
-    this.render();
+    this.draw();
   }
 
-  render(time?: number) {
-    this.update(time ?? performance.now());
+  draw() {
     this.renderer?.render(this.scene!, this.camera!);
+  }
+
+  render() {
+    if (document.hidden) {
+      return;
+    }
+
+    this.timer.update();
+    const elapsedTime = this.timer.getElapsed() * 1000; // 단위: ms
+
+    this.update(elapsedTime);
+    this.draw();
   }
 
   renderLoop() {
