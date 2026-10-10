@@ -11,9 +11,12 @@ import InfiniteGround from "./helpers/InfiniteGround";
 import Character from "./helpers/Character";
 import { isDirectionKey } from "./MoveCharacterProject.utils";
 import { DISTANCE_FROM_CHARACTER } from "./MoveCharacterProject.constants";
+import type { KeyboardKeyType } from "@/components/projects/MoveCharacterCanvas/MoveCharacterCanvas.types";
 
 type MoveCharacterProjectProps = ConstructorProps & {
   loadingOptions: LoadingOptionsType;
+  selectKey: (key: KeyboardKeyType) => void;
+  unselectKey: (key: KeyboardKeyType) => void;
 };
 
 @RenderLoop()
@@ -27,10 +30,19 @@ class MoveCharacterProject extends BaseProject {
   private handleBlur!: (event: FocusEvent) => void;
   private distance = new THREE.Vector3();
   private positionFromCharacter = new THREE.Vector3();
+  private selectKey: (key: KeyboardKeyType) => void;
+  private unselectKey: (key: KeyboardKeyType) => void;
 
-  constructor({ canvasEl, loadingOptions }: MoveCharacterProjectProps) {
+  constructor({
+    canvasEl,
+    loadingOptions,
+    selectKey,
+    unselectKey,
+  }: MoveCharacterProjectProps) {
     super({ canvasEl });
     this.loadingOptions = loadingOptions;
+    this.selectKey = selectKey;
+    this.unselectKey = unselectKey;
     this.setupModel();
     this.setupEvent();
   }
@@ -138,11 +150,14 @@ class MoveCharacterProject extends BaseProject {
         pressedKeys.add(keyInLowerCase);
         rotateCharacter();
         moveCharacter();
+        this.selectKey(keyInLowerCase);
       } else if (keyInLowerCase === "shift") {
         isShiftKeyPressed = true;
         moveCharacter();
+        this.selectKey(keyInLowerCase);
       } else if (keyInLowerCase === " ") {
         this.character.jump();
+        this.selectKey(keyInLowerCase);
       }
     };
 
@@ -154,9 +169,13 @@ class MoveCharacterProject extends BaseProject {
         pressedKeys.delete(keyInLowerCase);
         rotateCharacter();
         moveCharacter();
+        this.unselectKey(keyInLowerCase);
       } else if (keyInLowerCase === "shift") {
         isShiftKeyPressed = false;
         moveCharacter();
+        this.unselectKey(keyInLowerCase);
+      } else if (keyInLowerCase === " ") {
+        this.unselectKey(keyInLowerCase);
       }
     };
 
