@@ -41,6 +41,9 @@ const TagSelect = () => {
           ))}
         </Stack>
       )}
+      MenuProps={{
+        MenuListProps: { style: { maxHeight: "300px", overflowY: "scroll" } },
+      }}
     >
       {Object.entries(TAGS).map(([value, { label, color }]) => (
         <Option key={value} value={value}>
