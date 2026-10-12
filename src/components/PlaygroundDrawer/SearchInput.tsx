@@ -40,7 +40,12 @@ const SearchInput = () => {
       {ALL_PROJECTS.map(
         ({ id, title }) =>
           id !== BASIC_PROJECT.id && (
-            <AutocompleteOption key={id} label={title} value={title}>
+            <AutocompleteOption
+              className="[&>.JinniMenuItemButton]:text-left"
+              key={id}
+              label={title}
+              value={title}
+            >
               {title}
             </AutocompleteOption>
           ),
