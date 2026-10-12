@@ -10,3 +10,7 @@
     height: 8px; /* 가로 스크롤바 높이 */
   }
 }
+
+.JinniBackdrop.invisible {
+  visibility: visible;
+}
