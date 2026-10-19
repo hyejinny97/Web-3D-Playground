@@ -5,7 +5,7 @@ import { GROUND_WIDTH } from "../FireCannonProject.constants";
 
 class Cannon implements CannonType {
   private loadingManager: THREE.LoadingManager;
-  root: THREE.Object3D | null = null;
+  model: THREE.Object3D | null = null;
 
   constructor({ loadingManager }: { loadingManager: THREE.LoadingManager }) {
     this.loadingManager = loadingManager;
@@ -19,13 +19,13 @@ class Cannon implements CannonType {
   private async loadGLTF() {
     const loader = new GLTFLoader(this.loadingManager);
     const gltf = await loader.loadAsync("/models/cannon.glb");
-    this.root = gltf.scene;
+    this.model = gltf.scene;
   }
 
   private transform() {
-    if (this.root) {
-      this.root.rotateY(-Math.PI / 2);
-      this.root.position.set(-GROUND_WIDTH / 2 + 3, 0.25, 0);
+    if (this.model) {
+      this.model.rotateY(-Math.PI / 2);
+      this.model.position.set(-GROUND_WIDTH / 2 + 3, 0.25, 0);
     }
   }
 }

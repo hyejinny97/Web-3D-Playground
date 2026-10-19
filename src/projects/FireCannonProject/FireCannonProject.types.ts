@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 import type {
   CONCRETE_TEXTURES,
   METAL_TEXTURES,
@@ -15,20 +16,21 @@ export interface LoadManagerType {
 }
 
 export interface GroundType {
-  root: THREE.Object3D | null;
+  model: THREE.Object3D | null;
+  body: CANNON.Body | null;
   init: () => void;
 }
 
 export interface CannonType {
-  root: THREE.Object3D | null;
+  model: THREE.Object3D | null;
   init: () => void;
 }
 
 export interface CannonBallType {
-  root: THREE.Object3D;
+  model: THREE.Object3D;
 }
 
 export interface PyramidBoxesType {
-  root: THREE.Object3D | null;
+  model: THREE.Object3D | null;
   init: () => void;
 }

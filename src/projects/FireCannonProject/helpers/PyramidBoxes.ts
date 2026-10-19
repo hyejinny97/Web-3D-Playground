@@ -14,7 +14,7 @@ class PyramidBoxes implements PyramidBoxesType {
   private loadingManager: THREE.LoadingManager;
   private floors: number;
   private textures: Partial<Record<MetalTextureType, THREE.Texture>> = {};
-  root: THREE.Object3D | null = null;
+  model: THREE.Object3D | null = null;
 
   constructor({
     loadingManager,
@@ -52,21 +52,21 @@ class PyramidBoxes implements PyramidBoxesType {
     const material = new THREE.MeshStandardMaterial({ ...this.textures });
     const mesh = new THREE.Mesh(geometry, material);
 
-    this.root = new THREE.Object3D();
+    this.model = new THREE.Object3D();
     for (let floor = this.floors; floor > 0; floor--) {
       const boxCnt = 1 + (floor - 1) * BOX_REDUCTION;
       for (let idx = 0; idx < boxCnt; idx++) {
         const box = mesh.clone();
         box.position.x = (-boxCnt / 2 + idx) * BOX_SIZE;
         box.position.y = (this.floors - floor) * BOX_SIZE;
-        this.root?.add(box);
+        this.model?.add(box);
       }
     }
   }
 
   private transform() {
-    this.root?.position.set(GROUND_WIDTH / 2 - 3, BOX_SIZE, 0);
-    this.root?.rotateY(-Math.PI / 2);
+    this.model?.position.set(GROUND_WIDTH / 2 - 3, BOX_SIZE, 0);
+    this.model?.rotateY(-Math.PI / 2);
   }
 }
 

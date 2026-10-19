@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 class CannonBall {
-  root!: THREE.Object3D;
+  model!: THREE.Object3D;
 
   constructor() {
     this.setupModel();
@@ -14,7 +14,7 @@ class CannonBall {
       metalness: 0.5,
       roughness: 0.5,
     });
-    this.root = new THREE.Mesh(geometry, material);
+    this.model = new THREE.Mesh(geometry, material);
   }
 }
 

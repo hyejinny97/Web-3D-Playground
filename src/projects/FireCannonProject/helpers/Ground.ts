@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 import type {
   ConcreteTextureType,
   GroundType,
@@ -12,7 +13,8 @@ import {
 class Ground implements GroundType {
   private loadingManager: THREE.LoadingManager;
   private textures: Partial<Record<ConcreteTextureType, THREE.Texture>> = {};
-  root: THREE.Object3D | null = null;
+  model: THREE.Object3D | null = null;
+  body: CANNON.Body | null = null;
 
   constructor({ loadingManager }: { loadingManager: THREE.LoadingManager }) {
     this.loadingManager = loadingManager;
@@ -21,6 +23,7 @@ class Ground implements GroundType {
   async init() {
     await this.loadTextures();
     this.setupModel();
+    this.setupBody();
     this.transform();
   }
 
@@ -54,11 +57,21 @@ class Ground implements GroundType {
       displacementScale: 0.5,
       side: THREE.DoubleSide,
     });
-    this.root = new THREE.Mesh(geometry, material);
+    this.model = new THREE.Mesh(geometry, material);
+  }
+
+  private setupBody() {
+    const shape = new CANNON.Plane();
+    const material = new CANNON.Material("ground");
+    this.body = new CANNON.Body({
+      mass: 0,
+      shape,
+      material: material,
+    });
   }
 
   private transform() {
-    this.root?.rotateX(-Math.PI / 2);
+    this.body?.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
   }
 }
 
