@@ -74,7 +74,7 @@ class FireCannonProject extends BaseProject {
     this.models = [ground.model, cannon.model, pyramidBoxes.model].filter(
       (model) => model !== null,
     );
-    this.bodies = [ground.body].filter((model) => model !== null);
+    this.bodies = [ground.body, cannon.body].filter((model) => model !== null);
 
     this.models.forEach((model) => this.scene?.add(model));
     this.bodies.forEach((body) => this.physics.addBody(body));
