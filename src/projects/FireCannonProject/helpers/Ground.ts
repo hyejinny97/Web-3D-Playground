@@ -3,7 +3,11 @@ import type {
   ConcreteTextureType,
   GroundType,
 } from "../FireCannonProject.types";
-import { CONCRETE_TEXTURES, GROUND_SIZE } from "../FireCannonProject.constants";
+import {
+  CONCRETE_TEXTURES,
+  GROUND_HEIGHT,
+  GROUND_WIDTH,
+} from "../FireCannonProject.constants";
 
 class Ground implements GroundType {
   private loadingManager: THREE.LoadingManager;
@@ -17,6 +21,7 @@ class Ground implements GroundType {
   async init() {
     await this.loadTextures();
     this.setupModel();
+    this.transform();
   }
 
   private async loadTextures() {
@@ -29,7 +34,7 @@ class Ground implements GroundType {
           texture.colorSpace = colorSpace;
           texture.wrapS = THREE.MirroredRepeatWrapping;
           texture.wrapT = THREE.MirroredRepeatWrapping;
-          texture.repeat.set(2, 2);
+          texture.repeat.set(10, 5);
           this.textures[textureName] = texture;
         },
       ),
@@ -38,10 +43,10 @@ class Ground implements GroundType {
 
   private setupModel() {
     const geometry = new THREE.PlaneGeometry(
-      GROUND_SIZE,
-      GROUND_SIZE,
-      128,
-      128,
+      GROUND_WIDTH,
+      GROUND_HEIGHT,
+      150,
+      150,
     );
     const material = new THREE.MeshStandardMaterial({
       ...this.textures,
@@ -50,7 +55,10 @@ class Ground implements GroundType {
       side: THREE.DoubleSide,
     });
     this.root = new THREE.Mesh(geometry, material);
-    this.root.rotateX(-Math.PI / 2);
+  }
+
+  private transform() {
+    this.root?.rotateX(-Math.PI / 2);
   }
 }
 

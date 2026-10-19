@@ -4,7 +4,8 @@ import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
 import type { LoadManagerType } from "./FireCannonProject.types";
 import Ground from "./helpers/Ground";
-import { GROUND_SIZE } from "./FireCannonProject.constants";
+import { GROUND_HEIGHT } from "./FireCannonProject.constants";
+import Cannon from "./helpers/Cannon";
 
 type FireCannonProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -33,18 +34,20 @@ class FireCannonProject extends BaseProject {
   setupCamera() {
     super.setupCamera();
     if (this.camera) {
-      this.camera.position.set(0, 1.5, GROUND_SIZE / 2);
+      this.camera.position.set(0, 3, GROUND_HEIGHT / 2);
     }
   }
 
   async setupModel() {
     const loadingManager = this.createLoadingManager();
     const ground = new Ground({ loadingManager });
+    const cannon = new Cannon({ loadingManager });
 
-    await ground.init();
+    await Promise.allSettled([ground.init(), cannon.init()]);
     if (this.stopRender) return;
 
     if (ground.root) this.scene?.add(ground.root);
+    if (cannon.root) this.scene?.add(cannon.root);
   }
 
   createLoadingManager(): THREE.LoadingManager {

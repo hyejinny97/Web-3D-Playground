@@ -13,3 +13,8 @@ export interface GroundType {
   root: THREE.Object3D | null;
   init: () => void;
 }
+
+export interface CannonType {
+  root: THREE.Object3D | null;
+  init: () => void;
+}

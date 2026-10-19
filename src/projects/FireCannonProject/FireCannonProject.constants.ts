@@ -27,4 +27,6 @@ export const CONCRETE_TEXTURES = {
   },
 };
 
-export const GROUND_SIZE = 10;
+export const GROUND_WIDTH = 15;
+
+export const GROUND_HEIGHT = 10;
