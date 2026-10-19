@@ -210,13 +210,25 @@ const THREE_D_FILE_PROJECTS = [
   },
 ];
 
+const PHYSICS_PROJECTS = [
+  {
+    id: "fire-cannon",
+    title: "Fire a cannon",
+    imageUrl: "",
+    tags: [TAGS.cannon, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/FireCannonCanvas")),
+  },
+];
+
 export const ALL_PROJECTS = [
   BASIC_PROJECT,
   ...MODEL_PROJECTS,
   ...THREE_D_FILE_PROJECTS,
+  ...PHYSICS_PROJECTS,
 ];
 
 export const PROJECTS_BY_DOMAIN = [
   { domain: "Model", projects: MODEL_PROJECTS },
   { domain: "3D File", projects: THREE_D_FILE_PROJECTS },
+  { domain: "Physics", projects: PHYSICS_PROJECTS },
 ];

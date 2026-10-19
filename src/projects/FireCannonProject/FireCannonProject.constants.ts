@@ -1,0 +1,30 @@
+import * as THREE from "three";
+
+export const CONCRETE_TEXTURES = {
+  aoMap: {
+    url: "/textures/concrete/concrete_arm.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  roughnessMap: {
+    url: "/textures/concrete/concrete_arm.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  metalMap: {
+    url: "/textures/concrete/concrete_arm.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  map: {
+    url: "/textures/concrete/concrete_color.jpg",
+    colorSpace: THREE.SRGBColorSpace,
+  },
+  normalMap: {
+    url: "/textures/concrete/concrete_normal.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  displacementMap: {
+    url: "/textures/concrete/concrete_height.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+};
+
+export const GROUND_SIZE = 10;
