@@ -1,7 +1,12 @@
 import * as THREE from "three";
-import type { CONCRETE_TEXTURES } from "./FireCannonProject.constants";
+import type {
+  CONCRETE_TEXTURES,
+  METAL_TEXTURES,
+} from "./FireCannonProject.constants";
 
 export type ConcreteTextureType = keyof typeof CONCRETE_TEXTURES;
+
+export type MetalTextureType = keyof typeof METAL_TEXTURES;
 
 export interface LoadManagerType {
   onStart: () => void;
@@ -15,6 +20,11 @@ export interface GroundType {
 }
 
 export interface CannonType {
+  root: THREE.Object3D | null;
+  init: () => void;
+}
+
+export interface PyramidBoxesType {
   root: THREE.Object3D | null;
   init: () => void;
 }

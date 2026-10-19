@@ -27,6 +27,37 @@ export const CONCRETE_TEXTURES = {
   },
 };
 
+export const METAL_TEXTURES = {
+  aoMap: {
+    url: "/textures/metal/metal_arm.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  roughnessMap: {
+    url: "/textures/metal/metal_arm.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  metalMap: {
+    url: "/textures/metal/metal_arm.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  map: {
+    url: "/textures/metal/metal_color.jpg",
+    colorSpace: THREE.SRGBColorSpace,
+  },
+  normalMap: {
+    url: "/textures/metal/metal_normal.jpg",
+    colorSpace: THREE.NoColorSpace,
+  },
+  displacementMap: {
+    url: "/textures/metal/metal_height.png",
+    colorSpace: THREE.NoColorSpace,
+  },
+};
+
 export const GROUND_WIDTH = 15;
 
 export const GROUND_HEIGHT = 10;
+
+export const BOX_SIZE = 0.5;
+
+export const BOX_REDUCTION = 2;
