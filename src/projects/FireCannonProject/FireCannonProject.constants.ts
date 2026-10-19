@@ -58,6 +58,6 @@ export const GROUND_WIDTH = 15;
 
 export const GROUND_HEIGHT = 10;
 
-export const BOX_SIZE = 0.5;
+export const BOX_SIZE = 0.3;
 
 export const BOX_REDUCTION = 2;

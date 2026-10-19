@@ -24,6 +24,10 @@ export interface CannonType {
   init: () => void;
 }
 
+export interface CannonBallType {
+  root: THREE.Object3D;
+}
+
 export interface PyramidBoxesType {
   root: THREE.Object3D | null;
   init: () => void;

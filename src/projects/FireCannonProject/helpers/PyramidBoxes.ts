@@ -57,7 +57,7 @@ class PyramidBoxes implements PyramidBoxesType {
       const boxCnt = 1 + (floor - 1) * BOX_REDUCTION;
       for (let idx = 0; idx < boxCnt; idx++) {
         const box = mesh.clone();
-        box.position.x = BOX_REDUCTION / 2 + (-boxCnt / 2 + idx) * BOX_SIZE;
+        box.position.x = (-boxCnt / 2 + idx) * BOX_SIZE;
         box.position.y = (this.floors - floor) * BOX_SIZE;
         this.root?.add(box);
       }

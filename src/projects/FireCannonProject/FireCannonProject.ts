@@ -50,7 +50,7 @@ class FireCannonProject extends BaseProject {
     const loadingManager = this.createLoadingManager();
     const ground = new Ground({ loadingManager });
     const cannon = new Cannon({ loadingManager });
-    const pyramidBoxes = new PyramidBoxes({ loadingManager });
+    const pyramidBoxes = new PyramidBoxes({ loadingManager, floors: 7 });
 
     await Promise.allSettled([
       ground.init(),
