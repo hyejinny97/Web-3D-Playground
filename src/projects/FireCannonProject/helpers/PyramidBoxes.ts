@@ -75,23 +75,26 @@ class PyramidBoxes implements PyramidBoxesType {
         shape,
         material,
       });
+      body.sleep();
       this.bodies.push(body);
     }
   }
 
   private transform() {
+    const GAP = 0.001;
+    const STEP = BOX_SIZE + GAP;
     const ROTATION_Y = -Math.PI / 2;
     let boxes = 0;
     for (let row = this.floors; row > 0; row--) {
       const boxCnt = 1 + (row - 1) * BOX_REDUCTION;
       const pivot = new THREE.Vector3(
         GROUND_WIDTH / 2 - 3,
-        BOX_SIZE + (this.floors - row) * BOX_SIZE,
+        0.1 + BOX_SIZE / 2 + (this.floors - row) * STEP,
         0,
       );
       for (let column = 0; column < boxCnt; column++) {
         const body = this.bodies[boxes + column];
-        const radius = -(-boxCnt / 2 + column) * BOX_SIZE;
+        const radius = -(-boxCnt / 2 + column) * STEP;
         body.position.set(
           pivot.x + Math.cos(ROTATION_Y) * radius,
           pivot.y,

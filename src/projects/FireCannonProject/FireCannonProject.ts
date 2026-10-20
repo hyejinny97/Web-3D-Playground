@@ -63,6 +63,7 @@ class FireCannonProject extends BaseProject {
     this.physics = new CANNON.World({
       gravity: new CANNON.Vec3(0, EARTH_GRAVITY, 0),
     });
+    this.physics.allowSleep = true;
   }
 
   async setupModel() {
@@ -88,9 +89,11 @@ class FireCannonProject extends BaseProject {
       this.cannon.body,
       ...this.pyramidBoxes.bodies,
     ].filter((model) => model !== null);
+    const contactMaterials = this.generateContactMaterials();
 
     this.models.forEach((model) => this.scene?.add(model));
     this.bodies.forEach((body) => this.physics.addBody(body));
+    contactMaterials.forEach((mat) => this.physics.addContactMaterial(mat));
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -101,6 +104,35 @@ class FireCannonProject extends BaseProject {
     );
     manager.onStart = onStart;
     return manager;
+  }
+
+  generateContactMaterials(): CANNON.ContactMaterial[] {
+    const contactMaterials: CANNON.ContactMaterial[] = [];
+    const groundMaterial = this.ground?.body?.material;
+    const boxMaterial = this.pyramidBoxes?.bodies[0].material;
+    if (groundMaterial && boxMaterial) {
+      const groundBoxContact = new CANNON.ContactMaterial(
+        groundMaterial,
+        boxMaterial,
+        {
+          friction: 0.5,
+          restitution: 0.2,
+        },
+      );
+      contactMaterials.push(groundBoxContact);
+    }
+    if (boxMaterial) {
+      const boxesContact = new CANNON.ContactMaterial(
+        boxMaterial,
+        boxMaterial,
+        {
+          friction: 0.8,
+          restitution: 0,
+        },
+      );
+      contactMaterials.push(boxesContact);
+    }
+    return contactMaterials;
   }
 
   update() {
