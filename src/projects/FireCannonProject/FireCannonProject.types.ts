@@ -23,6 +23,7 @@ export interface GroundType {
 
 export interface CannonType {
   model: THREE.Object3D | null;
+  body: CANNON.Body | null;
   init: () => void;
 }
 
@@ -31,6 +32,7 @@ export interface CannonBallType {
 }
 
 export interface PyramidBoxesType {
-  model: THREE.Object3D | null;
+  models: THREE.Object3D[];
+  bodies: CANNON.Body[];
   init: () => void;
 }

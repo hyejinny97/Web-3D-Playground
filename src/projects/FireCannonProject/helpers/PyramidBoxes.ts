@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 import type {
   MetalTextureType,
   PyramidBoxesType,
@@ -13,8 +14,10 @@ import {
 class PyramidBoxes implements PyramidBoxesType {
   private loadingManager: THREE.LoadingManager;
   private floors: number;
+  private totalBoxCnt: number;
   private textures: Partial<Record<MetalTextureType, THREE.Texture>> = {};
-  model: THREE.Object3D | null = null;
+  models: THREE.Object3D[] = [];
+  bodies: CANNON.Body[] = [];
 
   constructor({
     loadingManager,
@@ -25,11 +28,13 @@ class PyramidBoxes implements PyramidBoxesType {
   }) {
     this.loadingManager = loadingManager;
     this.floors = floors;
+    this.totalBoxCnt = Math.pow(this.floors, 2);
   }
 
   async init() {
     await this.loadTextures();
-    this.setupModel();
+    this.setupModels();
+    this.setupBodies();
     this.transform();
   }
 
@@ -47,26 +52,54 @@ class PyramidBoxes implements PyramidBoxesType {
     );
   }
 
-  private setupModel() {
+  private setupModels() {
     const geometry = new THREE.BoxGeometry(BOX_SIZE, BOX_SIZE, BOX_SIZE);
     const material = new THREE.MeshStandardMaterial({ ...this.textures });
     const mesh = new THREE.Mesh(geometry, material);
 
-    this.model = new THREE.Object3D();
-    for (let floor = this.floors; floor > 0; floor--) {
-      const boxCnt = 1 + (floor - 1) * BOX_REDUCTION;
-      for (let idx = 0; idx < boxCnt; idx++) {
-        const box = mesh.clone();
-        box.position.x = (-boxCnt / 2 + idx) * BOX_SIZE;
-        box.position.y = (this.floors - floor) * BOX_SIZE;
-        this.model?.add(box);
-      }
+    for (let idx = 0; idx < this.totalBoxCnt; idx++) {
+      const box = mesh.clone();
+      this.models.push(box);
+    }
+  }
+
+  private setupBodies() {
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(BOX_SIZE / 2, BOX_SIZE / 2, BOX_SIZE / 2),
+    );
+    const material = new CANNON.Material("box");
+
+    for (let idx = 0; idx < this.totalBoxCnt; idx++) {
+      const body = new CANNON.Body({
+        mass: 3,
+        shape,
+        material,
+      });
+      this.bodies.push(body);
     }
   }
 
   private transform() {
-    this.model?.position.set(GROUND_WIDTH / 2 - 3, BOX_SIZE, 0);
-    this.model?.rotateY(-Math.PI / 2);
+    const ROTATION_Y = -Math.PI / 2;
+    let boxes = 0;
+    for (let row = this.floors; row > 0; row--) {
+      const boxCnt = 1 + (row - 1) * BOX_REDUCTION;
+      const pivot = new THREE.Vector3(
+        GROUND_WIDTH / 2 - 3,
+        BOX_SIZE + (this.floors - row) * BOX_SIZE,
+        0,
+      );
+      for (let column = 0; column < boxCnt; column++) {
+        const body = this.bodies[boxes + column];
+        const radius = -(-boxCnt / 2 + column) * BOX_SIZE;
+        body.position.set(
+          pivot.x + Math.cos(ROTATION_Y) * radius,
+          pivot.y,
+          pivot.z + Math.sin(ROTATION_Y) * radius,
+        );
+      }
+      boxes += boxCnt;
+    }
   }
 }
 
