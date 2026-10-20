@@ -29,6 +29,7 @@ export interface CannonType {
 
 export interface CannonBallType {
   model: THREE.Object3D;
+  body: CANNON.Body;
 }
 
 export interface PyramidBoxesType {

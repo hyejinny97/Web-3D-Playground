@@ -66,7 +66,7 @@ class Ground implements GroundType {
     this.body = new CANNON.Body({
       mass: 0,
       shape,
-      material: material,
+      material,
     });
   }
 

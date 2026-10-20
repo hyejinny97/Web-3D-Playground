@@ -63,3 +63,5 @@ export const BOX_SIZE = 0.3;
 export const BOX_REDUCTION = 2;
 
 export const PHYSICS_TIMESTEP = 1 / 60; // 단위: s
+
+export const BALL_RADIUS = 0.07;
