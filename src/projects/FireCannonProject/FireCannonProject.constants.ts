@@ -67,3 +67,9 @@ export const PHYSICS_TIMESTEP = 1 / 60; // 단위: s
 export const BALL_RADIUS = 0.07;
 
 export const CANNON_MUZZLE_NAME = "defaultMaterial_6";
+
+export const DEFAULT_FIRE_SPEED = 10;
+
+export const SPEED_CHANGE = 5;
+
+export const MAX_SPEED = 100;

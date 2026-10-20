@@ -5,7 +5,13 @@ import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
 import type { LoadManagerType } from "./FireCannonProject.types";
 import Ground from "./helpers/Ground";
-import { GROUND_HEIGHT, PHYSICS_TIMESTEP } from "./FireCannonProject.constants";
+import {
+  DEFAULT_FIRE_SPEED,
+  GROUND_HEIGHT,
+  MAX_SPEED,
+  PHYSICS_TIMESTEP,
+  SPEED_CHANGE,
+} from "./FireCannonProject.constants";
 import Cannon from "./helpers/Cannon";
 import PyramidBoxes from "./helpers/PyramidBoxes";
 import { EARTH_GRAVITY } from "@/constants/gravity";
@@ -24,7 +30,6 @@ class FireCannonProject extends BaseProject {
   private ground: Ground | null = null;
   private cannon: Cannon | null = null;
   private pyramidBoxes: PyramidBoxes | null = null;
-  declare private handleKeydown: (event: KeyboardEvent) => void;
   declare private handleKeypress: (event: KeyboardEvent) => void;
   declare private handleKeyup: (event: KeyboardEvent) => void;
 
@@ -143,26 +148,33 @@ class FireCannonProject extends BaseProject {
   }
 
   setupEvent() {
+    let speed = DEFAULT_FIRE_SPEED;
+    this.handleKeypress = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case " ": {
+          speed = Math.min(MAX_SPEED, speed + SPEED_CHANGE);
+        }
+      }
+    };
     this.handleKeyup = (event: KeyboardEvent) => {
       switch (event.key) {
         case " ": {
-          const ball = this.cannon?.fire(10);
+          const ball = this.cannon?.fire(speed);
           if (ball) {
             this.scene?.add(ball.model);
             this.physics.addBody(ball.body);
+            speed = DEFAULT_FIRE_SPEED;
           }
         }
       }
     };
 
-    window.addEventListener("keydown", this.handleKeydown);
     window.addEventListener("keypress", this.handleKeypress);
     window.addEventListener("keyup", this.handleKeyup);
   }
 
   dispose() {
     super.dispose();
-    window.removeEventListener("keydown", this.handleKeydown);
     window.removeEventListener("keypress", this.handleKeypress);
     window.removeEventListener("keyup", this.handleKeyup);
     this.stopRender = true;
