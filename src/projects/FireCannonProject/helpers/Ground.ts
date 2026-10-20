@@ -61,7 +61,9 @@ class Ground implements GroundType {
   }
 
   private setupBody() {
-    const shape = new CANNON.Plane();
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(GROUND_WIDTH / 2, GROUND_HEIGHT / 2, 0.1),
+    );
     const material = new CANNON.Material("ground");
     this.body = new CANNON.Body({
       mass: 0,
@@ -72,6 +74,13 @@ class Ground implements GroundType {
 
   private transform() {
     this.body?.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+  }
+
+  update() {
+    if (this.body && this.model) {
+      this.model.position.copy(this.body.position);
+      this.model.quaternion.copy(this.body.quaternion);
+    }
   }
 }
 

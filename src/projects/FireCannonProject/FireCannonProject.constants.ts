@@ -65,3 +65,5 @@ export const BOX_REDUCTION = 2;
 export const PHYSICS_TIMESTEP = 1 / 60; // 단위: s
 
 export const BALL_RADIUS = 0.07;
+
+export const CANNON_MUZZLE_NAME = "defaultMaterial_6";

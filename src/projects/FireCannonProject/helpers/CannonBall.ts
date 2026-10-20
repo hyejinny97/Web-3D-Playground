@@ -25,10 +25,15 @@ class CannonBall {
     const shape = new CANNON.Sphere(BALL_RADIUS / 2);
     const material = new CANNON.Material("ball");
     this.body = new CANNON.Body({
-      mass: 3,
+      mass: 10,
       shape,
       material,
     });
+  }
+
+  update() {
+    this.model.position.copy(this.body.position);
+    this.model.quaternion.copy(this.body.quaternion);
   }
 }
 

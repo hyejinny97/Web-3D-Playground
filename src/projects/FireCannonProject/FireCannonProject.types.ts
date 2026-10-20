@@ -19,21 +19,26 @@ export interface GroundType {
   model: THREE.Object3D | null;
   body: CANNON.Body | null;
   init: () => void;
+  update: () => void;
 }
 
 export interface CannonType {
   model: THREE.Object3D | null;
   body: CANNON.Body | null;
   init: () => void;
+  fire: (speed: number) => void; // speed 단위: world unit/s
+  update: () => void;
 }
 
 export interface CannonBallType {
   model: THREE.Object3D;
   body: CANNON.Body;
+  update: () => void;
 }
 
 export interface PyramidBoxesType {
   models: THREE.Object3D[];
   bodies: CANNON.Body[];
   init: () => void;
+  update: () => void;
 }

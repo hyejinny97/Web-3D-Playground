@@ -101,6 +101,15 @@ class PyramidBoxes implements PyramidBoxesType {
       boxes += boxCnt;
     }
   }
+
+  update() {
+    this.models.forEach((model, idx) => {
+      const body = this.bodies[idx];
+      if (!body) return;
+      model.position.copy(body.position);
+      model.quaternion.copy(body.quaternion);
+    });
+  }
 }
 
 export default PyramidBoxes;
