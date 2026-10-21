@@ -16,6 +16,7 @@ import Cannon from "./helpers/Cannon";
 import PyramidBoxes from "./helpers/PyramidBoxes";
 import { EARTH_GRAVITY } from "@/constants/gravity";
 import type { Dispatch } from "react";
+import { throttle } from "@/utils/throttle";
 
 type FireCannonProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -158,8 +159,18 @@ class FireCannonProject extends BaseProject {
 
   setupEvent() {
     let speed = DEFAULT_FIRE_SPEED;
+    let throttleSpeedProgress: () => void;
+
     this.handleKeydown = (event: KeyboardEvent) => {
+      if (event.repeat) return;
       switch (event.key) {
+        case " ": {
+          throttleSpeedProgress = throttle(
+            () => this.setSpeedProgress((speed / MAX_SPEED) * 100),
+            100,
+          );
+          break;
+        }
         case "ArrowUp": {
           this.cannon?.muzzle?.toUp();
           break;
@@ -173,7 +184,7 @@ class FireCannonProject extends BaseProject {
       switch (event.key) {
         case " ": {
           speed = Math.min(MAX_SPEED, speed + SPEED_CHANGE);
-          this.setSpeedProgress((speed / MAX_SPEED) * 100);
+          throttleSpeedProgress();
         }
       }
     };
