@@ -159,16 +159,16 @@ class FireCannonProject extends BaseProject {
 
   setupEvent() {
     let speed = DEFAULT_FIRE_SPEED;
-    let throttleSpeedProgress: () => void;
+    let throttleSpeed: () => void;
 
     this.handleKeydown = (event: KeyboardEvent) => {
       if (event.repeat) return;
       switch (event.key) {
         case " ": {
-          throttleSpeedProgress = throttle(
-            () => this.setSpeedProgress((speed / MAX_SPEED) * 100),
-            100,
-          );
+          throttleSpeed = throttle(() => {
+            speed = Math.min(MAX_SPEED, speed + SPEED_CHANGE);
+            this.setSpeedProgress((speed / MAX_SPEED) * 100);
+          }, 200);
           break;
         }
         case "ArrowUp": {
@@ -183,8 +183,7 @@ class FireCannonProject extends BaseProject {
     this.handleKeypress = (event: KeyboardEvent) => {
       switch (event.key) {
         case " ": {
-          speed = Math.min(MAX_SPEED, speed + SPEED_CHANGE);
-          throttleSpeedProgress();
+          throttleSpeed();
         }
       }
     };
