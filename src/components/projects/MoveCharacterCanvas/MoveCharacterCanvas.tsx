@@ -84,7 +84,7 @@ const MoveCharacterCanvas = () => {
           >
             {TUTORIALS.map(({ label, content }) => (
               <Stack direction="row" spacing={5}>
-                <Text className="typo-body-medium w-[160px] text-white!">
+                <Text className="typo-body-medium w-40 text-white!">
                   {label}
                 </Text>
                 <Text className="typo-body-small text-white!">: {content}</Text>

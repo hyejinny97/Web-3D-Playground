@@ -12,4 +12,5 @@ export const TAGS: { [value: string]: TagType } = {
   transform: { label: "Transform", color: "purple-400" },
   gltf: { label: "GLTF", color: "yellow-300" },
   animation: { label: "Animation", color: "pink-400" },
+  cannon: { label: "Cannon-es", color: "lime-400" },
 };

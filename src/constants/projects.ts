@@ -23,6 +23,7 @@ import image_url_follow_curve from "@/assets/images/projects/follow_curve.png";
 import image_url_animated_model from "@/assets/images/projects/animated_model.png";
 import image_url_clone_model from "@/assets/images/projects/clone_model.png";
 import image_url_move_character from "@/assets/images/projects/move_character.png";
+import image_url_fire_cannon from "@/assets/images/projects/fire_cannon.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -210,13 +211,27 @@ const THREE_D_FILE_PROJECTS = [
   },
 ];
 
+const PHYSICS_PROJECTS = [
+  {
+    id: "fire-cannon",
+    title: "Fire a cannon",
+    imageUrl: image_url_fire_cannon,
+    tags: [TAGS.cannon, TAGS.gltf],
+    component: lazy(
+      () => import("@/components/projects/FireCannonCanvas/index"),
+    ),
+  },
+];
+
 export const ALL_PROJECTS = [
   BASIC_PROJECT,
   ...MODEL_PROJECTS,
   ...THREE_D_FILE_PROJECTS,
+  ...PHYSICS_PROJECTS,
 ];
 
 export const PROJECTS_BY_DOMAIN = [
   { domain: "Model", projects: MODEL_PROJECTS },
   { domain: "3D File", projects: THREE_D_FILE_PROJECTS },
+  { domain: "Physics", projects: PHYSICS_PROJECTS },
 ];
