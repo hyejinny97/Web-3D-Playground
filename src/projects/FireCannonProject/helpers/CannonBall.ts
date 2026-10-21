@@ -35,6 +35,16 @@ class CannonBall {
     this.model.position.copy(this.body.position);
     this.model.quaternion.copy(this.body.quaternion);
   }
+
+  disposeModel() {
+    const mesh = this.model as THREE.Mesh;
+    mesh.geometry.dispose();
+    if (Array.isArray(mesh.material)) {
+      mesh.material.forEach((mat) => mat.dispose());
+    } else {
+      mesh.material.dispose();
+    }
+  }
 }
 
 export default CannonBall;

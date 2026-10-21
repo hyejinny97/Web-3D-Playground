@@ -75,7 +75,6 @@ class PyramidBoxes implements PyramidBoxesType {
         shape,
         material,
       });
-      body.sleep();
       this.bodies.push(body);
     }
   }
@@ -95,14 +94,35 @@ class PyramidBoxes implements PyramidBoxesType {
       for (let column = 0; column < boxCnt; column++) {
         const body = this.bodies[boxes + column];
         const radius = -(-boxCnt / 2 + column) * STEP;
-        body.position.set(
-          pivot.x + Math.cos(ROTATION_Y) * radius,
-          pivot.y,
-          pivot.z + Math.sin(ROTATION_Y) * radius,
-        );
+        const x = pivot.x + Math.cos(ROTATION_Y) * radius;
+        const y = pivot.y;
+        const z = pivot.z + Math.sin(ROTATION_Y) * radius;
+
+        this.resetBodyState(body, x, y, z);
       }
       boxes += boxCnt;
     }
+  }
+
+  private resetBodyState(body: CANNON.Body, x: number, y: number, z: number) {
+    body.position.set(x, y, z);
+    body.previousPosition.set(x, y, z);
+    body.interpolatedPosition.set(x, y, z);
+    body.initPosition.set(x, y, z);
+
+    body.quaternion.set(0, 0, 0, 1);
+    body.previousQuaternion.set(0, 0, 0, 1);
+    body.interpolatedQuaternion.set(0, 0, 0, 1);
+    body.initQuaternion.set(0, 0, 0, 1);
+
+    body.velocity.setZero();
+    body.initVelocity.setZero();
+    body.angularVelocity.setZero();
+    body.initAngularVelocity.setZero();
+    body.force.setZero();
+    body.torque.setZero();
+
+    body.sleep();
   }
 
   update() {
@@ -112,6 +132,10 @@ class PyramidBoxes implements PyramidBoxesType {
       model.position.copy(body.position);
       model.quaternion.copy(body.quaternion);
     });
+  }
+
+  reset() {
+    this.transform();
   }
 }
 

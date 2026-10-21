@@ -21,6 +21,7 @@ import { throttle } from "@/utils/throttle";
 type FireCannonProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
   setSpeedProgress: Dispatch<React.SetStateAction<number>>;
+  setIsFired: Dispatch<React.SetStateAction<boolean>>;
 };
 
 @RenderLoop()
@@ -37,15 +38,18 @@ class FireCannonProject extends BaseProject {
   declare private handleKeypress: (event: KeyboardEvent) => void;
   declare private handleKeyup: (event: KeyboardEvent) => void;
   declare private setSpeedProgress: Dispatch<React.SetStateAction<number>>;
+  declare private setIsFired: Dispatch<React.SetStateAction<boolean>>;
 
   constructor({
     canvasEl,
     loadManager,
     setSpeedProgress,
+    setIsFired,
   }: FireCannonProjectProps) {
     super({ canvasEl });
     this.loadManager = loadManager;
     this.setSpeedProgress = setSpeedProgress;
+    this.setIsFired = setIsFired;
     this.createPhysicsWorld();
     this.setupModel();
     this.setupEvent();
@@ -169,6 +173,7 @@ class FireCannonProject extends BaseProject {
             speed = Math.min(MAX_SPEED, speed + SPEED_CHANGE);
             this.setSpeedProgress((speed / MAX_SPEED) * 100);
           }, 200);
+          this.setIsFired(true);
           break;
         }
         case "ArrowUp": {
@@ -211,12 +216,23 @@ class FireCannonProject extends BaseProject {
     window.addEventListener("keyup", this.handleKeyup);
   }
 
+  reset() {
+    this.pyramidBoxes?.reset();
+    this.cannon?.reset((balls) => {
+      balls.forEach((ball) => {
+        this.scene?.remove(ball.model);
+        this.physics?.removeBody(ball.body);
+      });
+    });
+  }
+
   dispose() {
     super.dispose();
+    this.stopRender = true;
     window.removeEventListener("keydown", this.handleKeydown);
     window.removeEventListener("keypress", this.handleKeypress);
     window.removeEventListener("keyup", this.handleKeyup);
-    this.stopRender = true;
+    this.bodies.forEach((body) => this.physics.removeBody(body));
   }
 }
 

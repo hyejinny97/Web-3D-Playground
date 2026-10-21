@@ -7,18 +7,29 @@ import { TUTORIALS } from "./FireCannonCanvas.constants";
 import Box from "@jinni-labs/ui/Box";
 import Stack from "@jinni-labs/ui/Stack";
 import Text from "@jinni-labs/ui/Text";
+import Button from "@jinni-labs/ui/Button";
+import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon";
+import LinearProgress from "@jinni-labs/ui/LinearProgress";
 import {
   DEFAULT_FIRE_SPEED,
   MAX_SPEED,
 } from "@/projects/FireCannonProject/FireCannonProject.constants";
-import LinearProgress from "@jinni-labs/ui/LinearProgress";
 
 const FireCannonCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const projectRef = useRef<FireCannonProject>(undefined);
   const { isLoading, progress, loadStart, loading, loadComplete } = useLoad();
   const [speedProgress, setSpeedProgress] = useState(
     (DEFAULT_FIRE_SPEED / MAX_SPEED) * 100,
   ); // 단위: %
+  const [isFired, setIsFired] = useState(false);
+
+  const reset = () => {
+    setIsFired(false);
+    if (projectRef.current) {
+      projectRef.current.reset();
+    }
+  };
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -29,7 +40,7 @@ const FireCannonCanvas = () => {
     canvasEl.id = String(Date.now());
     container.appendChild(canvasEl);
 
-    const project: Project = new FireCannonProject({
+    const project = new FireCannonProject({
       canvasEl,
       loadManager: {
         onStart: loadStart,
@@ -37,9 +48,11 @@ const FireCannonCanvas = () => {
         onLoad: loadComplete,
       },
       setSpeedProgress,
-    });
-    if (project.loop) project.renderLoop();
+      setIsFired,
+    }) satisfies Project;
+    if ((project as Project).loop) project.renderLoop();
     else project.render();
+    projectRef.current = project;
 
     return () => {
       project.dispose();
@@ -76,6 +89,19 @@ const FireCannonCanvas = () => {
             trackColor="#fff5"
             progressColor="blue-300"
           />
+          {isFired && (
+            <Button
+              className="absolute top-5 right-5"
+              variant="outlined"
+              color="white"
+              size="lg"
+              shape="pill"
+              startAdornment={<ArrowLeftIcon className="fill-white" />}
+              onClick={reset}
+            >
+              Reset
+            </Button>
+          )}
         </>
       )}
     </div>

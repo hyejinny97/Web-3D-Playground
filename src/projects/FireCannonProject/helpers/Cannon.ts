@@ -95,6 +95,17 @@ class Cannon implements CannonType {
     });
     this.muzzle?.update(time);
   }
+
+  reset(removeBalls: (balls: CannonBall[]) => void) {
+    if (this.muzzle) {
+      this.muzzle.model.rotation.x = 0;
+    }
+    this.flyBalls.forEach((ball) => {
+      ball.disposeModel();
+      removeBalls(this.flyBalls);
+      this.flyBalls = [];
+    });
+  }
 }
 
 export default Cannon;

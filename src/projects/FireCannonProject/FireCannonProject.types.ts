@@ -39,12 +39,14 @@ export interface CannonType {
   init: () => void;
   fire: (speed: number) => void; // speed 단위: world unit/s
   update: (time: number) => void;
+  reset: (removeBalls: (balls: CannonBallType[]) => void) => void;
 }
 
 export interface CannonBallType {
   model: THREE.Object3D;
   body: CANNON.Body;
   update: () => void;
+  disposeModel: () => void;
 }
 
 export interface PyramidBoxesType {
@@ -52,4 +54,5 @@ export interface PyramidBoxesType {
   bodies: CANNON.Body[];
   init: () => void;
   update: () => void;
+  reset: () => void;
 }
