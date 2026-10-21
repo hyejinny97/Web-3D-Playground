@@ -25,7 +25,7 @@ class CannonBall {
     const shape = new CANNON.Sphere(BALL_RADIUS / 2);
     const material = new CANNON.Material("ball");
     this.body = new CANNON.Body({
-      mass: 10,
+      mass: 20,
       shape,
       material,
     });

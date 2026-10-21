@@ -9,10 +9,20 @@ export type ConcreteTextureType = keyof typeof CONCRETE_TEXTURES;
 
 export type MetalTextureType = keyof typeof METAL_TEXTURES;
 
+export type MuzzleDirectionStateType = "up" | "down" | "idle";
+
 export interface LoadManagerType {
   onStart: () => void;
   onProgress: (count: number, total: number) => void;
   onLoad: () => void;
+}
+
+export interface MuzzleType {
+  model: THREE.Object3D;
+  update: (time: number) => void;
+  toIdle: () => void;
+  toUp: () => void;
+  toDown: () => void;
 }
 
 export interface GroundType {
@@ -25,9 +35,10 @@ export interface GroundType {
 export interface CannonType {
   model: THREE.Object3D | null;
   body: CANNON.Body | null;
+  muzzle: MuzzleType | null;
   init: () => void;
   fire: (speed: number) => void; // speed 단위: world unit/s
-  update: () => void;
+  update: (time: number) => void;
 }
 
 export interface CannonBallType {

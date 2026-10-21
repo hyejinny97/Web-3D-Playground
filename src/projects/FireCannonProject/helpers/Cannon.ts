@@ -1,18 +1,17 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
-import type { CannonType } from "../FireCannonProject.types";
+import type { MuzzleType, CannonType } from "../FireCannonProject.types";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
-import {
-  CANNON_MUZZLE_NAME,
-  GROUND_WIDTH,
-} from "../FireCannonProject.constants";
+import { GROUND_WIDTH, MUZZLE_RADIUS } from "../FireCannonProject.constants";
 import CannonBall from "./CannonBall";
+import Muzzle from "./Muzzle";
 
 class Cannon implements CannonType {
   private loadingManager: THREE.LoadingManager;
   private flyBalls: CannonBall[] = [];
   model: THREE.Object3D | null = null;
   body: CANNON.Body | null = null;
+  muzzle: MuzzleType | null = null;
 
   constructor({ loadingManager }: { loadingManager: THREE.LoadingManager }) {
     this.loadingManager = loadingManager;
@@ -22,6 +21,9 @@ class Cannon implements CannonType {
     await this.loadGLTF();
     this.setupBody();
     this.transform();
+    if (this.model) {
+      this.muzzle = new Muzzle({ cannonModel: this.model });
+    }
   }
 
   private async loadGLTF() {
@@ -50,9 +52,8 @@ class Cannon implements CannonType {
   }
 
   fire(speed: number): CannonBall | null {
-    const muzzle = this.model?.getObjectByName(CANNON_MUZZLE_NAME);
-    if (!muzzle) {
-      console.error(`'${CANNON_MUZZLE_NAME}' 이름의 객체를 찾을 수 없습니다.`);
+    if (!this.muzzle) {
+      console.error("muzzle 객체가 정의되지 않았습니다.");
       return null;
     }
     if (!this.body) {
@@ -60,13 +61,15 @@ class Cannon implements CannonType {
       return null;
     }
 
-    const box = new THREE.Box3().setFromObject(muzzle);
+    const theta = this.muzzle.model.rotation.x;
+    const box = new THREE.Box3().setFromObject(this.muzzle.model);
     const size = box.getSize(new THREE.Vector3());
+    const { min, max } = box;
 
     const firePosition = new THREE.Vector3(
-      this.body.position.x + size.x / 2,
-      this.body.position.y + size.y / 2 + 0.1,
-      this.body.position.z,
+      min.x + size.x - MUZZLE_RADIUS * Math.cos(Math.PI / 2 - theta),
+      min.y + size.y - MUZZLE_RADIUS * Math.cos(theta),
+      (max.z + min.z) / 2,
     );
     const unitVectorXY = new THREE.Vector3(size.x, size.y, 0).normalize();
     const launchVelocity = unitVectorXY.multiplyScalar(speed);
@@ -82,7 +85,7 @@ class Cannon implements CannonType {
     return ball;
   }
 
-  update() {
+  update(time: number) {
     if (this.body && this.model) {
       this.model.position.copy(this.body.position);
       this.model.quaternion.copy(this.body.quaternion);
@@ -90,6 +93,7 @@ class Cannon implements CannonType {
     this.flyBalls.forEach((ball) => {
       ball.update();
     });
+    this.muzzle?.update(time);
   }
 }
 

@@ -68,8 +68,16 @@ export const BALL_RADIUS = 0.07;
 
 export const CANNON_MUZZLE_NAME = "defaultMaterial_6";
 
-export const DEFAULT_FIRE_SPEED = 10;
+export const DEFAULT_FIRE_SPEED = 5;
 
-export const SPEED_CHANGE = 5;
+export const SPEED_CHANGE = 2;
 
-export const MAX_SPEED = 100;
+export const MAX_SPEED = 30;
+
+export const MUZZLE_SPEED = 30; // 단위: degree/s
+
+export const MUZZLE_MAX_ROTATION = Math.PI / 2 - 0.5;
+
+export const MUZZLE_MIN_ROTATION = 0;
+
+export const MUZZLE_RADIUS = 0.15;

@@ -30,6 +30,7 @@ class FireCannonProject extends BaseProject {
   private ground: Ground | null = null;
   private cannon: Cannon | null = null;
   private pyramidBoxes: PyramidBoxes | null = null;
+  declare private handleKeydown: (event: KeyboardEvent) => void;
   declare private handleKeypress: (event: KeyboardEvent) => void;
   declare private handleKeyup: (event: KeyboardEvent) => void;
 
@@ -140,15 +141,26 @@ class FireCannonProject extends BaseProject {
     return contactMaterials;
   }
 
-  update() {
+  update(time: number) {
     this.physics.step(PHYSICS_TIMESTEP);
     this.ground?.update();
-    this.cannon?.update();
+    this.cannon?.update(time);
     this.pyramidBoxes?.update();
   }
 
   setupEvent() {
     let speed = DEFAULT_FIRE_SPEED;
+    this.handleKeydown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case "ArrowUp": {
+          this.cannon?.muzzle?.toUp();
+          break;
+        }
+        case "ArrowDown": {
+          this.cannon?.muzzle?.toDown();
+        }
+      }
+    };
     this.handleKeypress = (event: KeyboardEvent) => {
       switch (event.key) {
         case " ": {
@@ -165,16 +177,23 @@ class FireCannonProject extends BaseProject {
             this.physics.addBody(ball.body);
             speed = DEFAULT_FIRE_SPEED;
           }
+          break;
+        }
+        case "ArrowUp":
+        case "ArrowDown": {
+          this.cannon?.muzzle?.toIdle();
         }
       }
     };
 
+    window.addEventListener("keydown", this.handleKeydown);
     window.addEventListener("keypress", this.handleKeypress);
     window.addEventListener("keyup", this.handleKeyup);
   }
 
   dispose() {
     super.dispose();
+    window.removeEventListener("keydown", this.handleKeydown);
     window.removeEventListener("keypress", this.handleKeypress);
     window.removeEventListener("keyup", this.handleKeyup);
     this.stopRender = true;
