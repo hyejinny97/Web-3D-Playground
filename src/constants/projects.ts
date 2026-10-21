@@ -216,7 +216,9 @@ const PHYSICS_PROJECTS = [
     title: "Fire a cannon",
     imageUrl: "",
     tags: [TAGS.cannon, TAGS.gltf],
-    component: lazy(() => import("@/components/projects/FireCannonCanvas")),
+    component: lazy(
+      () => import("@/components/projects/FireCannonCanvas/index"),
+    ),
   },
 ];
 

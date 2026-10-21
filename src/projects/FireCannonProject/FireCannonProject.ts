@@ -15,9 +15,11 @@ import {
 import Cannon from "./helpers/Cannon";
 import PyramidBoxes from "./helpers/PyramidBoxes";
 import { EARTH_GRAVITY } from "@/constants/gravity";
+import type { Dispatch } from "react";
 
 type FireCannonProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
+  setSpeedProgress: Dispatch<React.SetStateAction<number>>;
 };
 
 @RenderLoop()
@@ -33,10 +35,16 @@ class FireCannonProject extends BaseProject {
   declare private handleKeydown: (event: KeyboardEvent) => void;
   declare private handleKeypress: (event: KeyboardEvent) => void;
   declare private handleKeyup: (event: KeyboardEvent) => void;
+  declare private setSpeedProgress: Dispatch<React.SetStateAction<number>>;
 
-  constructor({ canvasEl, loadManager }: FireCannonProjectProps) {
+  constructor({
+    canvasEl,
+    loadManager,
+    setSpeedProgress,
+  }: FireCannonProjectProps) {
     super({ canvasEl });
     this.loadManager = loadManager;
+    this.setSpeedProgress = setSpeedProgress;
     this.createPhysicsWorld();
     this.setupModel();
     this.setupEvent();
@@ -165,6 +173,7 @@ class FireCannonProject extends BaseProject {
       switch (event.key) {
         case " ": {
           speed = Math.min(MAX_SPEED, speed + SPEED_CHANGE);
+          this.setSpeedProgress((speed / MAX_SPEED) * 100);
         }
       }
     };
@@ -176,6 +185,7 @@ class FireCannonProject extends BaseProject {
             this.scene?.add(ball.model);
             this.physics.addBody(ball.body);
             speed = DEFAULT_FIRE_SPEED;
+            this.setSpeedProgress((DEFAULT_FIRE_SPEED / MAX_SPEED) * 100);
           }
           break;
         }
