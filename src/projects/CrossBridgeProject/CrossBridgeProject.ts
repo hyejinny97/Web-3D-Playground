@@ -5,10 +5,12 @@ import { RenderLoop } from "@/decorators/renderLoop";
 import type { LoadManagerType } from "./CrossBridgeProject.types";
 import Bridge from "./helpers/Bridge";
 import {
-  BOARD_HEIGHT,
+  BOARD_DEPTH,
   BOARD_WIDTH,
   BOARDS_CNT,
+  GROUND_WIDTH,
 } from "./CrossBridgeProject.constants";
+import Ground from "./helpers/Ground";
 
 type CrossBridgeProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -40,8 +42,9 @@ class CrossBridgeProject extends BaseProject {
       this.camera.position.set(
         0,
         5,
-        BOARD_HEIGHT / 2 +
-          (BOARD_HEIGHT / 2) * Math.sqrt((BOARDS_CNT / 2) * BOARD_WIDTH),
+        BOARD_DEPTH / 2 +
+          (BOARD_DEPTH / 2) *
+            Math.sqrt((BOARDS_CNT / 2) * BOARD_WIDTH + GROUND_WIDTH),
       );
     }
   }
@@ -49,11 +52,13 @@ class CrossBridgeProject extends BaseProject {
   async setupModel() {
     const loadingManager = this.generateLoadingManager();
     const bridge = new Bridge({ loadingManager });
+    const ground = new Ground({ loadingManager });
 
-    await bridge.init();
+    await Promise.allSettled([bridge.init(), ground.init()]);
     if (this.stopRender) return;
 
-    this.scene?.add(...bridge.models);
+    const models = [...bridge.models, ...ground.models];
+    this.scene?.add(...models);
   }
 
   generateLoadingManager(): THREE.LoadingManager {

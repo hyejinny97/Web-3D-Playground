@@ -4,9 +4,10 @@ import type { BarkTextureType, BridgeType } from "../CrossBridgeProject.types";
 import {
   BARK_TEXTURES,
   BOARD_GAP,
-  BOARD_HEIGHT,
+  BOARD_DEPTH,
   BOARD_WIDTH,
   BOARDS_CNT,
+  BOARD_HEIGHT,
 } from "../CrossBridgeProject.constants";
 
 class Bridge implements BridgeType {
@@ -39,7 +40,11 @@ class Bridge implements BridgeType {
   }
 
   private setupModels() {
-    const geometry = new THREE.BoxGeometry(BOARD_WIDTH, BOARD_HEIGHT, 1);
+    const geometry = new THREE.BoxGeometry(
+      BOARD_WIDTH,
+      BOARD_HEIGHT,
+      BOARD_DEPTH,
+    );
     const material = new THREE.MeshStandardMaterial({
       ...this.textures,
       displacementBias: -0.25,
@@ -55,9 +60,8 @@ class Bridge implements BridgeType {
 
   private transform() {
     this.models.forEach((model, idx) => {
-      const x = (-BOARDS_CNT / 2 + idx) * (BOARD_WIDTH + BOARD_GAP);
+      const x = (-(BOARDS_CNT - 1) / 2 + idx) * (BOARD_WIDTH + BOARD_GAP);
       model.position.set(x, 0, 0);
-      model.rotateX(-Math.PI / 2);
     });
   }
 }
