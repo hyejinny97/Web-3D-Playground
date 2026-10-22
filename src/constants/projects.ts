@@ -221,6 +221,13 @@ const PHYSICS_PROJECTS = [
       () => import("@/components/projects/FireCannonCanvas/index"),
     ),
   },
+  {
+    id: "cross-bridge",
+    title: "Cross a bridge",
+    imageUrl: "",
+    tags: [TAGS.cannon, TAGS.lock, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/CrossBridgeCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [
