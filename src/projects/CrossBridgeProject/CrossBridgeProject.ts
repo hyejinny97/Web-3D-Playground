@@ -66,9 +66,11 @@ class CrossBridgeProject extends BaseProject {
 
     const models = [...this.bridge.models, ...this.ground.models];
     const bodies = [...this.bridge.bodies, ...this.ground.bodies];
+    const constraints = [...this.bridge.constraints];
 
     this.scene?.add(...models);
     bodies.forEach((body) => this.physics.addBody(body));
+    constraints.forEach((constraint) => this.physics.addConstraint(constraint));
   }
 
   generateLoadingManager(): THREE.LoadingManager {

@@ -26,6 +26,7 @@ class Bridge implements BridgeType {
     this.setupModels();
     this.setupBodies();
     this.transform();
+    this.setupConstraints();
   }
 
   private async loadTexture() {
@@ -72,6 +73,17 @@ class Bridge implements BridgeType {
         material,
       });
       this.bodies.push(body);
+    }
+  }
+
+  private setupConstraints() {
+    for (let idx = 0; idx < BOARDS_CNT; idx++) {
+      const body = this.bodies[idx];
+      const previousBody = idx === 0 ? null : this.bodies[idx - 1];
+      if (previousBody) {
+        const constraint = new CANNON.LockConstraint(body, previousBody);
+        this.constraints.push(constraint);
+      }
     }
   }
 
