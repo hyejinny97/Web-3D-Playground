@@ -11,7 +11,7 @@ export const BARK_TEXTURES = {
     url: "/textures/bark/bark_arm.jpg",
     colorSpace: THREE.NoColorSpace,
   },
-  metalMap: {
+  metalnessMap: {
     url: "/textures/bark/bark_arm.jpg",
     colorSpace: THREE.NoColorSpace,
   },
@@ -38,7 +38,7 @@ export const GROUND_TEXTURES = {
     url: "/textures/rocks-ground/rocks_ground_arm.jpg",
     colorSpace: THREE.NoColorSpace,
   },
-  metalMap: {
+  metalnessMap: {
     url: "/textures/rocks-ground/rocks_ground_arm.jpg",
     colorSpace: THREE.NoColorSpace,
   },

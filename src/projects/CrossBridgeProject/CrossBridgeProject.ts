@@ -66,7 +66,10 @@ class CrossBridgeProject extends BaseProject {
 
     const models = [...this.bridge.models, ...this.ground.models];
     const bodies = [...this.bridge.bodies, ...this.ground.bodies];
-    const constraints = [...this.bridge.constraints];
+    const constraints = [
+      ...this.bridge.constraints,
+      ...this.generateBridgeGroundConstraint(),
+    ];
 
     this.scene?.add(...models);
     bodies.forEach((body) => this.physics.addBody(body));
@@ -87,6 +90,22 @@ class CrossBridgeProject extends BaseProject {
     this.physics = new CANNON.World({
       gravity: new CANNON.Vec3(0, EARTH_GRAVITY, 0),
     });
+  }
+
+  generateBridgeGroundConstraint(): CANNON.LockConstraint[] {
+    const leftGround = this.ground.bodies[0];
+    const rightGround = this.ground.bodies[1];
+    const firstBoard = this.bridge.bodies[0];
+    const lastBoard = this.bridge.bodies[BOARDS_CNT - 1];
+
+    const leftConstraint = new CANNON.LockConstraint(leftGround, firstBoard, {
+      maxForce: 1e8,
+    });
+    const rightConstraint = new CANNON.LockConstraint(rightGround, lastBoard, {
+      maxForce: 1e8,
+    });
+
+    return [leftConstraint, rightConstraint];
   }
 
   update() {
