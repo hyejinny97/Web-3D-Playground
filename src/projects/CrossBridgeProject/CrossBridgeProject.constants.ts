@@ -1,5 +1,7 @@
 import * as THREE from "three";
 
+export const PHYSICS_TIMESTEP = 1 / 60; // 단위: s
+
 export const BARK_TEXTURES = {
   aoMap: {
     url: "/textures/bark/bark_arm.jpg",

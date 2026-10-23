@@ -20,6 +20,7 @@ export interface BridgeType {
   bodies: CANNON.Body[];
   constraints: CANNON.Constraint[];
   init: () => void;
+  update: () => void;
 }
 
 export interface GroundType {

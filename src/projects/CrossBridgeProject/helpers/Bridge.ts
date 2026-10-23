@@ -24,6 +24,7 @@ class Bridge implements BridgeType {
   async init() {
     await this.loadTexture();
     this.setupModels();
+    this.setupBodies();
     this.transform();
   }
 
@@ -58,11 +59,37 @@ class Bridge implements BridgeType {
     }
   }
 
+  private setupBodies() {
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(BOARD_WIDTH / 2, BOARD_HEIGHT / 2, BOARD_DEPTH / 2),
+    );
+    const material = new CANNON.Material("board");
+
+    for (let idx = 0; idx < BOARDS_CNT; idx++) {
+      const body = new CANNON.Body({
+        mass: 3,
+        shape,
+        material,
+      });
+      this.bodies.push(body);
+    }
+  }
+
   private transform() {
-    this.models.forEach((model, idx) => {
+    this.bodies.forEach((body, idx) => {
       const x = (-(BOARDS_CNT - 1) / 2 + idx) * (BOARD_WIDTH + BOARD_GAP);
-      model.position.set(x, 0, 0);
+      body.position.set(x, 0, 0);
     });
+  }
+
+  update() {
+    for (let idx = 0; idx < BOARDS_CNT; idx++) {
+      const model = this.models[idx];
+      const body = this.bodies[idx];
+      if (!model || !body) return;
+      model.position.copy(body.position);
+      model.quaternion.copy(body.quaternion);
+    }
   }
 }
 

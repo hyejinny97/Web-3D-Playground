@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 import type { ConstructorProps } from "@/types/project";
 import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
@@ -9,8 +10,10 @@ import {
   BOARD_WIDTH,
   BOARDS_CNT,
   GROUND_WIDTH,
+  PHYSICS_TIMESTEP,
 } from "./CrossBridgeProject.constants";
 import Ground from "./helpers/Ground";
+import { EARTH_GRAVITY } from "@/constants/gravity";
 
 type CrossBridgeProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -20,6 +23,9 @@ type CrossBridgeProjectProps = ConstructorProps & {
 class CrossBridgeProject extends BaseProject {
   private loadManager: LoadManagerType;
   private stopRender = false;
+  private physics!: CANNON.World;
+  private bridge!: Bridge;
+  private ground!: Ground;
 
   constructor({ canvasEl, loadManager }: CrossBridgeProjectProps) {
     super({ canvasEl });
@@ -50,15 +56,19 @@ class CrossBridgeProject extends BaseProject {
   }
 
   async setupModel() {
+    this.createPhysicsWorld();
     const loadingManager = this.generateLoadingManager();
-    const bridge = new Bridge({ loadingManager });
-    const ground = new Ground({ loadingManager });
+    this.bridge = new Bridge({ loadingManager });
+    this.ground = new Ground({ loadingManager });
 
-    await Promise.allSettled([bridge.init(), ground.init()]);
+    await Promise.allSettled([this.bridge.init(), this.ground.init()]);
     if (this.stopRender) return;
 
-    const models = [...bridge.models, ...ground.models];
+    const models = [...this.bridge.models, ...this.ground.models];
+    const bodies = [...this.bridge.bodies];
+
     this.scene?.add(...models);
+    bodies.forEach((body) => this.physics.addBody(body));
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -69,6 +79,17 @@ class CrossBridgeProject extends BaseProject {
     );
     manager.onStart = onStart;
     return manager;
+  }
+
+  createPhysicsWorld() {
+    this.physics = new CANNON.World({
+      gravity: new CANNON.Vec3(0, EARTH_GRAVITY, 0),
+    });
+  }
+
+  update() {
+    this.physics.step(PHYSICS_TIMESTEP);
+    this.bridge.update();
   }
 
   dispose() {
