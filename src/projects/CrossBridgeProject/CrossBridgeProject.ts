@@ -65,7 +65,7 @@ class CrossBridgeProject extends BaseProject {
     if (this.stopRender) return;
 
     const models = [...this.bridge.models, ...this.ground.models];
-    const bodies = [...this.bridge.bodies];
+    const bodies = [...this.bridge.bodies, ...this.ground.bodies];
 
     this.scene?.add(...models);
     bodies.forEach((body) => this.physics.addBody(body));
@@ -90,6 +90,7 @@ class CrossBridgeProject extends BaseProject {
   update() {
     this.physics.step(PHYSICS_TIMESTEP);
     this.bridge.update();
+    this.ground.update();
   }
 
   dispose() {

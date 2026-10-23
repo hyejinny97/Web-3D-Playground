@@ -6,13 +6,14 @@ import type {
 } from "../CrossBridgeProject.types";
 import {
   BOARD_GAP,
-  BOARD_DEPTH,
+  GROUND_DEPTH,
   BOARD_WIDTH,
   BOARDS_CNT,
   GROUND_TEXTURES,
   GROUND_HEIGHT,
   BOARD_HEIGHT,
   GROUND_WIDTH,
+  GROUND_CNT,
 } from "../CrossBridgeProject.constants";
 
 class Ground implements GroundType {
@@ -28,6 +29,7 @@ class Ground implements GroundType {
   async init() {
     await this.loadTexture();
     this.setupModels();
+    this.setupBodies();
     this.transform();
   }
 
@@ -49,7 +51,7 @@ class Ground implements GroundType {
     const geometry = new THREE.BoxGeometry(
       GROUND_WIDTH,
       GROUND_HEIGHT,
-      BOARD_DEPTH,
+      GROUND_DEPTH,
       64,
       64,
       64,
@@ -62,15 +64,27 @@ class Ground implements GroundType {
     });
     const mesh = new THREE.Mesh(geometry, material);
 
-    for (let idx = 0; idx < 2; idx++) {
+    for (let idx = 0; idx < GROUND_CNT; idx++) {
       const ground = mesh.clone();
       this.models.push(ground);
     }
   }
 
+  private setupBodies() {
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(GROUND_WIDTH / 2, GROUND_HEIGHT / 2, GROUND_DEPTH / 2),
+    );
+    const material = new CANNON.Material("ground");
+
+    for (let idx = 0; idx < GROUND_CNT; idx++) {
+      const body = new CANNON.Body({ mass: 0, shape, material });
+      this.bodies.push(body);
+    }
+  }
+
   private transform() {
-    const leftGround = this.models[0];
-    const rightGround = this.models[1];
+    const leftGround = this.bodies[0];
+    const rightGround = this.bodies[1];
 
     const x =
       (BOARDS_CNT * (BOARD_WIDTH + BOARD_GAP)) / 2 -
@@ -81,7 +95,20 @@ class Ground implements GroundType {
     leftGround.position.x = -x;
     rightGround.position.x = x;
     leftGround.position.y = rightGround.position.y = y;
-    rightGround.rotateY(Math.PI);
+    rightGround.quaternion.setFromAxisAngle(
+      new CANNON.Vec3(0, 1, 0),
+      Math.PI / 2,
+    );
+  }
+
+  update() {
+    for (let idx = 0; idx < GROUND_CNT; idx++) {
+      const model = this.models[idx];
+      const body = this.bodies[idx];
+      if (!model || !body) return;
+      model.position.copy(body.position);
+      model.quaternion.copy(body.quaternion);
+    }
   }
 }
 

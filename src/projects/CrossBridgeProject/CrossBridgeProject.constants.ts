@@ -66,6 +66,10 @@ export const BOARD_DEPTH = 10;
 
 export const BOARD_GAP = 0.2;
 
+export const GROUND_CNT = 2;
+
 export const GROUND_WIDTH = 10;
 
 export const GROUND_HEIGHT = 10;
+
+export const GROUND_DEPTH = BOARD_DEPTH;

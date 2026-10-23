@@ -27,4 +27,5 @@ export interface GroundType {
   models: THREE.Object3D[];
   bodies: CANNON.Body[];
   init: () => void;
+  update: () => void;
 }
