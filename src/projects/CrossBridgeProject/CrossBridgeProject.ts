@@ -14,6 +14,7 @@ import {
 } from "./CrossBridgeProject.constants";
 import Ground from "./helpers/Ground";
 import { EARTH_GRAVITY } from "@/constants/gravity";
+import Bird from "./helpers/Bird";
 
 type CrossBridgeProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -26,6 +27,7 @@ class CrossBridgeProject extends BaseProject {
   private physics!: CANNON.World;
   private bridge!: Bridge;
   private ground!: Ground;
+  private bird!: Bird;
 
   constructor({ canvasEl, loadManager }: CrossBridgeProjectProps) {
     super({ canvasEl });
@@ -60,12 +62,25 @@ class CrossBridgeProject extends BaseProject {
     const loadingManager = this.generateLoadingManager();
     this.bridge = new Bridge({ loadingManager });
     this.ground = new Ground({ loadingManager });
+    this.bird = new Bird({ loadingManager });
 
-    await Promise.allSettled([this.bridge.init(), this.ground.init()]);
+    await Promise.allSettled([
+      this.bridge.init(),
+      this.ground.init(),
+      this.bird.init(),
+    ]);
     if (this.stopRender) return;
 
-    const models = [...this.bridge.models, ...this.ground.models];
-    const bodies = [...this.bridge.bodies, ...this.ground.bodies];
+    const models = [
+      ...this.bridge.models,
+      ...this.ground.models,
+      this.bird.model!,
+    ];
+    const bodies = [
+      ...this.bridge.bodies,
+      ...this.ground.bodies,
+      this.bird.body!,
+    ];
     const constraints = [
       ...this.bridge.constraints,
       ...this.generateBridgeGroundConstraint(),
@@ -108,10 +123,15 @@ class CrossBridgeProject extends BaseProject {
     return [leftConstraint, rightConstraint];
   }
 
-  update() {
+  update(time: number) {
     this.physics.step(PHYSICS_TIMESTEP);
     this.bridge.update();
     this.ground.update();
+    this.bird.update(time, () => {
+      if (this.bird.model) {
+        this.bird.model.visible = false;
+      }
+    });
   }
 
   dispose() {

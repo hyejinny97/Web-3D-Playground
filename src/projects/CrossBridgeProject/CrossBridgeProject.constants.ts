@@ -73,3 +73,5 @@ export const GROUND_WIDTH = 10;
 export const GROUND_HEIGHT = 10;
 
 export const GROUND_DEPTH = BOARD_DEPTH;
+
+export const MOVEMENT_SPEED = 10;

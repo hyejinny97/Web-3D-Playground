@@ -29,3 +29,15 @@ export interface GroundType {
   init: () => void;
   update: () => void;
 }
+
+export interface BirdType {
+  model: THREE.Object3D | null;
+  body: CANNON.Body | null;
+  init: () => void;
+  update: (time: number, onCrossEnd: () => void) => void;
+}
+
+export interface MovementType {
+  startPosition: THREE.Vector3;
+  update: (time: number, onCrossEnd: () => void) => void;
+}

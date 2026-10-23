@@ -68,7 +68,7 @@ class Bridge implements BridgeType {
 
     for (let idx = 0; idx < BOARDS_CNT; idx++) {
       const body = new CANNON.Body({
-        mass: 3,
+        mass: 10,
         shape,
         material,
       });
