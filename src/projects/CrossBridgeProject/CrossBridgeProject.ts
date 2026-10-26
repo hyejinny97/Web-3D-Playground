@@ -89,6 +89,8 @@ class CrossBridgeProject extends BaseProject {
     this.scene?.add(...models);
     bodies.forEach((body) => this.physics.addBody(body));
     constraints.forEach((constraint) => this.physics.addConstraint(constraint));
+
+    this.bird.crossing?.start();
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -128,9 +130,10 @@ class CrossBridgeProject extends BaseProject {
     this.bridge.update();
     this.ground.update();
     this.bird.update(time, () => {
-      if (this.bird.model) {
-        this.bird.model.visible = false;
-      }
+      this.bird.invisible();
+      this.bird.crossing?.init();
+      this.bird.visible();
+      this.bird.crossing?.start();
     });
   }
 

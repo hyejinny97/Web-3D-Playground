@@ -7,18 +7,19 @@ import {
   GROUND_WIDTH,
   MOVEMENT_SPEED,
 } from "../CrossBridgeProject.constants";
-import type { MovementType } from "../CrossBridgeProject.types";
+import type { CrossingType } from "../CrossBridgeProject.types";
 import type { GLTF } from "three/examples/jsm/Addons.js";
 import AnimationHelper, {
   type AnimationHelperType,
 } from "@/helpers/AnimationHelper";
 
-class Movement implements MovementType {
-  startPosition!: THREE.Vector3;
-  private endPosition!: THREE.Vector3;
+class Crossing implements CrossingType {
   private body: CANNON.Body;
   private gltf: GLTF;
+  private startPosition!: THREE.Vector3;
+  private endPosition!: THREE.Vector3;
   private animation!: AnimationHelperType;
+  private isCrossing: boolean = false;
 
   constructor({ body, gltf }: { body: CANNON.Body; gltf: GLTF }) {
     this.body = body;
@@ -50,20 +51,36 @@ class Movement implements MovementType {
       model: this.gltf.scene,
       clips: this.gltf.animations,
     });
+  }
+
+  init() {
+    const { x, y, z } = this.startPosition;
+    this.body.position.set(x, y, z);
+  }
+
+  start() {
+    this.isCrossing = true;
     this.animation.play({ name: "Walk" });
+    this.init();
+  }
+
+  private end() {
+    this.isCrossing = false;
+    this.animation.stop();
   }
 
   update(time: number, onCrossEnd: () => void) {
-    this.animation?.update(time);
-
     if (this.body.position.x > this.endPosition.x) {
+      this.end();
       onCrossEnd();
-      return;
     }
-    this.body.velocity.x = MOVEMENT_SPEED;
-    this.body.velocity.z = 0;
-    this.body.angularFactor.set(0, 0, 0);
+    if (this.isCrossing) {
+      this.animation?.update(time);
+      this.body.velocity.x = MOVEMENT_SPEED;
+      this.body.velocity.z = 0;
+      this.body.angularFactor.set(0, 0, 0);
+    }
   }
 }
 
-export default Movement;
+export default Crossing;

@@ -33,11 +33,15 @@ export interface GroundType {
 export interface BirdType {
   model: THREE.Object3D | null;
   body: CANNON.Body | null;
+  crossing: CrossingType | null;
   init: () => void;
+  visible: () => void;
+  invisible: () => void;
   update: (time: number, onCrossEnd: () => void) => void;
 }
 
-export interface MovementType {
-  startPosition: THREE.Vector3;
+export interface CrossingType {
+  init: () => void;
+  start: () => void;
   update: (time: number, onCrossEnd: () => void) => void;
 }

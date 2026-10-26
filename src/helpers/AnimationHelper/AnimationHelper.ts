@@ -86,6 +86,10 @@ class AnimationHelper implements AnimationHelperType {
     this.playingAction = action;
   }
 
+  stop() {
+    if (this.playingAction) this.playingAction.fadeOut(0.5);
+  }
+
   update(time: number) {
     time *= 0.001; // 단위: s
     const delta = time - this.then;

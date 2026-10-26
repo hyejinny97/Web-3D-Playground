@@ -2,15 +2,15 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { GLTFLoader, type GLTF } from "three/examples/jsm/Addons.js";
 import type { BirdType } from "../CrossBridgeProject.types";
-import Movement from "./Movement";
+import Crossing from "./Crossing";
 
 class Bird implements BirdType {
   private loadingManager: THREE.LoadingManager;
-  private movement: Movement | null = null;
   private modelOffset = new THREE.Vector3();
   private gltf: GLTF | null = null;
   model: THREE.Object3D | null = null;
   body: CANNON.Body | null = null;
+  crossing: Crossing | null = null;
 
   constructor({ loadingManager }: { loadingManager: THREE.LoadingManager }) {
     this.loadingManager = loadingManager;
@@ -18,13 +18,13 @@ class Bird implements BirdType {
 
   async init() {
     await this.loadGLTF();
-    if (this.model) {
-      this.scaleUpModel();
-      this.calculateCenterOffset();
-      this.setupBody();
-      this.movement = new Movement({ body: this.body!, gltf: this.gltf! });
-      this.transform();
-    }
+    this.scaleUpModel();
+    this.setupBody();
+    this.transform();
+
+    this.calculateCenterOffset();
+    this.crossing = new Crossing({ body: this.body!, gltf: this.gltf! });
+    this.crossing.init();
   }
 
   private async loadGLTF() {
@@ -64,9 +64,7 @@ class Bird implements BirdType {
   }
 
   private transform() {
-    if (this.body && this.movement) {
-      const { x, y, z } = this.movement.startPosition;
-      this.body.position.set(x, y, z);
+    if (this.body) {
       this.body.quaternion.setFromAxisAngle(
         new CANNON.Vec3(0, 1, 0),
         Math.PI / 2,
@@ -74,9 +72,27 @@ class Bird implements BirdType {
     }
   }
 
+  visible() {
+    if (this.model && this.body) {
+      this.model.visible = true;
+      this.body.collisionResponse = true;
+      this.body.type = CANNON.Body.DYNAMIC;
+    }
+  }
+
+  invisible() {
+    if (this.model && this.body) {
+      this.model.visible = false;
+      this.body.collisionResponse = false;
+      this.body.type = CANNON.Body.STATIC;
+      this.body.velocity.set(0, 0, 0);
+      this.body.angularVelocity.set(0, 0, 0);
+    }
+  }
+
   update(time: number, onCrossEnd: () => void) {
     if (this.model && this.body) {
-      this.movement?.update(time, onCrossEnd);
+      this.crossing?.update(time, onCrossEnd);
       this.model.position.copy(this.body.position).sub(this.modelOffset);
       this.model.quaternion.copy(this.body.quaternion);
     }
