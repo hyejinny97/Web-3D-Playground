@@ -1,0 +1,11 @@
+Model Information:
+* title:	Flamingo - Animated Low Poly
+* source:	https://sketchfab.com/3d-models/flamingo-animated-low-poly-94d6867725014747b22e37404831fdf9
+* author:	WildPoly3D (https://sketchfab.com/WildPoly3D)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Flamingo - Animated Low Poly" (https://sketchfab.com/3d-models/flamingo-animated-low-poly-94d6867725014747b22e37404831fdf9) by WildPoly3D (https://sketchfab.com/WildPoly3D) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)

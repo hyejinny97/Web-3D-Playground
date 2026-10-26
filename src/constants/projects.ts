@@ -24,6 +24,7 @@ import image_url_animated_model from "@/assets/images/projects/animated_model.pn
 import image_url_clone_model from "@/assets/images/projects/clone_model.png";
 import image_url_move_character from "@/assets/images/projects/move_character.png";
 import image_url_fire_cannon from "@/assets/images/projects/fire_cannon.png";
+import image_url_cross_bridge from "@/assets/images/projects/cross_bridge.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -220,6 +221,13 @@ const PHYSICS_PROJECTS = [
     component: lazy(
       () => import("@/components/projects/FireCannonCanvas/index"),
     ),
+  },
+  {
+    id: "cross-bridge",
+    title: "Cross a bridge",
+    imageUrl: image_url_cross_bridge,
+    tags: [TAGS.cannon, TAGS.lock, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/CrossBridgeCanvas")),
   },
 ];
 

@@ -25,5 +25,6 @@ export interface AnimationHelperType {
     loop?: LoopType;
     onFinished?: (event: FinishEvent) => void;
   }) => void;
+  stop: () => void;
   update: (time: number) => void;
 }

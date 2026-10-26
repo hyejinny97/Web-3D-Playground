@@ -9,7 +9,7 @@ export const CONCRETE_TEXTURES = {
     url: "/textures/concrete/concrete_arm.jpg",
     colorSpace: THREE.NoColorSpace,
   },
-  metalMap: {
+  metalnessMap: {
     url: "/textures/concrete/concrete_arm.jpg",
     colorSpace: THREE.NoColorSpace,
   },
@@ -36,7 +36,7 @@ export const METAL_TEXTURES = {
     url: "/textures/metal/metal_arm.jpg",
     colorSpace: THREE.NoColorSpace,
   },
-  metalMap: {
+  metalnessMap: {
     url: "/textures/metal/metal_arm.jpg",
     colorSpace: THREE.NoColorSpace,
   },
