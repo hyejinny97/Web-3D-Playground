@@ -3,7 +3,7 @@ import * as CANNON from "cannon-es";
 import Character from "./Character";
 import { BIRD_SPEED, BODY_MATERIALS } from "../CrossBridgeProject.constants";
 
-class Bird extends Character {
+class Kiwi extends Character {
   constructor({
     loadingManager,
     initialVisibility,
@@ -50,4 +50,4 @@ class Bird extends Character {
   }
 }
 
-export default Bird;
+export default Kiwi;

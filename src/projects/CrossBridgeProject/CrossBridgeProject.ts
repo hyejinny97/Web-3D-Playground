@@ -14,7 +14,8 @@ import {
 } from "./CrossBridgeProject.constants";
 import Ground from "./helpers/Ground";
 import { EARTH_GRAVITY } from "@/constants/gravity";
-import Bird from "./helpers/Bird";
+import Kiwi from "./helpers/Kiwi";
+import Flamingo from "./helpers/Flamingo";
 
 type CrossBridgeProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -27,7 +28,8 @@ class CrossBridgeProject extends BaseProject {
   private physics!: CANNON.World;
   private bridge!: Bridge;
   private ground!: Ground;
-  private bird!: Bird;
+  private kiwi!: Kiwi;
+  private flamingo!: Flamingo;
 
   constructor({ canvasEl, loadManager }: CrossBridgeProjectProps) {
     super({ canvasEl });
@@ -62,24 +64,28 @@ class CrossBridgeProject extends BaseProject {
     const loadingManager = this.generateLoadingManager();
     this.bridge = new Bridge({ loadingManager });
     this.ground = new Ground({ loadingManager });
-    this.bird = new Bird({ loadingManager });
+    this.kiwi = new Kiwi({ loadingManager });
+    this.flamingo = new Flamingo({ loadingManager, initialVisibility: false });
 
     await Promise.allSettled([
       this.bridge.init(),
       this.ground.init(),
-      this.bird.init(),
+      this.kiwi.init(),
+      this.flamingo.init(),
     ]);
     if (this.stopRender) return;
 
     const models = [
       ...this.bridge.models,
       ...this.ground.models,
-      this.bird.model!,
+      this.kiwi.model!,
+      this.flamingo.model!,
     ];
     const bodies = [
       ...this.bridge.bodies,
       ...this.ground.bodies,
-      this.bird.body!,
+      this.kiwi.body!,
+      this.flamingo.body!,
     ];
     const constraints = [
       ...this.bridge.constraints,
@@ -93,7 +99,7 @@ class CrossBridgeProject extends BaseProject {
     contactMaterials.forEach((mat) => this.physics.addContactMaterial(mat));
     this.registerCollisionMasks();
 
-    this.bird.crossing?.start();
+    this.kiwi.crossing?.start();
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -132,7 +138,7 @@ class CrossBridgeProject extends BaseProject {
     const contactMaterials: CANNON.ContactMaterial[] = [];
     const groundMaterial = this.ground?.bodies[0].material;
     const bridgeMaterial = this.bridge?.bodies[0].material;
-    const characterMaterial = this.bird.body?.material;
+    const characterMaterial = this.kiwi.body?.material;
     if (groundMaterial && characterMaterial) {
       const groundCharacterContact = new CANNON.ContactMaterial(
         groundMaterial,
@@ -173,7 +179,9 @@ class CrossBridgeProject extends BaseProject {
       body.collisionFilterMask = GROUP_CHARACTER;
     });
 
-    const characters = [this.bird.body].filter((el) => el !== null);
+    const characters = [this.kiwi.body, this.flamingo.body].filter(
+      (el) => el !== null,
+    );
     characters.forEach((character) => {
       character.collisionFilterGroup = GROUP_CHARACTER;
       character.collisionFilterMask = GROUP_BOARD | GROUP_GROUND;
@@ -184,11 +192,17 @@ class CrossBridgeProject extends BaseProject {
     this.physics.step(PHYSICS_TIMESTEP);
     this.bridge.update();
     this.ground.update();
-    this.bird.update(time, () => {
-      this.bird.invisible();
-      this.bird.crossing?.init();
-      this.bird.visible();
-      this.bird.crossing?.start();
+    this.kiwi.update(time, () => {
+      this.kiwi.invisible();
+      this.flamingo.visible();
+      this.flamingo.crossing?.start();
+      this.kiwi.crossing?.init();
+    });
+    this.flamingo.update(time, () => {
+      this.flamingo.invisible();
+      this.kiwi.visible();
+      this.kiwi.crossing?.start();
+      this.flamingo.crossing?.init();
     });
   }
 
