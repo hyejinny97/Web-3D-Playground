@@ -30,7 +30,7 @@ export interface GroundType {
   update: () => void;
 }
 
-export interface BirdType {
+export interface CharacterType {
   model: THREE.Object3D | null;
   body: CANNON.Body | null;
   crossing: CrossingType | null;

@@ -74,7 +74,9 @@ export const GROUND_HEIGHT = 10;
 
 export const GROUND_DEPTH = BOARD_DEPTH;
 
-export const MOVEMENT_SPEED = 12;
+export const BIRD_SPEED = 12;
+
+export const FLAMINGO_SPEED = 10;
 
 export const BODY_MATERIALS = {
   ground: "ground",

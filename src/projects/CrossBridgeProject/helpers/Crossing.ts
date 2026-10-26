@@ -5,7 +5,6 @@ import {
   BOARD_WIDTH,
   BOARDS_CNT,
   GROUND_WIDTH,
-  MOVEMENT_SPEED,
 } from "../CrossBridgeProject.constants";
 import type { CrossingType } from "../CrossBridgeProject.types";
 import type { GLTF } from "three/examples/jsm/Addons.js";
@@ -16,14 +15,24 @@ import AnimationHelper, {
 class Crossing implements CrossingType {
   private body: CANNON.Body;
   private gltf: GLTF;
+  private speed: number;
   private startPosition!: THREE.Vector3;
   private endPosition!: THREE.Vector3;
   private animation!: AnimationHelperType;
   private isCrossing: boolean = false;
 
-  constructor({ body, gltf }: { body: CANNON.Body; gltf: GLTF }) {
+  constructor({
+    body,
+    gltf,
+    speed,
+  }: {
+    body: CANNON.Body;
+    gltf: GLTF;
+    speed: number;
+  }) {
     this.body = body;
     this.gltf = gltf;
+    this.speed = speed;
     this.setupStartEndPosition();
     this.setupAnimation();
   }
@@ -76,7 +85,7 @@ class Crossing implements CrossingType {
     }
     if (this.isCrossing) {
       this.animation?.update(time);
-      this.body.velocity.x = MOVEMENT_SPEED;
+      this.body.velocity.x = this.speed;
       this.body.velocity.z = 0;
       this.body.angularFactor.set(0, 0, 0);
     }

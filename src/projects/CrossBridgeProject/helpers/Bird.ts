@@ -1,55 +1,32 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
-import { GLTFLoader, type GLTF } from "three/examples/jsm/Addons.js";
-import type { BirdType } from "../CrossBridgeProject.types";
-import Crossing from "./Crossing";
-import { BODY_MATERIALS } from "../CrossBridgeProject.constants";
+import Character from "./Character";
+import { BIRD_SPEED, BODY_MATERIALS } from "../CrossBridgeProject.constants";
 
-class Bird implements BirdType {
-  private loadingManager: THREE.LoadingManager;
-  private modelOffset = new THREE.Vector3();
-  private gltf: GLTF | null = null;
-  model: THREE.Object3D | null = null;
-  body: CANNON.Body | null = null;
-  crossing: Crossing | null = null;
-
-  constructor({ loadingManager }: { loadingManager: THREE.LoadingManager }) {
-    this.loadingManager = loadingManager;
+class Bird extends Character {
+  constructor({
+    loadingManager,
+    initialVisibility,
+  }: {
+    loadingManager: THREE.LoadingManager;
+    initialVisibility?: boolean;
+  }) {
+    super({
+      url: "models/kiwi-bird/scene.gltf",
+      loadingManager,
+      crossingSpeed: BIRD_SPEED,
+      initialVisibility,
+    });
   }
 
-  async init() {
-    await this.loadGLTF();
-    this.scaleUpModel();
-    this.setupBody();
-    this.transform();
-
-    this.calculateCenterOffset();
-    this.crossing = new Crossing({ body: this.body!, gltf: this.gltf! });
-    this.crossing.init();
-  }
-
-  private async loadGLTF() {
-    const loader = new GLTFLoader(this.loadingManager);
-    this.gltf = await loader.loadAsync("models/kiwi-bird/scene.gltf");
-    this.model = this.gltf.scene;
-  }
-
-  private scaleUpModel() {
+  protected scaleModel() {
     if (this.model) {
       this.model.scale.set(50, 50, 50);
       this.model.updateMatrixWorld();
     }
   }
 
-  private calculateCenterOffset() {
-    if (this.model) {
-      const box = new THREE.Box3().setFromObject(this.model);
-      const center = box.getCenter(new THREE.Vector3());
-      this.modelOffset.copy(center).sub(this.model.position);
-    }
-  }
-
-  private setupBody() {
+  protected setupBody() {
     const box = new THREE.Box3().setFromObject(this.model!);
     const size = box.getSize(new THREE.Vector3());
 
@@ -63,38 +40,12 @@ class Bird implements BirdType {
     });
   }
 
-  private transform() {
+  protected transform() {
     if (this.body) {
       this.body.quaternion.setFromAxisAngle(
         new CANNON.Vec3(0, 1, 0),
         Math.PI / 2,
       );
-    }
-  }
-
-  visible() {
-    if (this.model && this.body) {
-      this.model.visible = true;
-      this.body.collisionResponse = true;
-      this.body.type = CANNON.Body.DYNAMIC;
-    }
-  }
-
-  invisible() {
-    if (this.model && this.body) {
-      this.model.visible = false;
-      this.body.collisionResponse = false;
-      this.body.type = CANNON.Body.STATIC;
-      this.body.velocity.set(0, 0, 0);
-      this.body.angularVelocity.set(0, 0, 0);
-    }
-  }
-
-  update(time: number, onCrossEnd: () => void) {
-    if (this.model && this.body) {
-      this.crossing?.update(time, onCrossEnd);
-      this.model.position.copy(this.body.position).sub(this.modelOffset);
-      this.model.quaternion.copy(this.body.quaternion);
     }
   }
 }
