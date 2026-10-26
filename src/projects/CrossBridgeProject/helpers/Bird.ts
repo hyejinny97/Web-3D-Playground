@@ -3,6 +3,7 @@ import * as CANNON from "cannon-es";
 import { GLTFLoader, type GLTF } from "three/examples/jsm/Addons.js";
 import type { BirdType } from "../CrossBridgeProject.types";
 import Crossing from "./Crossing";
+import { BODY_MATERIALS } from "../CrossBridgeProject.constants";
 
 class Bird implements BirdType {
   private loadingManager: THREE.LoadingManager;
@@ -52,14 +53,13 @@ class Bird implements BirdType {
     const box = new THREE.Box3().setFromObject(this.model!);
     const size = box.getSize(new THREE.Vector3());
 
-    const shape = new CANNON.Box(
-      new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2),
-    );
-    const material = new CANNON.Material("character");
+    const shape = new CANNON.Sphere(size.y / 2);
+    const material = new CANNON.Material(BODY_MATERIALS.character);
     this.body = new CANNON.Body({
       mass: 10,
       shape,
       material,
+      linearDamping: 0,
     });
   }
 

@@ -8,6 +8,7 @@ import {
   BOARD_WIDTH,
   BOARDS_CNT,
   BOARD_HEIGHT,
+  BODY_MATERIALS,
 } from "../CrossBridgeProject.constants";
 
 class Bridge implements BridgeType {
@@ -62,13 +63,17 @@ class Bridge implements BridgeType {
 
   private setupBodies() {
     const shape = new CANNON.Box(
-      new CANNON.Vec3(BOARD_WIDTH / 2, BOARD_HEIGHT / 2, BOARD_DEPTH / 2),
+      new CANNON.Vec3(
+        (BOARD_WIDTH + BOARD_GAP) / 2 + 0.01,
+        BOARD_HEIGHT / 2,
+        BOARD_DEPTH / 2,
+      ),
     );
-    const material = new CANNON.Material("board");
+    const material = new CANNON.Material(BODY_MATERIALS.bridge);
 
     for (let idx = 0; idx < BOARDS_CNT; idx++) {
       const body = new CANNON.Body({
-        mass: 10,
+        mass: 30,
         shape,
         material,
       });

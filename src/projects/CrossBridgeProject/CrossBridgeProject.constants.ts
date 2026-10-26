@@ -74,4 +74,10 @@ export const GROUND_HEIGHT = 10;
 
 export const GROUND_DEPTH = BOARD_DEPTH;
 
-export const MOVEMENT_SPEED = 10;
+export const MOVEMENT_SPEED = 12;
+
+export const BODY_MATERIALS = {
+  ground: "ground",
+  bridge: "bridge",
+  character: "character",
+} as const;

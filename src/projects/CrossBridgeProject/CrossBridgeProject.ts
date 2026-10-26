@@ -85,10 +85,13 @@ class CrossBridgeProject extends BaseProject {
       ...this.bridge.constraints,
       ...this.generateBridgeGroundConstraint(),
     ];
+    const contactMaterials = this.generateContactMaterials();
 
     this.scene?.add(...models);
     bodies.forEach((body) => this.physics.addBody(body));
     constraints.forEach((constraint) => this.physics.addConstraint(constraint));
+    contactMaterials.forEach((mat) => this.physics.addContactMaterial(mat));
+    this.registerCollisionMasks();
 
     this.bird.crossing?.start();
   }
@@ -123,6 +126,58 @@ class CrossBridgeProject extends BaseProject {
     });
 
     return [leftConstraint, rightConstraint];
+  }
+
+  generateContactMaterials(): CANNON.ContactMaterial[] {
+    const contactMaterials: CANNON.ContactMaterial[] = [];
+    const groundMaterial = this.ground?.bodies[0].material;
+    const bridgeMaterial = this.bridge?.bodies[0].material;
+    const characterMaterial = this.bird.body?.material;
+    if (groundMaterial && characterMaterial) {
+      const groundCharacterContact = new CANNON.ContactMaterial(
+        groundMaterial,
+        characterMaterial,
+        {
+          friction: 0.9,
+          restitution: 0,
+        },
+      );
+      contactMaterials.push(groundCharacterContact);
+    }
+    if (bridgeMaterial && characterMaterial) {
+      const bridgeCharacterContact = new CANNON.ContactMaterial(
+        bridgeMaterial,
+        characterMaterial,
+        {
+          friction: 0.8,
+          restitution: 0,
+        },
+      );
+      contactMaterials.push(bridgeCharacterContact);
+    }
+    return contactMaterials;
+  }
+
+  registerCollisionMasks() {
+    const GROUP_BOARD = 1;
+    const GROUP_CHARACTER = 2;
+    const GROUP_GROUND = 4;
+
+    this.ground.bodies.forEach((body) => {
+      body.collisionFilterGroup = GROUP_GROUND;
+      body.collisionFilterMask = GROUP_CHARACTER;
+    });
+
+    this.bridge.bodies.forEach((body) => {
+      body.collisionFilterGroup = GROUP_BOARD;
+      body.collisionFilterMask = GROUP_CHARACTER;
+    });
+
+    const characters = [this.bird.body].filter((el) => el !== null);
+    characters.forEach((character) => {
+      character.collisionFilterGroup = GROUP_CHARACTER;
+      character.collisionFilterMask = GROUP_BOARD | GROUP_GROUND;
+    });
   }
 
   update(time: number) {

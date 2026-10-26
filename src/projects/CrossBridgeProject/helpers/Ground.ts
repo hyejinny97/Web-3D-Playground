@@ -14,6 +14,7 @@ import {
   BOARD_HEIGHT,
   GROUND_WIDTH,
   GROUND_CNT,
+  BODY_MATERIALS,
 } from "../CrossBridgeProject.constants";
 
 class Ground implements GroundType {
@@ -74,7 +75,7 @@ class Ground implements GroundType {
     const shape = new CANNON.Box(
       new CANNON.Vec3(GROUND_WIDTH / 2, GROUND_HEIGHT / 2, GROUND_DEPTH / 2),
     );
-    const material = new CANNON.Material("ground");
+    const material = new CANNON.Material(BODY_MATERIALS.ground);
 
     for (let idx = 0; idx < GROUND_CNT; idx++) {
       const body = new CANNON.Body({ mass: 0, shape, material });
