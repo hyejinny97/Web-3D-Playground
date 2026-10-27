@@ -17,3 +17,9 @@ export interface ClothType {
   init: () => void;
   update: () => void;
 }
+
+export interface BallType {
+  model: THREE.Mesh;
+  body: CANNON.Body;
+  update: (time: number) => void;
+}
