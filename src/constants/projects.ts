@@ -229,6 +229,15 @@ const PHYSICS_PROJECTS = [
     tags: [TAGS.cannon, TAGS.lock, TAGS.gltf],
     component: lazy(() => import("@/components/projects/CrossBridgeCanvas")),
   },
+  {
+    id: "cloth-simulation",
+    title: "Cloth simulation",
+    imageUrl: "",
+    tags: [TAGS.cannon, TAGS.distance],
+    component: lazy(
+      () => import("@/components/projects/ClothSimulationCanvas"),
+    ),
+  },
 ];
 
 export const ALL_PROJECTS = [

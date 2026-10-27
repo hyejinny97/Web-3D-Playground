@@ -14,4 +14,5 @@ export const TAGS: { [value: string]: TagType } = {
   animation: { label: "Animation", color: "pink-400" },
   cannon: { label: "Cannon-es", color: "lime-400" },
   lock: { label: "Lock Constraint", color: "green-400" },
+  distance: { label: "Distance Constraint", color: "emerald-400" },
 };
