@@ -25,6 +25,7 @@ import image_url_clone_model from "@/assets/images/projects/clone_model.png";
 import image_url_move_character from "@/assets/images/projects/move_character.png";
 import image_url_fire_cannon from "@/assets/images/projects/fire_cannon.png";
 import image_url_cross_bridge from "@/assets/images/projects/cross_bridge.png";
+import image_url_cloth_simulation from "@/assets/images/projects/cloth_simulation.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -228,6 +229,15 @@ const PHYSICS_PROJECTS = [
     imageUrl: image_url_cross_bridge,
     tags: [TAGS.cannon, TAGS.lock, TAGS.gltf],
     component: lazy(() => import("@/components/projects/CrossBridgeCanvas")),
+  },
+  {
+    id: "cloth-simulation",
+    title: "Cloth simulation",
+    imageUrl: image_url_cloth_simulation,
+    tags: [TAGS.cannon, TAGS.distance],
+    component: lazy(
+      () => import("@/components/projects/ClothSimulationCanvas"),
+    ),
   },
 ];
 
