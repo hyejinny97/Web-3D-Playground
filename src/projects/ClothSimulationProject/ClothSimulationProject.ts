@@ -40,7 +40,11 @@ class ClothSimulationProject extends BaseProject {
   setupCamera() {
     super.setupCamera();
     if (this.camera) {
-      this.camera.position.set(0, (CLOTH_HEIGHT / 2) * 1.5, CLOTH_WIDTH);
+      this.camera.position.set(
+        CLOTH_WIDTH * 1.2,
+        (CLOTH_HEIGHT / 2) * 1.5,
+        CLOTH_WIDTH / 2,
+      );
     }
   }
 

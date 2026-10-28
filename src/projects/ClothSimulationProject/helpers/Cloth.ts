@@ -59,8 +59,8 @@ class Cloth implements ClothType {
     const material = new THREE.MeshPhysicalMaterial({
       ...this.textures,
       anisotropy: 1,
-      metalness: 0.5,
-      roughness: 0.1,
+      metalness: 0.05,
+      roughness: 0.5,
       displacementBias: -0.5,
       displacementScale: 1,
       side: THREE.DoubleSide,
@@ -139,6 +139,8 @@ class Cloth implements ClothType {
             particlePosition.z,
           );
           modelPositionAttributes.needsUpdate = true;
+
+          this.model.geometry.computeVertexNormals();
         }
       }
     }
