@@ -28,7 +28,7 @@ class Ball implements BallType {
   }
 
   private setupBody() {
-    const shape = new CANNON.Sphere(BALL_RADIUS * 1.1);
+    const shape = new CANNON.Sphere(BALL_RADIUS * 1.35);
     const material = new CANNON.Material("ball");
 
     this.body = new CANNON.Body({

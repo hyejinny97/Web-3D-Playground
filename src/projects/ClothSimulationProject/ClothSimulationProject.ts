@@ -73,10 +73,12 @@ class ClothSimulationProject extends BaseProject {
     );
     const bodies = [...this.cloth.bodies, this.ball.body];
     const constraints = [...this.cloth.constraints];
+    const contactMaterial = this.generateContactMaterial();
 
     this.scene?.add(...models);
     bodies.forEach((body) => this.physics.addBody(body));
     constraints.forEach((constraint) => this.physics.addConstraint(constraint));
+    if (contactMaterial) this.physics.addContactMaterial(contactMaterial);
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -93,6 +95,17 @@ class ClothSimulationProject extends BaseProject {
     this.physics = new CANNON.World({
       gravity: new CANNON.Vec3(0, EARTH_GRAVITY, 0),
     });
+  }
+
+  generateContactMaterial(): CANNON.ContactMaterial | undefined {
+    const clothMaterial = this.cloth.bodies[0]?.material;
+    const ballMaterial = this.ball.body.material;
+    if (clothMaterial && ballMaterial) {
+      return new CANNON.ContactMaterial(clothMaterial, ballMaterial, {
+        friction: 0.2,
+        restitution: 0,
+      });
+    }
   }
 
   update(time: number) {

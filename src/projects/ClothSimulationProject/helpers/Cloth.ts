@@ -112,6 +112,17 @@ class Cloth implements ClothType {
             ),
           );
         }
+        if (column < CLOTH_WIDTH_SEGMENTS && row < CLOTH_HEIGHT_SEGMENTS) {
+          const rightDownParticle =
+            this.bodies[this.getIndex(row + 1, column + 1)];
+          this.constraints.push(
+            new CANNON.DistanceConstraint(
+              particle,
+              rightDownParticle,
+              Math.sqrt(CLOTH_WIDTH_STEP ** 2 + CLOTH_HEIGHT_STEP ** 2),
+            ),
+          );
+        }
       }
     }
   }
