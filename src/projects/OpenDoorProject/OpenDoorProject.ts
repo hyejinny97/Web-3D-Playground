@@ -7,7 +7,11 @@ import type { LoadManagerType } from "./OpenDoorProject.types";
 import { EARTH_GRAVITY } from "@/constants/gravity";
 import Door from "./helpers/Door";
 import { PHYSICS_TIMESTEP } from "../FireCannonProject/FireCannonProject.constants";
-import { BODY_NAMES } from "./OpenDoorProject.constants";
+import {
+  BODY_NAMES,
+  DOOR_OBJET_NAMES,
+  PRESS_FORCE,
+} from "./OpenDoorProject.constants";
 
 type OpenDoorProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -19,11 +23,18 @@ class OpenDoorProject extends BaseProject {
   private stopRender = false;
   private physics!: CANNON.World;
   private door!: Door;
+  declare private handlePointDown: (event: PointerEvent) => void;
+  declare private handlePointMove: (event: PointerEvent) => void;
+  declare private handlePointUp: (event: PointerEvent) => void;
+  declare private handlePointCancel: (event: PointerEvent) => void;
+  private pressedPoint: THREE.Vector3 | null = null;
+  private pressedForce: THREE.Vector3 | null = null;
 
   constructor({ canvasEl, loadManager }: OpenDoorProjectProps) {
     super({ canvasEl });
     this.loadManager = loadManager;
     this.setupModel();
+    this.setupEvent();
   }
 
   init() {
@@ -64,16 +75,94 @@ class OpenDoorProject extends BaseProject {
     });
   }
 
+  setupEvent() {
+    const raycaster = new THREE.Raycaster();
+    let isPressed = false;
+
+    const reset = () => {
+      this.pressedPoint = null;
+      this.pressedForce = null;
+    };
+    const ray = (event: PointerEvent) => {
+      if (!this.door.model) return;
+
+      const x = (event.clientX / this.canvasEl.clientWidth) * 2 - 1;
+      const y = -(event.clientY / this.canvasEl.clientHeight) * 2 + 1;
+      const clickedPosition = new THREE.Vector2(x, y);
+
+      raycaster.setFromCamera(clickedPosition, this.camera!);
+      const intersects = raycaster.intersectObjects([this.door.model]);
+
+      if (intersects.length > 0) {
+        const hitObject = intersects[0].object;
+        if (!this.isInDoorObject(hitObject)) {
+          reset();
+          return;
+        }
+
+        this.pressedPoint = intersects[0].point;
+        this.pressedForce = raycaster.ray.direction
+          .clone()
+          .multiplyScalar(PRESS_FORCE);
+      } else {
+        reset();
+      }
+    };
+
+    this.handlePointDown = (event: PointerEvent) => {
+      isPressed = true;
+      ray(event);
+    };
+    this.handlePointMove = (event: PointerEvent) => {
+      if (!isPressed) return;
+      ray(event);
+    };
+    this.handlePointUp = () => {
+      isPressed = false;
+      reset();
+    };
+    this.handlePointCancel = () => {
+      isPressed = false;
+      reset();
+    };
+
+    this.canvasEl.addEventListener("pointerdown", this.handlePointDown);
+    this.canvasEl.addEventListener("pointermove", this.handlePointMove);
+    this.canvasEl.addEventListener("pointerup", this.handlePointUp);
+    this.canvasEl.addEventListener("pointercancel", this.handlePointCancel);
+  }
+
+  isInDoorObject(obj: THREE.Object3D): boolean {
+    if (obj.name === DOOR_OBJET_NAMES.newDoor) return true;
+
+    let isChild = false;
+    obj.traverseAncestors((ancestor) => {
+      if (ancestor.name === DOOR_OBJET_NAMES.newDoor) {
+        isChild = true;
+      }
+    });
+    return isChild;
+  }
+
   update() {
     this.physics.step(PHYSICS_TIMESTEP);
     this.door.update();
 
-    const force = new CANNON.Vec3(0, 0, -0.2);
     const doorBody = this.door.bodies.find(
       (body) => body.name === BODY_NAMES.door,
     );
-    if (doorBody) {
-      doorBody.applyForce(force, doorBody.position);
+    if (doorBody && this.pressedPoint && this.pressedForce) {
+      const force = new CANNON.Vec3(
+        this.pressedForce.x,
+        this.pressedForce.y,
+        this.pressedForce.z,
+      );
+      const relativePoint = new CANNON.Vec3(
+        this.pressedPoint.x,
+        this.pressedPoint.y,
+        this.pressedPoint.z,
+      );
+      doorBody.applyForce(force, relativePoint);
     }
   }
 
@@ -86,8 +175,12 @@ class OpenDoorProject extends BaseProject {
 
   dispose() {
     super.dispose();
-    this.stopRender = true;
     this.disposePhysics();
+    this.stopRender = true;
+    this.canvasEl.removeEventListener("pointerdown", this.handlePointDown);
+    this.canvasEl.removeEventListener("pointermove", this.handlePointMove);
+    this.canvasEl.removeEventListener("pointerup", this.handlePointUp);
+    this.canvasEl.removeEventListener("pointercancel", this.handlePointCancel);
   }
 }
 

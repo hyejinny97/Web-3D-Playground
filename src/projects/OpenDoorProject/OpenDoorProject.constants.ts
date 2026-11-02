@@ -9,3 +9,5 @@ export const BODY_NAMES = {
   door: "door",
   hinge: "door-hinge",
 } as const;
+
+export const PRESS_FORCE = 0.1;
