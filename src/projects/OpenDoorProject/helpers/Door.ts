@@ -1,0 +1,137 @@
+import * as THREE from "three";
+import * as CANNON from "cannon-es";
+import type { DoorInfoType, DoorType } from "../OpenDoorProject.types";
+import { GLTFLoader } from "three/examples/jsm/Addons.js";
+import { BODY_NAMES, DOOR_OBJET_NAMES } from "../OpenDoorProject.constants";
+
+class Door implements DoorType {
+  private loadingManager: THREE.LoadingManager;
+  private info: DoorInfoType = {};
+  model: THREE.Object3D | null = null;
+  bodies: CANNON.Body[] = [];
+  constraint: CANNON.HingeConstraint | null = null;
+
+  constructor({ loadingManager }: { loadingManager: THREE.LoadingManager }) {
+    this.loadingManager = loadingManager;
+  }
+
+  async init() {
+    await this.loadGLTF();
+    this.centralizeModel();
+    this.setupInfo();
+    this.setupBody();
+    this.setupConstraint();
+  }
+
+  private async loadGLTF() {
+    const loader = new GLTFLoader(this.loadingManager);
+    const gltf = await loader.loadAsync("/models/door.glb");
+    this.model = gltf.scene;
+  }
+
+  private centralizeModel() {
+    if (this.model) {
+      const doorObj = this.findObject(
+        this.model,
+        DOOR_OBJET_NAMES.originalDoor,
+      );
+      const doorParentObj = doorObj.parent;
+
+      const newDoorObj = new THREE.Object3D();
+      newDoorObj.add(doorObj);
+      newDoorObj.name = DOOR_OBJET_NAMES.newDoor;
+
+      doorParentObj?.remove(doorObj);
+      doorParentObj?.add(newDoorObj);
+
+      const box = new THREE.Box3().setFromObject(this.model);
+      const center = box.getCenter(new THREE.Vector3());
+      this.model.position.sub(center);
+    }
+  }
+
+  private setupInfo() {
+    const doorObj = this.findObject(this.model!, DOOR_OBJET_NAMES.newDoor);
+    const boardObj = this.findObject(this.model!, DOOR_OBJET_NAMES.board);
+    const doorBox = this.getBoundingBox(doorObj);
+    const boardBox = this.getBoundingBox(boardObj);
+    const doorSize = this.getBoxSize(doorBox);
+    this.info = {
+      ...this.info,
+      doorObj,
+      doorBox,
+      doorSize,
+      boardBox,
+    };
+  }
+
+  private setupBody() {
+    const { doorSize, doorBox, boardBox } = this.info;
+    if (!doorSize || !doorBox || !boardBox) {
+      throw new Error("doorSize, doorBox, boardBox를 찾을 수 없습니다.");
+    }
+
+    const doorShape = new CANNON.Box(
+      new CANNON.Vec3(doorSize.x / 2, doorSize.y / 2, doorSize.z / 2),
+    );
+    const doorBody = new CANNON.Body({
+      mass: 10,
+      shape: doorShape,
+    });
+
+    const hingeShape = new CANNON.Particle();
+    const hingeBody = new CANNON.Body({
+      mass: 0,
+      shape: hingeShape,
+      position: new CANNON.Vec3(doorBox.min.x, doorBox.max.y, boardBox.min.z),
+    });
+
+    hingeBody.name = BODY_NAMES.hinge;
+    doorBody.name = BODY_NAMES.door;
+    this.bodies.push(hingeBody, doorBody);
+    this.info = { ...this.info, doorBody, hingeBody };
+  }
+
+  private setupConstraint() {
+    const { hingeBody, doorBody, doorBox, boardBox } = this.info;
+    if (!hingeBody || !doorBody || !doorBox || !boardBox) {
+      throw new Error(
+        "hingeBody, doorBody, doorBox, boardBox를 찾을 수 없습니다.",
+      );
+    }
+
+    this.constraint = new CANNON.HingeConstraint(hingeBody, doorBody, {
+      pivotA: new CANNON.Vec3(0, 0, 0),
+      axisA: new CANNON.Vec3(0, 1, 0),
+      pivotB: new CANNON.Vec3(doorBox.min.x, doorBox.max.y, boardBox.min.z),
+      axisB: new CANNON.Vec3(0, 1, 0),
+    });
+  }
+
+  private findObject(target: THREE.Object3D, name: string): THREE.Object3D {
+    const obj = target.getObjectByName(name);
+    if (!obj) {
+      throw new Error(`${name} 이름의 객체를 찾을 수 없습니다.`);
+    }
+    return obj;
+  }
+
+  private getBoundingBox(obj: THREE.Object3D): THREE.Box3 {
+    return new THREE.Box3().setFromObject(obj);
+  }
+
+  private getBoxSize(box: THREE.Box3): THREE.Vector3 {
+    return box.getSize(new THREE.Vector3());
+  }
+
+  update() {
+    const { doorObj, doorBody } = this.info;
+    if (!this.model) return;
+    if (!doorObj || !doorBody) return;
+
+    doorObj.position.copy(doorBody.position);
+    doorObj.quaternion.copy(doorBody.quaternion);
+  }
+}
+
+export default Door;

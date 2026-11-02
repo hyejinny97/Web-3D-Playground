@@ -239,6 +239,13 @@ const PHYSICS_PROJECTS = [
       () => import("@/components/projects/ClothSimulationCanvas"),
     ),
   },
+  {
+    id: "open-door",
+    title: "Open the door",
+    imageUrl: "",
+    tags: [TAGS.cannon, TAGS.hinge, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/OpenDoorCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [
