@@ -26,6 +26,7 @@ import image_url_move_character from "@/assets/images/projects/move_character.pn
 import image_url_fire_cannon from "@/assets/images/projects/fire_cannon.png";
 import image_url_cross_bridge from "@/assets/images/projects/cross_bridge.png";
 import image_url_cloth_simulation from "@/assets/images/projects/cloth_simulation.png";
+import image_url_open_door from "@/assets/images/projects/open_door.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -238,6 +239,13 @@ const PHYSICS_PROJECTS = [
     component: lazy(
       () => import("@/components/projects/ClothSimulationCanvas"),
     ),
+  },
+  {
+    id: "open-door",
+    title: "Open the door",
+    imageUrl: image_url_open_door,
+    tags: [TAGS.cannon, TAGS.hinge, TAGS.raycaster, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/OpenDoorCanvas")),
   },
 ];
 
