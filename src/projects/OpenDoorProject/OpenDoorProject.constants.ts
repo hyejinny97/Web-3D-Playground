@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 export const DOOR_OBJET_NAMES = {
   originalDoor: "Door_8",
   newDoor: "Door_Container",
@@ -10,4 +12,6 @@ export const BODY_NAMES = {
   hinge: "door-hinge",
 } as const;
 
-export const PRESS_FORCE = 0.1;
+export const PRESS_FORCE = 0.2;
+
+export const POINT_INIT_DIRECTION = new THREE.Vector3(0, 0, 1);

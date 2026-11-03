@@ -29,3 +29,10 @@ export interface DoorInfoType {
   boardBox?: THREE.Box3;
   doorSize?: THREE.Vector3;
 }
+
+export interface PointType {
+  model: THREE.Mesh;
+  displayLow: (position: THREE.Vector3, direction: THREE.Vector3) => void;
+  displayHigh: (position: THREE.Vector3, direction: THREE.Vector3) => void;
+  hide: () => void;
+}

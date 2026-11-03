@@ -12,6 +12,7 @@ import {
   DOOR_OBJET_NAMES,
   PRESS_FORCE,
 } from "./OpenDoorProject.constants";
+import Point from "./helpers/Point";
 
 type OpenDoorProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -23,6 +24,7 @@ class OpenDoorProject extends BaseProject {
   private stopRender = false;
   private physics!: CANNON.World;
   private door!: Door;
+  private point!: Point;
   declare private handlePointDown: (event: PointerEvent) => void;
   declare private handlePointMove: (event: PointerEvent) => void;
   declare private handlePointUp: (event: PointerEvent) => void;
@@ -50,11 +52,14 @@ class OpenDoorProject extends BaseProject {
     this.createPhysicsWorld();
     const loadingManager = this.generateLoadingManager();
     this.door = new Door({ loadingManager });
+    this.point = new Point();
 
     await this.door.init();
     if (this.stopRender) return;
 
-    if (this.door.model) this.scene?.add(this.door.model);
+    const models = [this.door.model!, this.point.model];
+
+    models.forEach((model) => this.scene?.add(model));
     this.door.bodies.forEach((body) => this.physics.addBody(body));
     if (this.door.constraint) this.physics.addConstraint(this.door.constraint);
   }
@@ -82,6 +87,7 @@ class OpenDoorProject extends BaseProject {
     const reset = () => {
       this.pressedPoint = null;
       this.pressedForce = null;
+      this.point.hide();
     };
     const ray = (event: PointerEvent) => {
       if (!this.door.model) return;
@@ -94,16 +100,28 @@ class OpenDoorProject extends BaseProject {
       const intersects = raycaster.intersectObjects([this.door.model]);
 
       if (intersects.length > 0) {
-        const hitObject = intersects[0].object;
-        if (!this.isInDoorObject(hitObject)) {
+        const hit = intersects[0];
+        if (!this.isInDoorObject(hit.object)) {
           reset();
           return;
         }
 
-        this.pressedPoint = intersects[0].point;
-        this.pressedForce = raycaster.ray.direction
-          .clone()
-          .multiplyScalar(PRESS_FORCE);
+        this.pressedPoint = hit.point;
+        const normal = hit.face?.normal.clone();
+        if (normal) {
+          const normalMatrix = new THREE.Matrix3().getNormalMatrix(
+            hit.object.matrixWorld,
+          );
+          normal.applyNormalMatrix(normalMatrix).normalize();
+        }
+
+        if (isPressed) {
+          const rayDirection = raycaster.ray.direction;
+          this.pressedForce = rayDirection.clone().multiplyScalar(PRESS_FORCE);
+          if (normal) this.point.displayHigh(this.pressedPoint, normal);
+        } else {
+          if (normal) this.point.displayLow(this.pressedPoint, normal);
+        }
       } else {
         reset();
       }
@@ -114,7 +132,6 @@ class OpenDoorProject extends BaseProject {
       ray(event);
     };
     this.handlePointMove = (event: PointerEvent) => {
-      if (!isPressed) return;
       ray(event);
     };
     this.handlePointUp = () => {
