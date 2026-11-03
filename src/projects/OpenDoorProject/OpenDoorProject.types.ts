@@ -28,6 +28,8 @@ export interface DoorInfoType {
   doorBox?: THREE.Box3;
   boardBox?: THREE.Box3;
   doorSize?: THREE.Vector3;
+  boardSize?: THREE.Vector3;
+  frameSize?: THREE.Vector3;
 }
 
 export interface PointType {

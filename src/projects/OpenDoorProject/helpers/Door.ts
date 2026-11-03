@@ -53,30 +53,40 @@ class Door implements DoorType {
   private setupInfo() {
     const doorObj = this.findObject(this.model!, DOOR_OBJET_NAMES.newDoor);
     const boardObj = this.findObject(this.model!, DOOR_OBJET_NAMES.board);
+    const frameObj = this.findObject(this.model!, DOOR_OBJET_NAMES.frame);
     const doorBox = this.getBoundingBox(doorObj);
     const boardBox = this.getBoundingBox(boardObj);
+    const frameBox = this.getBoundingBox(frameObj);
     const doorSize = this.getBoxSize(doorBox);
+    const boardSize = this.getBoxSize(boardBox);
+    const frameSize = this.getBoxSize(frameBox);
     this.info = {
       ...this.info,
       doorObj,
       doorBox,
-      doorSize,
       boardBox,
+      doorSize,
+      boardSize,
+      frameSize,
     };
   }
 
   private setupBody() {
-    const { doorSize, doorBox, boardBox } = this.info;
-    if (!doorSize || !doorBox || !boardBox) {
-      throw new Error("doorSize, doorBox, boardBox를 찾을 수 없습니다.");
+    const { doorSize, doorBox, boardBox, boardSize, frameSize } = this.info;
+    if (!doorSize || !doorBox || !boardBox || !boardSize || !frameSize) {
+      throw new Error(
+        "doorSize, doorBox, boardBox, boardSize, frameSize를 찾을 수 없습니다.",
+      );
     }
 
     const doorShape = new CANNON.Box(
       new CANNON.Vec3(doorSize.x / 2, doorSize.y / 2, doorSize.z / 2),
     );
+    const doorMaterial = new CANNON.Material("door");
     const doorBody = new CANNON.Body({
       mass: 10,
       shape: doorShape,
+      material: doorMaterial,
     });
 
     const hingeShape = new CANNON.Particle();
@@ -86,9 +96,30 @@ class Door implements DoorType {
       position: new CANNON.Vec3(doorBox.min.x, doorBox.max.y, boardBox.min.z),
     });
 
-    hingeBody.name = BODY_NAMES.hinge;
+    const frameShape = new CANNON.Box(
+      new CANNON.Vec3(
+        (frameSize.x - boardSize.x) / 4,
+        frameSize.y / 2,
+        frameSize.z / 2,
+      ),
+    );
+    const frameMaterial = new CANNON.Material("frame");
+    const frameBody = new CANNON.Body({
+      mass: 0,
+      shape: frameShape,
+      material: frameMaterial,
+      position: new CANNON.Vec3(
+        -(frameSize.x + boardSize.x) / 4 - 0.01,
+        0,
+        0.04,
+      ),
+    });
+
     doorBody.name = BODY_NAMES.door;
-    this.bodies.push(hingeBody, doorBody);
+    hingeBody.name = BODY_NAMES.hinge;
+    frameBody.name = BODY_NAMES.frame;
+
+    this.bodies.push(hingeBody, doorBody, frameBody);
     this.info = { ...this.info, doorBody, hingeBody };
   }
 

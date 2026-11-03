@@ -58,10 +58,12 @@ class OpenDoorProject extends BaseProject {
     if (this.stopRender) return;
 
     const models = [this.door.model!, this.point.model];
+    const contactMaterial = this.generateContactMaterial();
 
     models.forEach((model) => this.scene?.add(model));
     this.door.bodies.forEach((body) => this.physics.addBody(body));
     if (this.door.constraint) this.physics.addConstraint(this.door.constraint);
+    if (contactMaterial) this.physics.addContactMaterial(contactMaterial);
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -78,6 +80,21 @@ class OpenDoorProject extends BaseProject {
     this.physics = new CANNON.World({
       gravity: new CANNON.Vec3(0, EARTH_GRAVITY, 0),
     });
+  }
+
+  generateContactMaterial(): CANNON.ContactMaterial | undefined {
+    const doorBody = this.door.bodies.find(
+      (body) => body.name === BODY_NAMES.door,
+    );
+    const frameBody = this.door.bodies.find(
+      (body) => body.name === BODY_NAMES.frame,
+    );
+    if (doorBody && frameBody && doorBody.material && frameBody.material) {
+      return new CANNON.ContactMaterial(doorBody.material, frameBody.material, {
+        friction: 0.8,
+        restitution: 0,
+      });
+    }
   }
 
   setupEvent() {
