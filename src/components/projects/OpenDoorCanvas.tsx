@@ -3,6 +3,7 @@ import OpenDoorProject from "@/projects/OpenDoorProject";
 import type { Project } from "@/types/project";
 import useLoad from "@/hooks/useLoading";
 import Loading from "../Loading";
+import Text from "@jinni-labs/ui/Text";
 
 const OpenDoorCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -36,7 +37,13 @@ const OpenDoorCanvas = () => {
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
-      {isLoading && <Loading progress={progress} helpText="Loading files..." />}
+      {isLoading ? (
+        <Loading progress={progress} helpText="Loading files..." />
+      ) : (
+        <Text className="absolute bottom-5 left-5 text-white! typo-headline-small">
+          * Try pushing the door to open it.
+        </Text>
+      )}
     </div>
   );
 };
