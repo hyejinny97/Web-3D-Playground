@@ -19,7 +19,7 @@ class Doll implements DollType {
       DOLL_SIZE.depth,
     );
     const material = new THREE.MeshPhongMaterial({
-      color: new THREE.Color(0xffffff),
+      color: new THREE.Color(0xffff00),
     });
     this.model = new THREE.Mesh(geometry, material);
   }

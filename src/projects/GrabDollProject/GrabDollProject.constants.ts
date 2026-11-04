@@ -9,3 +9,5 @@ export const DOLL_SIZE = {
   height: 1,
   depth: 1,
 } as const;
+
+export const MARKER_RADIUS = 0.1;

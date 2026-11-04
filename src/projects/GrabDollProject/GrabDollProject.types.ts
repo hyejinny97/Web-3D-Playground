@@ -12,3 +12,9 @@ export interface DollType {
   body: CANNON.Body | null;
   update: () => void;
 }
+
+export interface MarkerType {
+  model: THREE.Object3D | null;
+  body: CANNON.Body | null;
+  update: () => void;
+}

@@ -6,12 +6,14 @@ import Doll from "./helpers/Doll";
 import { EARTH_GRAVITY } from "@/constants/gravity";
 import { PHYSICS_TIMESTEP } from "../FireCannonProject/FireCannonProject.constants";
 import type { ConstructorProps } from "@/types/project";
+import Marker from "./helpers/Marker";
 
 @RenderLoop()
 class GrabDollProject extends BaseProject {
   private physics!: CANNON.World;
   private floor!: Floor;
   private doll!: Doll;
+  private marker!: Marker;
 
   constructor(props: ConstructorProps) {
     super(props);
@@ -38,9 +40,10 @@ class GrabDollProject extends BaseProject {
     this.createPhysicsWorld();
     this.floor = new Floor();
     this.doll = new Doll();
+    this.marker = new Marker();
 
-    const models = [this.floor.model!, this.doll.model!];
-    const bodies = [this.floor.body!, this.doll.body!];
+    const models = [this.floor.model!, this.doll.model!, this.marker.model!];
+    const bodies = [this.floor.body!, this.doll.body!, this.marker.body!];
 
     models.forEach((model) => this.scene?.add(model));
     bodies.forEach((body) => this.physics.addBody(body));
@@ -56,6 +59,7 @@ class GrabDollProject extends BaseProject {
     this.physics.step(PHYSICS_TIMESTEP);
     this.floor.update();
     this.doll.update();
+    this.marker.update();
   }
 
   disposePhysics() {
