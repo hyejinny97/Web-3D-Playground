@@ -16,5 +16,8 @@ export interface DollType {
 export interface MarkerType {
   model: THREE.Object3D | null;
   body: CANNON.Body | null;
+  show: () => void;
+  hide: () => void;
+  locateAt: (position: THREE.Vector3) => void;
   update: () => void;
 }

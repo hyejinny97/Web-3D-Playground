@@ -17,6 +17,7 @@ class Marker {
       color: new THREE.Color(0xffffff),
     });
     this.model = new THREE.Mesh(geometry, material);
+    this.model.visible = false;
   }
 
   private setupBody() {
@@ -27,6 +28,25 @@ class Marker {
     });
     this.body.collisionFilterGroup = 0;
     this.body.collisionFilterMask = 0;
+  }
+
+  show() {
+    if (this.model) {
+      this.model.visible = true;
+    }
+  }
+
+  hide() {
+    if (this.model) {
+      this.model.visible = false;
+    }
+  }
+
+  locateAt(position: THREE.Vector3) {
+    if (this.body) {
+      const { x, y, z } = position;
+      this.body.position.set(x, y, z);
+    }
   }
 
   update() {

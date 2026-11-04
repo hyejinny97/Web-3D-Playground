@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
@@ -14,10 +15,16 @@ class GrabDollProject extends BaseProject {
   private floor!: Floor;
   private doll!: Doll;
   private marker!: Marker;
+  private raycaster = new THREE.Raycaster();
+  declare private handlePointerDown: (event: PointerEvent) => void;
+  declare private handlePointerMove: (event: PointerEvent) => void;
+  declare private handlePointerUp: (event: PointerEvent) => void;
+  declare private handlePointerCancel: (event: PointerEvent) => void;
 
   constructor(props: ConstructorProps) {
     super(props);
     this.setupModel();
+    this.setupEvent();
   }
 
   init() {
@@ -55,6 +62,36 @@ class GrabDollProject extends BaseProject {
     });
   }
 
+  setupEvent() {
+    this.handlePointerDown = (event: PointerEvent) => {
+      const hitPoint = this.getHitPointOnDoll(event);
+      if (!hitPoint) return;
+
+      this.marker.locateAt(hitPoint);
+      this.marker.show();
+    };
+    this.handlePointerMove = () => {};
+    this.handlePointerUp = () => {};
+    this.handlePointerCancel = () => {};
+
+    this.canvasEl.addEventListener("pointerdown", this.handlePointerDown);
+    this.canvasEl.addEventListener("pointermove", this.handlePointerMove);
+    this.canvasEl.addEventListener("pointerup", this.handlePointerUp);
+    this.canvasEl.addEventListener("pointercancel", this.handlePointerCancel);
+  }
+
+  getHitPointOnDoll(event: PointerEvent): THREE.Vector3 | undefined {
+    if (!this.doll.model) return;
+    const x = (event.clientX / this.canvasEl.clientWidth) * 2 - 1;
+    const y = -(event.clientY / this.canvasEl.clientHeight) * 2 + 1;
+    const mouse = new THREE.Vector2(x, y);
+
+    this.raycaster.setFromCamera(mouse, this.camera!);
+    const intersects = this.raycaster.intersectObjects([this.doll.model]);
+
+    return intersects.length > 0 ? intersects[0].point : undefined;
+  }
+
   update() {
     this.physics.step(PHYSICS_TIMESTEP);
     this.floor.update();
@@ -72,6 +109,13 @@ class GrabDollProject extends BaseProject {
   dispose() {
     super.dispose();
     this.disposePhysics();
+    this.canvasEl.removeEventListener("pointerdown", this.handlePointerDown);
+    this.canvasEl.removeEventListener("pointermove", this.handlePointerMove);
+    this.canvasEl.removeEventListener("pointerup", this.handlePointerUp);
+    this.canvasEl.removeEventListener(
+      "pointercancel",
+      this.handlePointerCancel,
+    );
   }
 }
 
