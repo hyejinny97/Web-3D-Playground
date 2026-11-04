@@ -247,6 +247,13 @@ const PHYSICS_PROJECTS = [
     tags: [TAGS.cannon, TAGS.hinge, TAGS.raycaster, TAGS.gltf],
     component: lazy(() => import("@/components/projects/OpenDoorCanvas")),
   },
+  {
+    id: "grab-doll",
+    title: "Grab a doll",
+    imageUrl: "",
+    tags: [TAGS.cannon, TAGS.point, TAGS.raycaster, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/GrabDollCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [
