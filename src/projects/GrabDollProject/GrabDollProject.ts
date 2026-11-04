@@ -20,6 +20,7 @@ class GrabDollProject extends BaseProject {
   declare private handlePointerMove: (event: PointerEvent) => void;
   declare private handlePointerUp: (event: PointerEvent) => void;
   declare private handlePointerCancel: (event: PointerEvent) => void;
+  private joint: CANNON.PointToPointConstraint | null = null;
 
   constructor(props: ConstructorProps) {
     super(props);
@@ -69,6 +70,7 @@ class GrabDollProject extends BaseProject {
 
       this.marker.locateAt(hitPoint);
       this.marker.show();
+      this.addJoint(hitPoint);
     };
     this.handlePointerMove = () => {};
     this.handlePointerUp = () => {};
@@ -90,6 +92,28 @@ class GrabDollProject extends BaseProject {
     const intersects = this.raycaster.intersectObjects([this.doll.model]);
 
     return intersects.length > 0 ? intersects[0].point : undefined;
+  }
+
+  addJoint(hitPoint: THREE.Vector3) {
+    if (!this.doll.body || !this.marker.body) return;
+
+    // world 좌표를 doll의 local 좌표로 변환
+    const bodyToHitPoint = new CANNON.Vec3(
+      hitPoint.x,
+      hitPoint.y,
+      hitPoint.z,
+    ).vsub(this.doll.body.position);
+    const antiRotation = this.doll.body.quaternion.inverse();
+    const dollPivot = antiRotation.vmult(bodyToHitPoint);
+
+    // marker와 doll 사이 joint 생성
+    this.joint = new CANNON.PointToPointConstraint(
+      this.doll.body,
+      dollPivot,
+      this.marker.body,
+      new CANNON.Vec3(0, 0, 0),
+    );
+    this.physics.addConstraint(this.joint);
   }
 
   update() {
