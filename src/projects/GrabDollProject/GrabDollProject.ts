@@ -8,6 +8,7 @@ import { EARTH_GRAVITY } from "@/constants/gravity";
 import { PHYSICS_TIMESTEP } from "../FireCannonProject/FireCannonProject.constants";
 import type { ConstructorProps } from "@/types/project";
 import Marker from "./helpers/Marker";
+import MovementPlane from "./helpers/MovementPlane";
 
 @RenderLoop()
 class GrabDollProject extends BaseProject {
@@ -15,6 +16,7 @@ class GrabDollProject extends BaseProject {
   private floor!: Floor;
   private doll!: Doll;
   private marker!: Marker;
+  private movementPlane!: MovementPlane;
   private raycaster = new THREE.Raycaster();
   declare private handlePointerDown: (event: PointerEvent) => void;
   declare private handlePointerMove: (event: PointerEvent) => void;
@@ -33,7 +35,6 @@ class GrabDollProject extends BaseProject {
     this.setupCamera();
     this.setupScene();
     this.setupLight();
-    this.setupControls();
     this.setupResizeObserver();
   }
 
@@ -49,8 +50,14 @@ class GrabDollProject extends BaseProject {
     this.floor = new Floor();
     this.doll = new Doll();
     this.marker = new Marker();
+    this.movementPlane = new MovementPlane({ camera: this.camera! });
 
-    const models = [this.floor.model!, this.doll.model!, this.marker.model!];
+    const models = [
+      this.floor.model!,
+      this.doll.model!,
+      this.marker.model!,
+      this.movementPlane.model,
+    ];
     const bodies = [this.floor.body!, this.doll.body!, this.marker.body!];
 
     models.forEach((model) => this.scene?.add(model));
@@ -64,15 +71,30 @@ class GrabDollProject extends BaseProject {
   }
 
   setupEvent() {
+    let isDragged = false;
+
     this.handlePointerDown = (event: PointerEvent) => {
-      const hitPoint = this.getHitPointOnDoll(event);
+      if (!this.doll.model) return;
+
+      const hitPoint = this.getHitPoint(event, this.doll.model);
       if (!hitPoint) return;
 
+      this.movementPlane.locateAt(hitPoint);
       this.marker.locateAt(hitPoint);
       this.marker.show();
       this.addJoint(hitPoint);
+      isDragged = true;
     };
-    this.handlePointerMove = () => {};
+    this.handlePointerMove = (event: PointerEvent) => {
+      if (!isDragged) return;
+
+      const hitPoint = this.getHitPoint(event, this.movementPlane.model);
+      if (!hitPoint) return;
+
+      this.movementPlane.locateAt(hitPoint);
+      this.marker.locateAt(hitPoint);
+      this.updateJoint();
+    };
     this.handlePointerUp = () => {};
     this.handlePointerCancel = () => {};
 
@@ -82,14 +104,16 @@ class GrabDollProject extends BaseProject {
     this.canvasEl.addEventListener("pointercancel", this.handlePointerCancel);
   }
 
-  getHitPointOnDoll(event: PointerEvent): THREE.Vector3 | undefined {
-    if (!this.doll.model) return;
+  getHitPoint(
+    event: PointerEvent,
+    ...targets: [THREE.Object3D, ...THREE.Object3D[]]
+  ): THREE.Vector3 | undefined {
     const x = (event.clientX / this.canvasEl.clientWidth) * 2 - 1;
     const y = -(event.clientY / this.canvasEl.clientHeight) * 2 + 1;
     const mouse = new THREE.Vector2(x, y);
 
     this.raycaster.setFromCamera(mouse, this.camera!);
-    const intersects = this.raycaster.intersectObjects([this.doll.model]);
+    const intersects = this.raycaster.intersectObjects(targets);
 
     return intersects.length > 0 ? intersects[0].point : undefined;
   }
@@ -114,6 +138,10 @@ class GrabDollProject extends BaseProject {
       new CANNON.Vec3(0, 0, 0),
     );
     this.physics.addConstraint(this.joint);
+  }
+
+  updateJoint() {
+    this.joint?.update();
   }
 
   update() {

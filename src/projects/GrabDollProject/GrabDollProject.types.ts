@@ -21,3 +21,8 @@ export interface MarkerType {
   locateAt: (position: THREE.Vector3) => void;
   update: () => void;
 }
+
+export interface MovementPlaneType {
+  model: THREE.Object3D;
+  locateAt: (position: THREE.Vector3) => void;
+}

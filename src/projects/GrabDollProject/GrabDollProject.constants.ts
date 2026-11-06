@@ -11,3 +11,8 @@ export const DOLL_SIZE = {
 } as const;
 
 export const MARKER_RADIUS = 0.1;
+
+export const PLANE_SIZE = {
+  width: 10,
+  height: 10,
+} as const;
