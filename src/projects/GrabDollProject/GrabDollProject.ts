@@ -9,6 +9,9 @@ import { PHYSICS_TIMESTEP } from "../FireCannonProject/FireCannonProject.constan
 import type { ConstructorProps } from "@/types/project";
 import Marker from "./helpers/Marker";
 import MovementPlane from "./helpers/MovementPlane";
+import TriggerPlane from "./helpers/TriggerPlane";
+import type { CollideEvent } from "./GrabDollProject.types";
+import { BODY_NAME, DOLL_SIZE, FLOOR_SIZE } from "./GrabDollProject.constants";
 
 @RenderLoop()
 class GrabDollProject extends BaseProject {
@@ -17,17 +20,20 @@ class GrabDollProject extends BaseProject {
   private doll!: Doll;
   private marker!: Marker;
   private movementPlane!: MovementPlane;
+  private triggerPlane!: TriggerPlane;
   private raycaster = new THREE.Raycaster();
   declare private handlePointerDown: (event: PointerEvent) => void;
   declare private handlePointerMove: (event: PointerEvent) => void;
   declare private handlePointerUp: (event: PointerEvent) => void;
   declare private handlePointerCancel: (event: PointerEvent) => void;
+  declare private handleCollide: (event: CollideEvent) => void;
   private joint: CANNON.PointToPointConstraint | null = null;
 
   constructor(props: ConstructorProps) {
     super(props);
     this.setupModel();
-    this.setupEvent();
+    this.setupPointerEvent();
+    this.setupCollideEvent();
   }
 
   init() {
@@ -41,7 +47,11 @@ class GrabDollProject extends BaseProject {
   setupCamera() {
     super.setupCamera();
     if (this.camera) {
-      this.camera.position.set(0, 1, 3);
+      this.camera.position.set(
+        0,
+        DOLL_SIZE.height + 0.5,
+        FLOOR_SIZE.depth / 2 + 0.5,
+      );
     }
   }
 
@@ -51,6 +61,7 @@ class GrabDollProject extends BaseProject {
     this.doll = new Doll();
     this.marker = new Marker();
     this.movementPlane = new MovementPlane({ camera: this.camera! });
+    this.triggerPlane = new TriggerPlane();
 
     const models = [
       this.floor.model!,
@@ -58,7 +69,12 @@ class GrabDollProject extends BaseProject {
       this.marker.model!,
       this.movementPlane.model,
     ];
-    const bodies = [this.floor.body!, this.doll.body!, this.marker.body!];
+    const bodies = [
+      this.floor.body!,
+      this.doll.body!,
+      this.marker.body!,
+      this.triggerPlane.body,
+    ];
 
     models.forEach((model) => this.scene?.add(model));
     bodies.forEach((body) => this.physics.addBody(body));
@@ -70,7 +86,7 @@ class GrabDollProject extends BaseProject {
     });
   }
 
-  setupEvent() {
+  setupPointerEvent() {
     let isDragged = false;
 
     this.handlePointerDown = (event: PointerEvent) => {
@@ -110,6 +126,17 @@ class GrabDollProject extends BaseProject {
     this.canvasEl.addEventListener("pointermove", this.handlePointerMove);
     this.canvasEl.addEventListener("pointerup", this.handlePointerUp);
     this.canvasEl.addEventListener("pointercancel", this.handlePointerCancel);
+  }
+
+  setupCollideEvent() {
+    this.handleCollide = (event: CollideEvent) => {
+      const body = event.body;
+      if (body.name === BODY_NAME.doll) {
+        this.doll.reset();
+      }
+    };
+
+    this.triggerPlane.body.addEventListener("collide", this.handleCollide);
   }
 
   getHitPoint(
@@ -183,6 +210,7 @@ class GrabDollProject extends BaseProject {
       "pointercancel",
       this.handlePointerCancel,
     );
+    this.triggerPlane.body.removeEventListener("collide", this.handleCollide);
   }
 }
 

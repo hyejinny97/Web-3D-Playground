@@ -1,7 +1,11 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import type { DollType } from "../GrabDollProject.types";
-import { DOLL_SIZE } from "../GrabDollProject.constants";
+import {
+  BODY_NAME,
+  DOLL_INIT_POSITION,
+  DOLL_SIZE,
+} from "../GrabDollProject.constants";
 
 class Doll implements DollType {
   model: THREE.Object3D | null = null;
@@ -35,8 +39,19 @@ class Doll implements DollType {
     this.body = new CANNON.Body({
       mass: 1,
       shape,
-      position: new CANNON.Vec3(0, DOLL_SIZE.height, 0),
+      position: DOLL_INIT_POSITION,
     });
+    this.body.name = BODY_NAME.doll;
+  }
+
+  reset() {
+    if (this.body) {
+      const { x, y, z } = DOLL_INIT_POSITION;
+      this.body.position.set(x, y, z);
+      this.body.quaternion.set(0, 0, 0, 1);
+      this.body.velocity.set(0, 0, 0);
+      this.body.angularVelocity.set(0, 0, 0);
+    }
   }
 
   update() {
