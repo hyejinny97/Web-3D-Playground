@@ -95,8 +95,16 @@ class GrabDollProject extends BaseProject {
       this.marker.locateAt(hitPoint);
       this.updateJoint();
     };
-    this.handlePointerUp = () => {};
-    this.handlePointerCancel = () => {};
+    this.handlePointerUp = () => {
+      this.marker.hide();
+      this.removeJoint();
+      isDragged = false;
+    };
+    this.handlePointerCancel = () => {
+      this.marker.hide();
+      this.removeJoint();
+      isDragged = false;
+    };
 
     this.canvasEl.addEventListener("pointerdown", this.handlePointerDown);
     this.canvasEl.addEventListener("pointermove", this.handlePointerMove);
@@ -142,6 +150,13 @@ class GrabDollProject extends BaseProject {
 
   updateJoint() {
     this.joint?.update();
+  }
+
+  removeJoint() {
+    if (this.joint) {
+      this.physics.removeConstraint(this.joint);
+      this.joint = null;
+    }
   }
 
   update() {
