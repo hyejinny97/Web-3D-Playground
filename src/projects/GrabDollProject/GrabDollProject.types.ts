@@ -7,6 +7,12 @@ declare module "cannon-es" {
   }
 }
 
+export interface LoadManagerType {
+  onStart: () => void;
+  onProgress: (percent: number) => void;
+  onLoad: () => void;
+}
+
 export interface FloorType {
   model: THREE.Object3D | null;
   body: CANNON.Body | null;
@@ -16,6 +22,7 @@ export interface FloorType {
 export interface DollType {
   model: THREE.Object3D | null;
   body: CANNON.Body | null;
+  init: () => void;
   reset: () => void;
   update: () => void;
 }

@@ -1,9 +1,13 @@
 import { useLayoutEffect, useRef } from "react";
 import GrabDollProject from "@/projects/GrabDollProject";
 import type { Project } from "@/types/project";
+import useLoad from "@/hooks/useLoading";
+import Loading from "../Loading";
+import Text from "@jinni-labs/ui/Text";
 
 const GrabDollCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { isLoading, progress, loadStart, loading, loadComplete } = useLoad();
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -16,6 +20,11 @@ const GrabDollCanvas = () => {
 
     const project: Project = new GrabDollProject({
       canvasEl,
+      loadManager: {
+        onStart: loadStart,
+        onProgress: loading,
+        onLoad: loadComplete,
+      },
     });
     if (project.loop) project.renderLoop();
     else project.render();
@@ -24,9 +33,19 @@ const GrabDollCanvas = () => {
       project.dispose();
       container.removeChild(canvasEl);
     };
-  }, []);
+  }, [loadStart, loading, loadComplete]);
 
-  return <div ref={containerRef} className="w-full h-full" />;
+  return (
+    <div ref={containerRef} className="relative w-full h-full">
+      {isLoading ? (
+        <Loading progress={progress} helpText="Loading files..." />
+      ) : (
+        <Text className="absolute bottom-5 left-5 text-white! typo-headline-small">
+          * Try picking up the doll.
+        </Text>
+      )}
+    </div>
+  );
 };
 
 export default GrabDollCanvas;

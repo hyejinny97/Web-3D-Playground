@@ -10,11 +10,17 @@ import type { ConstructorProps } from "@/types/project";
 import Marker from "./helpers/Marker";
 import MovementPlane from "./helpers/MovementPlane";
 import TriggerPlane from "./helpers/TriggerPlane";
-import type { CollideEvent } from "./GrabDollProject.types";
-import { BODY_NAME, DOLL_SIZE, FLOOR_SIZE } from "./GrabDollProject.constants";
+import type { CollideEvent, LoadManagerType } from "./GrabDollProject.types";
+import { BODY_NAME, FLOOR_SIZE } from "./GrabDollProject.constants";
+
+type GrabDollProjectProps = ConstructorProps & {
+  loadManager: LoadManagerType;
+};
 
 @RenderLoop()
 class GrabDollProject extends BaseProject {
+  private loadManager: LoadManagerType;
+  private stopRender = false;
   private physics!: CANNON.World;
   private floor!: Floor;
   private doll!: Doll;
@@ -29,8 +35,9 @@ class GrabDollProject extends BaseProject {
   declare private handleCollide: (event: CollideEvent) => void;
   private joint: CANNON.PointToPointConstraint | null = null;
 
-  constructor(props: ConstructorProps) {
-    super(props);
+  constructor({ canvasEl, loadManager }: GrabDollProjectProps) {
+    super({ canvasEl });
+    this.loadManager = loadManager;
     this.setupModel();
     this.setupPointerEvent();
     this.setupCollideEvent();
@@ -47,21 +54,22 @@ class GrabDollProject extends BaseProject {
   setupCamera() {
     super.setupCamera();
     if (this.camera) {
-      this.camera.position.set(
-        0,
-        DOLL_SIZE.height + 0.5,
-        FLOOR_SIZE.depth / 2 + 0.5,
-      );
+      this.camera.position.set(0, 1.5, FLOOR_SIZE.depth / 2 + 0.5);
     }
   }
 
-  setupModel() {
+  async setupModel() {
     this.createPhysicsWorld();
+    const loadingManager = this.generateLoadingManager();
+
     this.floor = new Floor();
-    this.doll = new Doll();
+    this.doll = new Doll({ loadingManager });
     this.marker = new Marker();
     this.movementPlane = new MovementPlane({ camera: this.camera! });
     this.triggerPlane = new TriggerPlane();
+
+    await this.doll.init();
+    if (this.stopRender) return;
 
     const models = [
       this.floor.model!,
@@ -78,6 +86,17 @@ class GrabDollProject extends BaseProject {
 
     models.forEach((model) => this.scene?.add(model));
     bodies.forEach((body) => this.physics.addBody(body));
+  }
+
+  generateLoadingManager(): THREE.LoadingManager {
+    const { onStart, onProgress, onLoad } = this.loadManager;
+    const manager = new THREE.LoadingManager(
+      onLoad,
+      (_: string, loaded: number, total: number) =>
+        onProgress((loaded / total) * 100),
+    );
+    manager.onStart = onStart;
+    return manager;
   }
 
   createPhysicsWorld() {
@@ -211,6 +230,7 @@ class GrabDollProject extends BaseProject {
       this.handlePointerCancel,
     );
     this.triggerPlane.body.removeEventListener("collide", this.handleCollide);
+    this.stopRender = true;
   }
 }
 

@@ -14,7 +14,7 @@ class Marker {
   private setupModel() {
     const geometry = new THREE.SphereGeometry(MARKER_RADIUS);
     const material = new THREE.MeshPhongMaterial({
-      color: new THREE.Color(0xffffff),
+      color: new THREE.Color("#fef08a"),
     });
     this.model = new THREE.Mesh(geometry, material);
     this.model.visible = false;
