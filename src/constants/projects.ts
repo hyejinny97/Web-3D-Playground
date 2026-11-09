@@ -255,6 +255,13 @@ const PHYSICS_PROJECTS = [
     tags: [TAGS.cannon, TAGS.point, TAGS.raycaster, TAGS.gltf],
     component: lazy(() => import("@/components/projects/GrabDollCanvas")),
   },
+  {
+    id: "hit-punching-bag",
+    title: "Hit a punching bag",
+    imageUrl: "",
+    tags: [TAGS.cannon, TAGS.coneTwist, TAGS.raycaster, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/HitPunchingBagCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [
