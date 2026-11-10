@@ -8,9 +8,11 @@ import PunchingBag from "./helpers/PunchingBag";
 import { EARTH_GRAVITY } from "@/constants/gravity";
 import { PHYSICS_TIMESTEP } from "../FireCannonProject/FireCannonProject.constants";
 import {
+  IMPULSE_SIZE,
   PUNCHING_BAG_BODY_NAMES,
   PUNCHING_BAG_OBJECT_NAMES,
 } from "./HitPunchingBagProject.constants";
+import Glove from "./helpers/Glove";
 
 type HitPunchingBagProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -22,6 +24,7 @@ class HitPunchingBagProject extends BaseProject {
   private stopRender = false;
   private physics!: CANNON.World;
   private punchingBag!: PunchingBag;
+  private glove!: Glove;
   private raycaster = new THREE.Raycaster();
   declare bagObj?: THREE.Object3D;
   declare bagBody?: CANNON.Body;
@@ -39,6 +42,7 @@ class HitPunchingBagProject extends BaseProject {
     this.setupCamera();
     this.setupScene();
     this.setupLight();
+    this.setupControls();
     this.setupResizeObserver();
   }
 
@@ -69,11 +73,12 @@ class HitPunchingBagProject extends BaseProject {
     const loadingManager = this.generateLoadingManager();
 
     this.punchingBag = new PunchingBag({ loadingManager });
+    this.glove = new Glove({ loadingManager });
 
-    await this.punchingBag.init();
+    await Promise.allSettled([this.punchingBag.init(), this.glove.init()]);
     if (this.stopRender) return;
 
-    const models = [this.punchingBag.model!];
+    const models = [this.punchingBag.model!, this.glove.model!];
     const bodies = [...this.punchingBag.bodies];
 
     models.forEach((model) => this.scene?.add(model));
@@ -106,7 +111,7 @@ class HitPunchingBagProject extends BaseProject {
   }
 
   setupEvent() {
-    this.handlePointerDown = (event: PointerEvent) => {
+    this.handlePointerDown = async (event: PointerEvent) => {
       if (!this.bagObj || !this.bagBody || !this.camera) return;
 
       const hitPointInWorld = this.getHitPoint(event, this.bagObj);
@@ -118,7 +123,12 @@ class HitPunchingBagProject extends BaseProject {
       const cameraToHitPoint = new THREE.Vector3()
         .subVectors(hitPointInWorld, this.camera.position)
         .normalize();
-      const impulse = cameraToHitPoint.multiplyScalar(10);
+      const impulse = cameraToHitPoint.multiplyScalar(IMPULSE_SIZE);
+
+      await this.glove.punch({
+        position: hitPointInWorld,
+        direction: cameraToHitPoint,
+      });
 
       this.bagBody.applyImpulse(
         new CANNON.Vec3(impulse.x, impulse.y, impulse.z),

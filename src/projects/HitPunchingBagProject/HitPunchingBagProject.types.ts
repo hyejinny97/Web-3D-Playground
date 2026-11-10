@@ -27,3 +27,15 @@ export interface PunchingBagInfoType {
   bagBody?: CANNON.Body;
   anchorBody?: CANNON.Body;
 }
+
+export interface GloveType {
+  model: THREE.Object3D | null;
+  init: () => void;
+  punch: ({
+    position,
+    direction,
+  }: {
+    position: THREE.Vector3;
+    direction: THREE.Vector3;
+  }) => void;
+}
