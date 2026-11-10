@@ -115,8 +115,8 @@ class PunchingBag implements PunchingBagType {
       pivotB: new CANNON.Vec3(0, 0, 0),
       axisA: new CANNON.Vec3(0, -1, 0),
       axisB: new CANNON.Vec3(0, -1, 0),
-      angle: THREE.MathUtils.degToRad(80),
-      twistAngle: THREE.MathUtils.degToRad(100),
+      angle: THREE.MathUtils.degToRad(60),
+      twistAngle: THREE.MathUtils.degToRad(30),
     });
   }
 
