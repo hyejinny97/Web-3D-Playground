@@ -52,6 +52,9 @@ class PunchingBag implements PunchingBagType {
     const center = box.getCenter(new THREE.Vector3());
     this.gltf.position.set(-center.x, -center.y, -center.z);
     this.gltf.updateMatrixWorld(true);
+
+    const bagObj = this.findObject(this.model, PUNCHING_BAG_OBJECT_NAMES.bag);
+    this.model.attach(bagObj);
   }
 
   private setupInfo() {
@@ -85,6 +88,8 @@ class PunchingBag implements PunchingBagType {
       mass: 10,
       shape: bagShape,
       position: bagInitPosition,
+      linearDamping: 0.3,
+      angularDamping: 0.5,
     });
     bagBody.name = PUNCHING_BAG_BODY_NAMES.bag;
 
@@ -131,12 +136,7 @@ class PunchingBag implements PunchingBagType {
     const { bagObj, bagBody } = this.info;
     if (!this.model || !bagObj || !bagBody) return;
 
-    const worldPos = new THREE.Vector3(
-      bagBody.position.x,
-      bagBody.position.y,
-      bagBody.position.z,
-    );
-    bagObj.worldToLocal(worldPos.clone());
+    bagObj.position.copy(bagBody.position);
     bagObj.quaternion.copy(bagBody.quaternion);
   }
 }
