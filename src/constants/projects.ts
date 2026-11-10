@@ -28,6 +28,7 @@ import image_url_cross_bridge from "@/assets/images/projects/cross_bridge.png";
 import image_url_cloth_simulation from "@/assets/images/projects/cloth_simulation.png";
 import image_url_open_door from "@/assets/images/projects/open_door.png";
 import image_url_grab_doll from "@/assets/images/projects/grab_doll.png";
+import image_url_hit_punching_bag from "@/assets/images/projects/hit_punching_bag.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -254,6 +255,13 @@ const PHYSICS_PROJECTS = [
     imageUrl: image_url_grab_doll,
     tags: [TAGS.cannon, TAGS.point, TAGS.raycaster, TAGS.gltf],
     component: lazy(() => import("@/components/projects/GrabDollCanvas")),
+  },
+  {
+    id: "hit-punching-bag",
+    title: "Hit a punching bag",
+    imageUrl: image_url_hit_punching_bag,
+    tags: [TAGS.cannon, TAGS.coneTwist, TAGS.raycaster, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/HitPunchingBagCanvas")),
   },
 ];
 
