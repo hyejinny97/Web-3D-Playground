@@ -265,15 +265,27 @@ const PHYSICS_PROJECTS = [
   },
 ];
 
+const GAME_AI_PROJECTS = [
+  {
+    id: "bees-flowers",
+    title: "Bees and Flowers",
+    imageUrl: "",
+    tags: [TAGS.yuka, TAGS.arrive, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/BeesFlowersCanvas")),
+  },
+];
+
 export const ALL_PROJECTS = [
   BASIC_PROJECT,
   ...MODEL_PROJECTS,
   ...THREE_D_FILE_PROJECTS,
   ...PHYSICS_PROJECTS,
+  ...GAME_AI_PROJECTS,
 ];
 
 export const PROJECTS_BY_DOMAIN = [
   { domain: "Model", projects: MODEL_PROJECTS },
   { domain: "3D File", projects: THREE_D_FILE_PROJECTS },
   { domain: "Physics", projects: PHYSICS_PROJECTS },
+  { domain: "Game AI", projects: GAME_AI_PROJECTS },
 ];
