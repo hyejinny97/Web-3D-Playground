@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as YUKA from "yuka";
 import type { GRASS_TEXTURES } from "./BeesFlowersProject.constants";
 
 export type GrassTextureType = keyof typeof GRASS_TEXTURES;
@@ -16,5 +17,11 @@ export interface GroundType {
 
 export interface ElementsType {
   models: THREE.Object3D[];
+  init: () => void;
+}
+
+export interface StaticElementsType {
+  models: THREE.Object3D[];
+  entities: YUKA.GameEntity[];
   init: () => void;
 }

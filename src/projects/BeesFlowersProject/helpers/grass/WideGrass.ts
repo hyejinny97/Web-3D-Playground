@@ -1,12 +1,12 @@
 import Elements from "../Elements";
-import { GRASS2_TRANSFORMATION } from "../../BeesFlowersProject.constants";
+import { WIDE_GRASS_TRANSFORMATION } from "../../BeesFlowersProject.constants";
 
-class Grass2 extends Elements {
+class WideGrass extends Elements {
   protected url = "/models/grass2.glb";
-  protected count = GRASS2_TRANSFORMATION.length;
+  protected count = WIDE_GRASS_TRANSFORMATION.length;
 
   protected transform() {
-    GRASS2_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
+    WIDE_GRASS_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
       const model = this.models[idx];
       if (!model) return;
 
@@ -17,4 +17,4 @@ class Grass2 extends Elements {
   }
 }
 
-export default Grass2;
+export default WideGrass;

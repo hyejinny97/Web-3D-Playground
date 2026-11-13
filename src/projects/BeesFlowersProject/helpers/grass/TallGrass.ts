@@ -1,12 +1,12 @@
 import Elements from "../Elements";
-import { GRASS1_TRANSFORMATION } from "../../BeesFlowersProject.constants";
+import { TALL_GRASS_TRANSFORMATION } from "../../BeesFlowersProject.constants";
 
-class Grass1 extends Elements {
+class TallGrass extends Elements {
   protected url = "/models/grass1.glb";
-  protected count = GRASS1_TRANSFORMATION.length;
+  protected count = TALL_GRASS_TRANSFORMATION.length;
 
   protected transform() {
-    GRASS1_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
+    TALL_GRASS_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
       const model = this.models[idx];
       if (!model) return;
 
@@ -17,4 +17,4 @@ class Grass1 extends Elements {
   }
 }
 
-export default Grass1;
+export default TallGrass;
