@@ -167,3 +167,11 @@ export const HYDRANGEA_TRANSFORMATION = [
     scale: 1.9,
   },
 ] as const;
+
+export const BEES_TRANSFORMATION = [
+  {
+    position: new THREE.Vector3(0, 1.5, 0),
+    rotationY: 0,
+    scale: 0.01,
+  },
+] as const;

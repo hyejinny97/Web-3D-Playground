@@ -25,3 +25,9 @@ export interface StaticElementsType {
   entities: YUKA.GameEntity[];
   init: () => void;
 }
+
+export interface DynamicElementsType {
+  models: THREE.Object3D[];
+  entities: YUKA.Vehicle[];
+  init: () => void;
+}

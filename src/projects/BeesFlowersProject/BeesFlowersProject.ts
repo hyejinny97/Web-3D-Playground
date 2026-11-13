@@ -12,6 +12,7 @@ import Lavender from "./helpers/flower/Lavender";
 import Carnation from "./helpers/flower/Carnation";
 import Rose from "./helpers/flower/Rose";
 import Hydrangea from "./helpers/flower/Hydrangea";
+import Bee from "./helpers/Bee";
 
 type BeesFlowersProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -55,6 +56,7 @@ class BeesFlowersProject extends BaseProject {
     const carnation = new Carnation({ loadingManager });
     const rose = new Rose({ loadingManager });
     const hydrangea = new Hydrangea({ loadingManager });
+    const bee = new Bee({ loadingManager });
 
     await Promise.allSettled([
       ground.init(),
@@ -64,6 +66,7 @@ class BeesFlowersProject extends BaseProject {
       carnation.init(),
       rose.init(),
       hydrangea.init(),
+      bee.init(),
     ]);
     if (this.stopRender) return;
 
@@ -75,12 +78,14 @@ class BeesFlowersProject extends BaseProject {
       ...carnation.models,
       ...rose.models,
       ...hydrangea.models,
+      ...bee.models,
     ];
     const entities = [
       ...lavender.entities,
       ...carnation.entities,
       ...rose.entities,
       ...hydrangea.entities,
+      ...bee.entities,
     ];
 
     models.forEach((model) => this.scene?.add(model));

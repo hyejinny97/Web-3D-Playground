@@ -14,9 +14,23 @@ abstract class StaticElements extends Elements implements StaticElementsType {
   private setupEntities() {
     this.models.forEach((model) => {
       const entity = new YUKA.GameEntity();
-      entity.setRenderComponent(model, this.sync);
+      this.connectEntityToModel(entity, model);
       this.entities.push(entity);
     });
+  }
+
+  private connectEntityToModel(entity: YUKA.GameEntity, model: THREE.Object3D) {
+    entity.position.set(model.position.x, model.position.y, model.position.z);
+    entity.rotation.set(
+      model.quaternion.x,
+      model.quaternion.y,
+      model.quaternion.z,
+      model.quaternion.w,
+    );
+    entity.scale.set(model.scale.x, model.scale.y, model.scale.z);
+
+    model.matrixAutoUpdate = false;
+    entity.setRenderComponent(model, this.sync);
   }
 
   private sync(entity: YUKA.GameEntity, renderComponent: THREE.Object3D) {
