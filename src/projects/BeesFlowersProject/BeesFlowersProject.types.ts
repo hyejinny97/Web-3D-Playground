@@ -13,3 +13,8 @@ export interface GroundType {
   model: THREE.Mesh | null;
   init: () => void;
 }
+
+export interface ElementsType {
+  models: THREE.Object3D[];
+  init: () => void;
+}

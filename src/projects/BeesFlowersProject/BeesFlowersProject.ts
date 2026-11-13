@@ -5,6 +5,8 @@ import { RenderLoop } from "@/decorators/renderLoop";
 import type { LoadManagerType } from "./BeesFlowersProject.types";
 import Ground from "./helpers/Ground";
 import { GROUND_SIZE } from "./BeesFlowersProject.constants";
+import Grass1 from "./helpers/grass/Grass1";
+import Grass2 from "./helpers/grass/Grass2";
 
 type BeesFlowersProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -14,7 +16,6 @@ type BeesFlowersProjectProps = ConstructorProps & {
 class BeesFlowersProject extends BaseProject {
   private loadManager: LoadManagerType;
   private stopRender = false;
-  private ground!: Ground;
 
   constructor({ canvasEl, loadManager }: BeesFlowersProjectProps) {
     super({ canvasEl });
@@ -41,12 +42,14 @@ class BeesFlowersProject extends BaseProject {
   async setupModel() {
     const loadingManager = this.generateLoadingManager();
 
-    this.ground = new Ground({ loadingManager });
+    const ground = new Ground({ loadingManager });
+    const grass1 = new Grass1({ loadingManager });
+    const grass2 = new Grass2({ loadingManager });
 
-    await this.ground.init();
+    await Promise.allSettled([ground.init(), grass1.init(), grass2.init()]);
     if (this.stopRender) return;
 
-    const models = [this.ground.model!];
+    const models = [ground.model!, ...grass1.models, ...grass2.models];
 
     models.forEach((model) => this.scene?.add(model));
   }
