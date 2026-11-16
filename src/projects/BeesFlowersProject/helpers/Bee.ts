@@ -6,6 +6,7 @@ import DynamicElements from "./DynamicElements";
 import Job from "./Job";
 
 class Bee extends DynamicElements implements BeeType {
+  protected name = "bee";
   protected url = "/models/bee/scene.gltf";
   protected count = BEES_TRANSFORMATION.length;
   private jobs: Job[] = [];
@@ -30,7 +31,7 @@ class Bee extends DynamicElements implements BeeType {
             mat.depthTest = false;
             mat.depthWrite = false;
             mat.transparent = true;
-            mat.color.offsetHSL(0, 0.3, 0.3);
+            mat.color.offsetHSL(0, 0.5, 0.5);
             mat.needsUpdate = true;
           });
         }
@@ -60,8 +61,10 @@ class Bee extends DynamicElements implements BeeType {
     return Math.trunc(Math.random() * (max - min + 1)) + min;
   }
 
-  setTargets(...targets: YUKA.Vector3[]) {
-    this.targets = targets.map((target) => new YUKA.Vector3().copy(target));
+  addTarget(target: YUKA.Vector3) {
+    if (!this.targets.find((tar) => tar.name === target.name)) {
+      this.targets.push(new YUKA.Vector3().copy(target));
+    }
   }
 
   private getNextTask() {

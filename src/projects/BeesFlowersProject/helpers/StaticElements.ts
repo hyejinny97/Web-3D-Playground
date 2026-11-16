@@ -5,10 +5,12 @@ import type { StaticElementsType } from "../BeesFlowersProject.types";
 
 abstract class StaticElements extends Elements implements StaticElementsType {
   entities: YUKA.GameEntity[] = [];
+  targets: YUKA.Vector3[] = [];
 
   async init() {
     await super.init();
     this.setupEntities();
+    this.setupTargets();
   }
 
   private setupEntities() {
@@ -35,6 +37,19 @@ abstract class StaticElements extends Elements implements StaticElementsType {
 
   private sync(entity: YUKA.GameEntity, renderComponent: THREE.Object3D) {
     renderComponent.matrix.copy(entity.worldMatrix as unknown as THREE.Matrix4);
+  }
+
+  private setupTargets() {
+    this.models.forEach((model, idx) => {
+      const box = new THREE.Box3().setFromObject(model);
+      const target = new YUKA.Vector3(
+        (box.max.x + box.min.x) / 2,
+        box.max.y - 0.2,
+        (box.max.z + box.min.z) / 2,
+      );
+      target.name = `${this.name}-${idx}`;
+      this.targets.push(target);
+    });
   }
 }
 

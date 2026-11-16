@@ -81,18 +81,24 @@ class BeesFlowersProject extends BaseProject {
       ...hydrangea.models,
       ...this.bee.models,
     ];
-    const staticEntities = [
+    const entities = [
       ...lavender.entities,
       ...carnation.entities,
       ...rose.entities,
       ...hydrangea.entities,
+      ...this.bee.entities,
     ];
-    const entities = [...staticEntities, ...this.bee.entities];
+    const targets = [
+      ...lavender.targets,
+      ...carnation.targets,
+      ...rose.targets,
+      ...hydrangea.targets,
+    ];
 
     models.forEach((model) => this.scene?.add(model));
     entities.forEach((entity) => this.entityManager.add(entity));
 
-    this.bee.setTargets(...staticEntities.map((entity) => entity.position));
+    targets.forEach((target) => this.bee.addTarget(target));
     this.bee.work();
   }
 

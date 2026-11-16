@@ -3,6 +3,7 @@ import { ROSE_TRANSFORMATION } from "../../BeesFlowersProject.constants";
 import StaticElements from "../StaticElements";
 
 class Rose extends StaticElements {
+  protected name = "rose";
   protected url = "/models/rose.glb";
   protected count = ROSE_TRANSFORMATION.length;
 
@@ -17,6 +18,7 @@ class Rose extends StaticElements {
 
       const box = new THREE.Box3().setFromObject(model);
       model.position.y -= box.min.y;
+      model.updateMatrixWorld(true);
     });
   }
 }

@@ -7,6 +7,7 @@ import {
 import type { ElementsType } from "../BeesFlowersProject.types";
 
 abstract class Elements implements ElementsType {
+  protected abstract name: string;
   protected abstract url: string;
   protected abstract count: number;
   private loadingManager: THREE.LoadingManager;

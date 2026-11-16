@@ -3,6 +3,12 @@ import * as YUKA from "yuka";
 import type { GRASS_TEXTURES } from "./BeesFlowersProject.constants";
 import type { GLTF } from "three/examples/jsm/Addons.js";
 
+declare module "yuka" {
+  interface Vector3 {
+    name?: string;
+  }
+}
+
 export type GrassTextureType = keyof typeof GRASS_TEXTURES;
 
 export interface LoadManagerType {
@@ -24,6 +30,7 @@ export interface ElementsType {
 
 export interface StaticElementsType extends ElementsType {
   entities: YUKA.GameEntity[];
+  targets: YUKA.Vector3[];
 }
 
 export interface DynamicElementsType extends ElementsType {
@@ -38,7 +45,7 @@ export interface JobType {
 }
 
 export interface BeeType extends DynamicElementsType {
-  setTargets: (...targets: YUKA.Vector3[]) => void;
+  addTarget: (target: YUKA.Vector3) => void;
   work: () => void;
   stop: () => void;
   update: (time: number) => void;

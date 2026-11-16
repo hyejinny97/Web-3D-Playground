@@ -3,6 +3,7 @@ import { HYDRANGEA_TRANSFORMATION } from "../../BeesFlowersProject.constants";
 import StaticElements from "../StaticElements";
 
 class Hydrangea extends StaticElements {
+  protected name = "hydrangea";
   protected url = "/models/hydrangea.glb";
   protected count = HYDRANGEA_TRANSFORMATION.length;
 
@@ -17,6 +18,7 @@ class Hydrangea extends StaticElements {
 
       const box = new THREE.Box3().setFromObject(model);
       model.position.y -= box.min.y;
+      model.updateMatrixWorld(true);
     });
   }
 }
