@@ -5,7 +5,7 @@ class Carnation extends StaticElements {
   protected url = "/models/carnation.glb";
   protected count = CARNATION_TRANSFORMATION.length;
 
-  protected transform() {
+  protected transformModels() {
     CARNATION_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
       const model = this.models[idx];
       if (!model) return;

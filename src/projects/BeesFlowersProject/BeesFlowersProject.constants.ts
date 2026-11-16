@@ -170,8 +170,20 @@ export const HYDRANGEA_TRANSFORMATION = [
 
 export const BEES_TRANSFORMATION = [
   {
-    position: new THREE.Vector3(0, 1.5, 0),
+    position: new THREE.Vector3(0, 1.5, -2),
+    rotationY: 0,
+    scale: 0.01,
+  },
+  {
+    position: new THREE.Vector3(2, 1.5, 0),
+    rotationY: 0,
+    scale: 0.01,
+  },
+  {
+    position: new THREE.Vector3(-2, 1.5, 0),
     rotationY: 0,
     scale: 0.01,
   },
 ] as const;
+
+export const TOLERANCE = 0.1 as const;

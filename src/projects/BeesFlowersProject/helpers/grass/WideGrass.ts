@@ -5,7 +5,7 @@ class WideGrass extends Elements {
   protected url = "/models/grass2.glb";
   protected count = WIDE_GRASS_TRANSFORMATION.length;
 
-  protected transform() {
+  protected transformModels() {
     WIDE_GRASS_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
       const model = this.models[idx];
       if (!model) return;

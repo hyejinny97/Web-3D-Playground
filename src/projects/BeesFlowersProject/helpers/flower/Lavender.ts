@@ -5,7 +5,7 @@ class Lavender extends StaticElements {
   protected url = "/models/lavender.glb";
   protected count = LAVENDER_TRANSFORMATION.length;
 
-  protected transform() {
+  protected transformModels() {
     LAVENDER_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
       const model = this.models[idx];
       if (!model) return;

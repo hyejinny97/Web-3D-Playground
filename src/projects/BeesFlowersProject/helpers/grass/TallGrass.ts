@@ -5,7 +5,7 @@ class TallGrass extends Elements {
   protected url = "/models/grass1.glb";
   protected count = TALL_GRASS_TRANSFORMATION.length;
 
-  protected transform() {
+  protected transformModels() {
     TALL_GRASS_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
       const model = this.models[idx];
       if (!model) return;

@@ -24,6 +24,7 @@ class BeesFlowersProject extends BaseProject {
   private stopRender = false;
   private entityManager = new YUKA.EntityManager();
   private time = new YUKA.Time();
+  private bee!: Bee;
 
   constructor({ canvasEl, loadManager }: BeesFlowersProjectProps) {
     super({ canvasEl });
@@ -56,7 +57,7 @@ class BeesFlowersProject extends BaseProject {
     const carnation = new Carnation({ loadingManager });
     const rose = new Rose({ loadingManager });
     const hydrangea = new Hydrangea({ loadingManager });
-    const bee = new Bee({ loadingManager });
+    this.bee = new Bee({ loadingManager });
 
     await Promise.allSettled([
       ground.init(),
@@ -66,7 +67,7 @@ class BeesFlowersProject extends BaseProject {
       carnation.init(),
       rose.init(),
       hydrangea.init(),
-      bee.init(),
+      this.bee.init(),
     ]);
     if (this.stopRender) return;
 
@@ -78,18 +79,21 @@ class BeesFlowersProject extends BaseProject {
       ...carnation.models,
       ...rose.models,
       ...hydrangea.models,
-      ...bee.models,
+      ...this.bee.models,
     ];
-    const entities = [
+    const staticEntities = [
       ...lavender.entities,
       ...carnation.entities,
       ...rose.entities,
       ...hydrangea.entities,
-      ...bee.entities,
     ];
+    const entities = [...staticEntities, ...this.bee.entities];
 
     models.forEach((model) => this.scene?.add(model));
     entities.forEach((entity) => this.entityManager.add(entity));
+
+    this.bee.setTargets(...staticEntities.map((entity) => entity.position));
+    this.bee.work();
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -103,14 +107,16 @@ class BeesFlowersProject extends BaseProject {
     return manager;
   }
 
-  update() {
+  update(time: number) {
     const delta = this.time.update().getDelta();
     this.entityManager.update(delta);
+    this.bee.update(time);
   }
 
   dispose() {
     super.dispose();
     this.stopRender = true;
+    this.bee.stop();
   }
 }
 

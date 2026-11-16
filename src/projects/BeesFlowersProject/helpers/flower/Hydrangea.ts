@@ -6,7 +6,7 @@ class Hydrangea extends StaticElements {
   protected url = "/models/hydrangea.glb";
   protected count = HYDRANGEA_TRANSFORMATION.length;
 
-  protected transform() {
+  protected transformModels() {
     HYDRANGEA_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
       const model = this.models[idx];
       if (!model) return;

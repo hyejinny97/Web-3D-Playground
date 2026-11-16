@@ -1,11 +1,16 @@
 import * as THREE from "three";
-import { GLTFLoader, SkeletonUtils } from "three/examples/jsm/Addons.js";
+import {
+  GLTFLoader,
+  SkeletonUtils,
+  type GLTF,
+} from "three/examples/jsm/Addons.js";
 import type { ElementsType } from "../BeesFlowersProject.types";
 
 abstract class Elements implements ElementsType {
   protected abstract url: string;
   protected abstract count: number;
   private loadingManager: THREE.LoadingManager;
+  gltf: GLTF | null = null;
   models: THREE.Object3D[] = [];
 
   constructor({ loadingManager }: { loadingManager: THREE.LoadingManager }) {
@@ -14,21 +19,30 @@ abstract class Elements implements ElementsType {
 
   async init() {
     await this.loadGLTF();
-    this.transform();
+    this.transformGLTF();
+    this.setupModels();
+    this.transformModels();
   }
 
   private async loadGLTF() {
     const loader = new GLTFLoader(this.loadingManager);
-    const gltf = await loader.loadAsync(this.url);
-    Array(this.count)
-      .fill(0)
-      .forEach(() => {
-        const clonedModel = SkeletonUtils.clone(gltf.scene);
-        this.models.push(clonedModel);
-      });
+    this.gltf = await loader.loadAsync(this.url);
   }
 
-  protected abstract transform(): void;
+  protected transformGLTF() {}
+
+  private setupModels() {
+    if (this.gltf) {
+      Array(this.count)
+        .fill(0)
+        .forEach(() => {
+          const clonedModel = SkeletonUtils.clone(this.gltf!.scene);
+          this.models.push(clonedModel);
+        });
+    }
+  }
+
+  protected abstract transformModels(): void;
 }
 
 export default Elements;

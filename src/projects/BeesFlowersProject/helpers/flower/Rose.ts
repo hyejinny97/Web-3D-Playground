@@ -6,7 +6,7 @@ class Rose extends StaticElements {
   protected url = "/models/rose.glb";
   protected count = ROSE_TRANSFORMATION.length;
 
-  protected transform() {
+  protected transformModels() {
     ROSE_TRANSFORMATION.forEach(({ position, rotationY, scale }, idx) => {
       const model = this.models[idx];
       if (!model) return;
