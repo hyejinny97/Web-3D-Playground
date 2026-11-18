@@ -15,6 +15,8 @@ abstract class DynamicElements extends Elements implements DynamicElementsType {
     this.models.forEach((model) => {
       const entity = new YUKA.Vehicle();
       entity.maxSpeed = 0.5;
+      entity.maxForce = 2;
+      entity.smoother = new YUKA.Smoother(20);
       this.connectEntityToModel(entity, model);
       this.entities.push(entity);
     });
