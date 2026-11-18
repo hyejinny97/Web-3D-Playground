@@ -18,4 +18,6 @@ export const TAGS: { [value: string]: TagType } = {
   hinge: { label: "Hinge Constraint", color: "teal-400" },
   point: { label: "PointToPoint Constraint", color: "cyan-400" },
   coneTwist: { label: "ConeTwist Constraint", color: "sky-400" },
+  yuka: { label: "Yuka", color: "blue-400" },
+  arrive: { label: "Arrive Steering", color: "indigo-400" },
 };
