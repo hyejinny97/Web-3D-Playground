@@ -187,3 +187,8 @@ export const BEES_TRANSFORMATION = [
 ] as const;
 
 export const TOLERANCE = 0.1 as const;
+
+export const ANIMATION_NAME = {
+  idle: "_bee_idle",
+  fly: "_bee_hover",
+} as const;

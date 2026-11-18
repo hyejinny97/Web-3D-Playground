@@ -51,8 +51,13 @@ class Bee extends DynamicElements implements BeeType {
   }
 
   private setupJobs() {
-    this.entities.forEach((entity) => {
-      const job = new Job({ entity });
+    if (!this.gltf) return;
+    this.entities.forEach((entity, idx) => {
+      const job = new Job({
+        entity,
+        model: this.models[idx],
+        clips: this.gltf!.animations,
+      });
       this.jobs.push(job);
     });
   }
