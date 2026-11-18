@@ -123,6 +123,8 @@ class BeesFlowersProject extends BaseProject {
     super.dispose();
     this.stopRender = true;
     this.bee.stop();
+    this.entityManager.clear();
+    this.time.dispose();
   }
 }
 
