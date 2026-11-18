@@ -274,6 +274,13 @@ const GAME_AI_PROJECTS = [
     tags: [TAGS.yuka, TAGS.arrive, TAGS.gltf],
     component: lazy(() => import("@/components/projects/BeesFlowersCanvas")),
   },
+  {
+    id: "orca-seal",
+    title: "A orca and a seal",
+    imageUrl: "",
+    tags: [TAGS.yuka, TAGS.seek, TAGS.pursuit, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/OrcaSealCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [

@@ -20,4 +20,6 @@ export const TAGS: { [value: string]: TagType } = {
   coneTwist: { label: "ConeTwist Constraint", color: "sky-400" },
   yuka: { label: "Yuka", color: "blue-400" },
   arrive: { label: "Arrive Steering", color: "indigo-400" },
+  seek: { label: "Seek Steering", color: "violet-400" },
+  pursuit: { label: "Pursuit Steering", color: "purple-400" },
 };
