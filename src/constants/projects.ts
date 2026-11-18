@@ -29,6 +29,7 @@ import image_url_cloth_simulation from "@/assets/images/projects/cloth_simulatio
 import image_url_open_door from "@/assets/images/projects/open_door.png";
 import image_url_grab_doll from "@/assets/images/projects/grab_doll.png";
 import image_url_hit_punching_bag from "@/assets/images/projects/hit_punching_bag.png";
+import image_url_bees_flowers from "@/assets/images/projects/bees_flowers.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -269,7 +270,7 @@ const GAME_AI_PROJECTS = [
   {
     id: "bees-flowers",
     title: "Bees and Flowers",
-    imageUrl: "",
+    imageUrl: image_url_bees_flowers,
     tags: [TAGS.yuka, TAGS.arrive, TAGS.gltf],
     component: lazy(() => import("@/components/projects/BeesFlowersCanvas")),
   },
