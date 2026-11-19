@@ -11,6 +11,7 @@ export type FinishEvent = {
 };
 
 export interface AnimationHelperType {
+  getPlayingAnimationName: () => string | undefined;
   getAnimationNames: () => string[];
   play: ({
     name,

@@ -61,8 +61,8 @@ class OrcaSealProject extends BaseProject {
     if (this.camera) {
       this.camera.position.set(
         0,
-        TARGET_RANGE_LIMIT.y + 1,
-        TARGET_RANGE_LIMIT.z + 1,
+        TARGET_RANGE_LIMIT.y + 2,
+        (TARGET_RANGE_LIMIT.z * 5) / 2,
       );
     }
   }
@@ -83,6 +83,7 @@ class OrcaSealProject extends BaseProject {
     entities.forEach((entity) => this.entityManager.add(entity));
 
     this.seal.seek(this.sealTarget.position);
+    this.orca.pursuit(this.seal.entity!);
   }
 
   generateLoadingManager(): THREE.LoadingManager {

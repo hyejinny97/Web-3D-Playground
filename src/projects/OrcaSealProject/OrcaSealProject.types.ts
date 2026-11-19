@@ -19,6 +19,7 @@ export interface SealType extends DynamicElementType {
 }
 
 export interface OrcaType extends DynamicElementType {
+  pursuit: (entity: YUKA.MovingEntity) => void;
   update: (time: number) => void;
 }
 

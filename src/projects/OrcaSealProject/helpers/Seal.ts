@@ -18,6 +18,7 @@ class Seal extends DynamicElement implements SealType {
   async init() {
     await super.init();
     this.transformModel();
+    this.transformEntity();
     this.setupAnimation();
     this.animation?.play({ name: ANIMATION_NAME.seal.swim, duration: 500 });
   }
@@ -27,6 +28,12 @@ class Seal extends DynamicElement implements SealType {
     if (originalModel) {
       originalModel.scale.set(0.2, 0.2, 0.2);
       originalModel.rotateY(-Math.PI / 2);
+    }
+  }
+
+  private transformEntity() {
+    if (this.entity) {
+      this.entity.position.set(3, 3, 3);
     }
   }
 

@@ -41,6 +41,10 @@ class AnimationHelper implements AnimationHelperType {
     this.mixer.addEventListener("finished", this.handleFinished);
   }
 
+  getPlayingAnimationName(): string | undefined {
+    return this.playingAction?.getClip().name;
+  }
+
   getAnimationNames(): string[] {
     return this.clips.map((clip) => clip.name);
   }
