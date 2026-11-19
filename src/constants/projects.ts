@@ -30,6 +30,7 @@ import image_url_open_door from "@/assets/images/projects/open_door.png";
 import image_url_grab_doll from "@/assets/images/projects/grab_doll.png";
 import image_url_hit_punching_bag from "@/assets/images/projects/hit_punching_bag.png";
 import image_url_bees_flowers from "@/assets/images/projects/bees_flowers.png";
+import image_url_orca_seal from "@/assets/images/projects/orca_seal.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -273,6 +274,13 @@ const GAME_AI_PROJECTS = [
     imageUrl: image_url_bees_flowers,
     tags: [TAGS.yuka, TAGS.arrive, TAGS.gltf],
     component: lazy(() => import("@/components/projects/BeesFlowersCanvas")),
+  },
+  {
+    id: "orca-seal",
+    title: "A orca and a seal",
+    imageUrl: image_url_orca_seal,
+    tags: [TAGS.yuka, TAGS.seek, TAGS.pursuit, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/OrcaSealCanvas")),
   },
 ];
 
