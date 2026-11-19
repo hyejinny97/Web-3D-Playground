@@ -14,11 +14,13 @@ export interface DynamicElementType {
 }
 
 export interface SealType extends DynamicElementType {
+  seek: (target: YUKA.Vector3) => void;
   update: (time: number) => void;
 }
 
 export interface SealTargetType {
   model: THREE.Mesh;
+  position: YUKA.Vector3;
   show: () => void;
   hide: () => void;
   update: (time: number) => void;

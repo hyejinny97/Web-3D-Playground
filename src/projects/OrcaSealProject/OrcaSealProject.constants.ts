@@ -9,3 +9,5 @@ export const TARGET_RANGE_LIMIT = {
   y: 3, // -3 ~ 3
   z: 5, // -5 ~ 5
 } as const;
+
+export const ORIGINAL_MODEL_NAME = "model" as const;

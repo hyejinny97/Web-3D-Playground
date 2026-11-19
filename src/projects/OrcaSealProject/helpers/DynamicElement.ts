@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as YUKA from "yuka";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import type { DynamicElementType } from "../OrcaSealProject.types";
+import { ORIGINAL_MODEL_NAME } from "../OrcaSealProject.constants";
 
 abstract class DynamicElement implements DynamicElementType {
   private loadingManager: THREE.LoadingManager;
@@ -25,7 +26,10 @@ abstract class DynamicElement implements DynamicElementType {
   private async loadGLTF() {
     const loader = new GLTFLoader(this.loadingManager);
     const gltf = await loader.loadAsync(this.url);
-    this.model = gltf.scene;
+    gltf.scene.name = ORIGINAL_MODEL_NAME;
+
+    this.model = new THREE.Group();
+    this.model.add(gltf.scene);
     this.clips = gltf.animations;
   }
 

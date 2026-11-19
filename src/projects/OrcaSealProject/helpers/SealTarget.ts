@@ -1,9 +1,11 @@
 import * as THREE from "three";
+import * as YUKA from "yuka";
 import type { SealTargetType } from "../OrcaSealProject.types";
 import { TARGET_RANGE_LIMIT } from "../OrcaSealProject.constants";
 
 class SealTarget implements SealTargetType {
   model!: THREE.Mesh;
+  position = new YUKA.Vector3();
 
   constructor() {
     this.setupModel();
@@ -27,10 +29,12 @@ class SealTarget implements SealTargetType {
   }
 
   update(time: number) {
-    this.model.position.x =
+    this.position.x =
       Math.cos(time) * Math.sin(time * 0.2) * TARGET_RANGE_LIMIT.x;
-    this.model.position.z = Math.sin(time * 0.8) * TARGET_RANGE_LIMIT.y;
-    this.model.position.y = Math.sin(time * 0.5) * TARGET_RANGE_LIMIT.z;
+    this.position.z = Math.sin(time * 0.8) * TARGET_RANGE_LIMIT.y;
+    this.position.y = Math.sin(time * 0.5) * TARGET_RANGE_LIMIT.z;
+
+    this.model.position.set(this.position.x, this.position.y, this.position.z);
   }
 }
 

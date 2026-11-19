@@ -78,6 +78,8 @@ class OrcaSealProject extends BaseProject {
 
     models.forEach((model) => this.scene?.add(model));
     entities.forEach((entity) => this.entityManager.add(entity));
+
+    this.seal.seek(this.sealTarget.position);
   }
 
   generateLoadingManager(): THREE.LoadingManager {
