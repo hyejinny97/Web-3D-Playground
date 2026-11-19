@@ -5,6 +5,8 @@ import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
 import type { LoadManagerType } from "./OrcaSealProject.types";
 import Seal from "./helpers/Seal";
+import SealTarget from "./helpers/SealTarget";
+import { TARGET_RANGE_LIMIT } from "./OrcaSealProject.constants";
 
 type OrcaSealProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -17,6 +19,7 @@ class OrcaSealProject extends BaseProject {
   private entityManager = new YUKA.EntityManager();
   private time = new YUKA.Time();
   private seal!: Seal;
+  private sealTarget!: SealTarget;
 
   constructor({ canvasEl, loadManager }: OrcaSealProjectProps) {
     super({ canvasEl });
@@ -51,14 +54,26 @@ class OrcaSealProject extends BaseProject {
     this.scene?.add(directionalLight2);
   }
 
+  setupCamera() {
+    super.setupCamera();
+    if (this.camera) {
+      this.camera.position.set(
+        0,
+        TARGET_RANGE_LIMIT.y + 1,
+        TARGET_RANGE_LIMIT.z + 1,
+      );
+    }
+  }
+
   async setupModel() {
     const loadingManager = this.generateLoadingManager();
     this.seal = new Seal({ loadingManager });
+    this.sealTarget = new SealTarget();
 
     await Promise.allSettled([this.seal.init()]);
     if (this.stopRender) return;
 
-    const models = [this.seal.model!];
+    const models = [this.seal.model!, this.sealTarget.model];
     const entities = [this.seal.entity!];
 
     models.forEach((model) => this.scene?.add(model));
@@ -78,8 +93,11 @@ class OrcaSealProject extends BaseProject {
 
   update() {
     const delta = this.time.update().getDelta();
+    const elapsedTime = this.time.getElapsed(); // 단위: s
+
     this.entityManager.update(delta);
-    this.seal.update(this.time.getElapsed() * 1000);
+    this.seal.update(elapsedTime * 1000);
+    this.sealTarget.update(elapsedTime);
   }
 
   dispose() {

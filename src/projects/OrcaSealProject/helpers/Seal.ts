@@ -20,7 +20,7 @@ class Seal extends DynamicElement implements SealType {
 
   private transformEntity() {
     if (this.entity) {
-      this.entity.scale.set(0.3, 0.3, 0.3);
+      this.entity.scale.set(0.2, 0.2, 0.2);
     }
   }
 

@@ -16,3 +16,10 @@ export interface DynamicElementType {
 export interface SealType extends DynamicElementType {
   update: (time: number) => void;
 }
+
+export interface SealTargetType {
+  model: THREE.Mesh;
+  show: () => void;
+  hide: () => void;
+  update: (time: number) => void;
+}
