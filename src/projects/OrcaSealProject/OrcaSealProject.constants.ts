@@ -2,6 +2,9 @@ export const ANIMATION_NAME = {
   seal: {
     swim: "GltfAnimation 0",
   },
+  orca: {
+    swim: "Swim",
+  },
 } as const;
 
 export const TARGET_RANGE_LIMIT = {

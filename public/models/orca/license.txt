@@ -1,0 +1,11 @@
+Model Information:
+* title:	Orca (Killer-Whale)
+* source:	https://sketchfab.com/3d-models/orca-killer-whale-b6a855d2fd0c4e669f89b51c9615c1b9
+* author:	planeta-elefante (https://sketchfab.com/planeta-elefante)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Orca (Killer-Whale)" (https://sketchfab.com/3d-models/orca-killer-whale-b6a855d2fd0c4e669f89b51c9615c1b9) by planeta-elefante (https://sketchfab.com/planeta-elefante) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

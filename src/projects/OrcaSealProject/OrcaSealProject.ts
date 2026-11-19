@@ -7,6 +7,7 @@ import type { LoadManagerType } from "./OrcaSealProject.types";
 import Seal from "./helpers/Seal";
 import SealTarget from "./helpers/SealTarget";
 import { TARGET_RANGE_LIMIT } from "./OrcaSealProject.constants";
+import Orca from "./helpers/Orca";
 
 type OrcaSealProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -20,6 +21,7 @@ class OrcaSealProject extends BaseProject {
   private time = new YUKA.Time();
   private seal!: Seal;
   private sealTarget!: SealTarget;
+  private orca!: Orca;
 
   constructor({ canvasEl, loadManager }: OrcaSealProjectProps) {
     super({ canvasEl });
@@ -69,12 +71,13 @@ class OrcaSealProject extends BaseProject {
     const loadingManager = this.generateLoadingManager();
     this.seal = new Seal({ loadingManager });
     this.sealTarget = new SealTarget();
+    this.orca = new Orca({ loadingManager });
 
-    await Promise.allSettled([this.seal.init()]);
+    await Promise.allSettled([this.seal.init(), this.orca.init()]);
     if (this.stopRender) return;
 
-    const models = [this.seal.model!, this.sealTarget.model];
-    const entities = [this.seal.entity!];
+    const models = [this.seal.model!, this.sealTarget.model, this.orca.model!];
+    const entities = [this.seal.entity!, this.orca.entity!];
 
     models.forEach((model) => this.scene?.add(model));
     entities.forEach((entity) => this.entityManager.add(entity));
@@ -100,6 +103,7 @@ class OrcaSealProject extends BaseProject {
     this.entityManager.update(delta);
     this.seal.update(elapsedTime * 1000);
     this.sealTarget.update(elapsedTime);
+    this.orca.update(elapsedTime * 1000);
   }
 
   dispose() {

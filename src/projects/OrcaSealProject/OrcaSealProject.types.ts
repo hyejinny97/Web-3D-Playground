@@ -18,6 +18,10 @@ export interface SealType extends DynamicElementType {
   update: (time: number) => void;
 }
 
+export interface OrcaType extends DynamicElementType {
+  update: (time: number) => void;
+}
+
 export interface SealTargetType {
   model: THREE.Mesh;
   position: YUKA.Vector3;
