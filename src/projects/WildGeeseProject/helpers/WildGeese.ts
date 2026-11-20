@@ -73,7 +73,6 @@ class WildGeese implements WildGeeseType {
       const size = isLeader ? 0.8 : 0.6;
       const originalModel = model.getObjectByName(ORIGINAL_MODEL_NAME);
       if (originalModel) {
-        originalModel.rotateY(Math.PI / 2);
         originalModel.scale.set(size, size, size);
       }
     });
@@ -85,8 +84,8 @@ class WildGeese implements WildGeeseType {
       .forEach((_, idx) => {
         const isLeader = idx === 0;
         const entity = new YUKA.Vehicle();
-        entity.maxSpeed = isLeader ? 5 : 4;
-        entity.maxForce = 50;
+        entity.maxSpeed = isLeader ? 3 : 15;
+        entity.maxForce = isLeader ? 5 : 20;
         this.entities.push(entity);
       });
   }
@@ -124,12 +123,24 @@ class WildGeese implements WildGeeseType {
       const { x, y, z } = GEESE_OFFSET;
       const level = Math.trunc((idx - 1) / 2) + 1;
       const sign = idx % 2 === 0 ? -1 : 1;
-      const offset = new YUKA.Vector3(-level * x, -level * y, sign * level * z);
+      const offset = new YUKA.Vector3(
+        sign * level ** 2 * x,
+        -(level ** 2) * y,
+        -(level ** 2) * z,
+      );
 
       const behavior = new YUKA.OffsetPursuitBehavior(leader, offset);
       entity.steering.add(behavior);
       entity.position.copy(offset);
     });
+  }
+
+  seek(target: YUKA.Vector3) {
+    const leader = this.entities[0];
+    if (leader) {
+      const behavior = new YUKA.SeekBehavior(target);
+      leader.steering.add(behavior);
+    }
   }
 
   update(time: number) {

@@ -5,6 +5,8 @@ import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
 import type { LoadManagerType } from "./WildGeeseProject.types";
 import WildGeese from "./helpers/WildGeese";
+import { TARGET_RANGE_LIMIT } from "./WildGeeseProject.constants";
+import Target from "./helpers/Target";
 
 type WildGeeseProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -17,6 +19,7 @@ class WildGeeseProject extends BaseProject {
   private entityManager = new YUKA.EntityManager();
   private time = new YUKA.Time();
   private wildGeese!: WildGeese;
+  private target!: Target;
 
   constructor({ canvasEl, loadManager }: WildGeeseProjectProps) {
     super({ canvasEl });
@@ -47,22 +50,25 @@ class WildGeeseProject extends BaseProject {
   setupCamera() {
     super.setupCamera();
     if (this.camera) {
-      this.camera.position.set(0, 5, 10);
+      this.camera.position.set(0, TARGET_RANGE_LIMIT.x, TARGET_RANGE_LIMIT.z);
     }
   }
 
   async setupModel() {
     const loadingManager = this.generateLoadingManager();
     this.wildGeese = new WildGeese({ loadingManager, count: 5 });
+    this.target = new Target();
 
     await Promise.allSettled([this.wildGeese.init()]);
     if (this.stopRender) return;
 
-    const models = [...this.wildGeese.models];
+    const models = [...this.wildGeese.models, this.target.model];
     const entities = [...this.wildGeese.entities];
 
     models.forEach((model) => this.scene?.add(model));
     entities.forEach((entity) => this.entityManager.add(entity));
+
+    this.wildGeese.seek(this.target.position);
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -82,6 +88,7 @@ class WildGeeseProject extends BaseProject {
 
     this.entityManager.update(delta);
     this.wildGeese.update(elapsedTime * 1000);
+    this.target.update(elapsedTime);
   }
 
   dispose() {
