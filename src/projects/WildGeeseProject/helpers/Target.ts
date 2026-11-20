@@ -29,9 +29,10 @@ class Target implements TargetType {
   }
 
   update(time: number) {
-    this.position.x = Math.sin(time * 0.3) * TARGET_RANGE_LIMIT.x;
-    this.position.z = Math.cos(time * 0.3) * TARGET_RANGE_LIMIT.z;
-    this.position.y = Math.sin(time * 0.3) * TARGET_RANGE_LIMIT.y;
+    const SPEED = 0.2;
+    this.position.x = Math.sin(time * SPEED) * TARGET_RANGE_LIMIT.x;
+    this.position.z = Math.cos(time * SPEED) * TARGET_RANGE_LIMIT.z;
+    this.position.y = Math.sin(time * SPEED) * TARGET_RANGE_LIMIT.y;
 
     this.model.position.set(this.position.x, this.position.y, this.position.z);
   }

@@ -7,7 +7,7 @@ export const GEESE_OFFSET = {
 } as const;
 
 export const TARGET_RANGE_LIMIT = {
-  x: 20, // -20 ~ 20
+  x: 25, // -25 ~ 25
   y: 0, // -0 ~ 0
   z: 5, // -5 ~ 5
 } as const;

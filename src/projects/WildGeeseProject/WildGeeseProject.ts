@@ -7,6 +7,7 @@ import type { LoadManagerType } from "./WildGeeseProject.types";
 import WildGeese from "./helpers/WildGeese";
 import { TARGET_RANGE_LIMIT } from "./WildGeeseProject.constants";
 import Target from "./helpers/Target";
+import { HDRLoader } from "three/examples/jsm/Addons.js";
 
 type WildGeeseProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -31,36 +32,47 @@ class WildGeeseProject extends BaseProject {
     this.setupRenderer();
     this.setupCamera();
     this.setupScene();
-    this.setupLight();
     this.setupControls();
     this.setupResizeObserver();
-  }
-
-  setupLight() {
-    const ambientLight = new THREE.AmbientLight("white", 0.5);
-    const directionalLight1 = new THREE.DirectionalLight("white", 1);
-    const directionalLight2 = new THREE.DirectionalLight("white", 1);
-    directionalLight1.position.set(2, 2, 2);
-    directionalLight2.position.set(-2, 2, 2);
-    this.scene?.add(ambientLight);
-    this.scene?.add(directionalLight1);
-    this.scene?.add(directionalLight2);
   }
 
   setupCamera() {
     super.setupCamera();
     if (this.camera) {
-      this.camera.position.set(0, TARGET_RANGE_LIMIT.x, TARGET_RANGE_LIMIT.z);
+      const fovRad = THREE.MathUtils.degToRad(this.camera.fov);
+      const aspect = this.camera.aspect;
+
+      const distForDepth = TARGET_RANGE_LIMIT.z / Math.tan(fovRad / 2);
+      const distForWidth =
+        TARGET_RANGE_LIMIT.x / (Math.tan(fovRad / 2) * aspect);
+      const distance = Math.max(distForDepth, distForWidth);
+
+      const y = 8;
+      const z = Math.sqrt(Math.pow(distance * 1.15, 2) - Math.pow(y, 2));
+      this.camera.position.set(0, y, z);
     }
   }
 
   async setupModel() {
     const loadingManager = this.generateLoadingManager();
+    const hdrLoader = new HDRLoader(loadingManager);
+
     this.wildGeese = new WildGeese({ loadingManager, count: 5 });
     this.target = new Target();
 
-    await Promise.allSettled([this.wildGeese.init()]);
+    const [skyTexture] = await Promise.all([
+      hdrLoader.loadAsync("/textures/pure_sky.hdr"),
+      this.wildGeese.init(),
+    ]);
     if (this.stopRender) return;
+
+    if (this.renderer && this.scene) {
+      skyTexture.mapping = THREE.EquirectangularReflectionMapping;
+      this.scene.background = skyTexture;
+      this.scene.environment = skyTexture;
+      this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      this.renderer.toneMappingExposure = 1.0;
+    }
 
     const models = [...this.wildGeese.models, this.target.model];
     const entities = [...this.wildGeese.entities];
