@@ -31,6 +31,7 @@ import image_url_grab_doll from "@/assets/images/projects/grab_doll.png";
 import image_url_hit_punching_bag from "@/assets/images/projects/hit_punching_bag.png";
 import image_url_bees_flowers from "@/assets/images/projects/bees_flowers.png";
 import image_url_orca_seal from "@/assets/images/projects/orca_seal.png";
+import image_url_wild_geese from "@/assets/images/projects/wild_geese.png";
 
 export const BASIC_PROJECT = {
   id: "base",
@@ -279,8 +280,15 @@ const GAME_AI_PROJECTS = [
     id: "orca-seal",
     title: "A orca and a seal",
     imageUrl: image_url_orca_seal,
-    tags: [TAGS.yuka, TAGS.seek, TAGS.pursuit, TAGS.gltf],
+    tags: [TAGS.yuka, TAGS.pursuit, TAGS.seek, TAGS.gltf],
     component: lazy(() => import("@/components/projects/OrcaSealCanvas")),
+  },
+  {
+    id: "wild-geese",
+    title: "A flock of wild geese",
+    imageUrl: image_url_wild_geese,
+    tags: [TAGS.yuka, TAGS.offsetPursuit, TAGS.seek, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/WildGeeseCanvas")),
   },
 ];
 

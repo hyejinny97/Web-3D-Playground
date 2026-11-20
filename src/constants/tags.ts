@@ -22,4 +22,5 @@ export const TAGS: { [value: string]: TagType } = {
   arrive: { label: "Arrive Steering", color: "indigo-400" },
   seek: { label: "Seek Steering", color: "violet-400" },
   pursuit: { label: "Pursuit Steering", color: "purple-400" },
+  offsetPursuit: { label: "Offset Pursuit Steering", color: "rose-400" },
 };
