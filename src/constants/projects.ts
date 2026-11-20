@@ -279,8 +279,15 @@ const GAME_AI_PROJECTS = [
     id: "orca-seal",
     title: "A orca and a seal",
     imageUrl: image_url_orca_seal,
-    tags: [TAGS.yuka, TAGS.seek, TAGS.pursuit, TAGS.gltf],
+    tags: [TAGS.yuka, TAGS.pursuit, TAGS.seek, TAGS.gltf],
     component: lazy(() => import("@/components/projects/OrcaSealCanvas")),
+  },
+  {
+    id: "wild-geese",
+    title: "A flock of wild geese",
+    imageUrl: "",
+    tags: [TAGS.yuka, TAGS.offsetPursuit, TAGS.seek, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/WildGeeseCanvas")),
   },
 ];
 
