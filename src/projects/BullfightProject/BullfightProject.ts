@@ -8,6 +8,7 @@ import Flag from "./helpers/Flag";
 import Ground from "./helpers/Ground";
 import CameraZoomHelper from "@/helpers/CameraZoomHelper";
 import { GROUND_SIZE } from "./BullfightProject.constants";
+import FlagTarget from "./helpers/FlagTarget";
 
 type BullfightProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -19,6 +20,7 @@ class BullfightProject extends BaseProject {
   private stopRender = false;
   private entityManager = new YUKA.EntityManager();
   private time = new YUKA.Time();
+  private flagTarget!: FlagTarget;
 
   constructor({ canvasEl, loadManager }: BullfightProjectProps) {
     super({ canvasEl });
@@ -53,6 +55,7 @@ class BullfightProject extends BaseProject {
       zoomHelper.fitAreaWithOffsetY({
         area: { width: GROUND_SIZE.width, depth: GROUND_SIZE.height },
         offsetY: 1,
+        distanceFactor: 1.25,
       });
     }
   }
@@ -61,15 +64,18 @@ class BullfightProject extends BaseProject {
     const loadingManager = this.generateLoadingManager();
     const ground = new Ground({ loadingManager });
     const flag = new Flag({ loadingManager });
+    this.flagTarget = new FlagTarget();
 
     await Promise.allSettled([ground.init(), flag.init()]);
     if (this.stopRender) return;
 
-    const models = [ground.model!, ...flag.models];
+    const models = [ground.model!, ...flag.models, this.flagTarget.model];
     const entities = [...flag.entities];
 
     models.forEach((model) => this.scene?.add(model));
     entities.forEach((entity) => this.entityManager.add(entity));
+
+    flag.seek(this.flagTarget.position);
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -85,7 +91,10 @@ class BullfightProject extends BaseProject {
 
   update() {
     const delta = this.time.update().getDelta();
+    const elapsedTime = this.time.getElapsed(); // 단위: s
+
     this.entityManager.update(delta);
+    this.flagTarget.update(elapsedTime);
   }
 
   dispose() {

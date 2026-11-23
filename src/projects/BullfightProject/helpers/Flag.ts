@@ -15,6 +15,7 @@ import type { FlagType } from "../BullfightProject.types";
 class Flag implements FlagType {
   private loadingManager: THREE.LoadingManager;
   private gltf: GLTF | null = null;
+  private flagSize = new THREE.Vector3();
   models: THREE.Object3D[] = [];
   entities: YUKA.Vehicle[] = [];
 
@@ -68,6 +69,7 @@ class Flag implements FlagType {
       if (isLeftFlag) originalModel.rotateY(-Math.PI);
 
       const box = new THREE.Box3().setFromObject(originalModel);
+      box.getSize(this.flagSize);
       const center = box.getCenter(new THREE.Vector3());
       originalModel.position.sub(center);
     });
@@ -75,26 +77,23 @@ class Flag implements FlagType {
 
   private setupEntities() {
     const anchor = new YUKA.Vehicle();
-    anchor.maxSpeed = 20;
-    anchor.maxForce = 50;
+    anchor.maxSpeed = 10;
+    anchor.maxForce = 20;
     this.entities.push(anchor);
 
     Array(2)
       .fill(0)
       .forEach(() => {
         const flag = new YUKA.Vehicle();
-        flag.maxSpeed = 50;
-        flag.maxForce = 80;
+        flag.maxSpeed = 20;
+        flag.maxForce = 50;
         this.entities.push(flag);
       });
   }
 
   private transformEntities() {
     const anchor = this.entities[0];
-    const flag = this.models[1];
-    const box = new THREE.Box3().setFromObject(flag);
-    const size = box.getSize(new THREE.Vector3());
-    anchor.position.y = size.y / 2;
+    anchor.position.y = this.flagSize.y / 2;
 
     this.entities.forEach((entity, idx) => {
       const isAnchor = idx === 0;
@@ -136,6 +135,15 @@ class Flag implements FlagType {
       const behavior = new YUKA.OffsetPursuitBehavior(anchor, offset);
       entity.steering.add(behavior);
     });
+  }
+
+  seek(target: YUKA.Vector3) {
+    target.y = this.flagSize.y / 2;
+    const anchor = this.entities[0];
+    if (anchor) {
+      const behavior = new YUKA.SeekBehavior(target);
+      anchor.steering.add(behavior);
+    }
   }
 }
 
