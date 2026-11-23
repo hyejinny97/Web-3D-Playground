@@ -29,3 +29,10 @@ export interface FlagTargetType {
   hide: () => void;
   update: (time: number) => void;
 }
+
+export interface BullType {
+  model: THREE.Object3D | null;
+  entity: YUKA.Vehicle | null;
+  init: () => void;
+  update: (time: number) => void;
+}

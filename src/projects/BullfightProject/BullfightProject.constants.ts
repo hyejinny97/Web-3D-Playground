@@ -41,3 +41,9 @@ export const FLAG_OFFSET_FROM_ANCHOR = {
   y: 0,
   z: 0,
 } as const;
+
+export const BULL_ANIMATION_NAME = {
+  idle: "Take 001_2",
+  run: "Take 001_4",
+  attack: "Take 001",
+} as const;

@@ -9,6 +9,7 @@ import Ground from "./helpers/Ground";
 import CameraZoomHelper from "@/helpers/CameraZoomHelper";
 import { GROUND_SIZE } from "./BullfightProject.constants";
 import FlagTarget from "./helpers/FlagTarget";
+import Bull from "./helpers/Bull";
 
 type BullfightProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -21,6 +22,7 @@ class BullfightProject extends BaseProject {
   private entityManager = new YUKA.EntityManager();
   private time = new YUKA.Time();
   private flagTarget!: FlagTarget;
+  private bull!: Bull;
 
   constructor({ canvasEl, loadManager }: BullfightProjectProps) {
     super({ canvasEl });
@@ -65,12 +67,18 @@ class BullfightProject extends BaseProject {
     const ground = new Ground({ loadingManager });
     const flag = new Flag({ loadingManager });
     this.flagTarget = new FlagTarget();
+    this.bull = new Bull({ loadingManager });
 
-    await Promise.allSettled([ground.init(), flag.init()]);
+    await Promise.allSettled([ground.init(), flag.init(), this.bull.init()]);
     if (this.stopRender) return;
 
-    const models = [ground.model!, ...flag.models, this.flagTarget.model];
-    const entities = [...flag.entities];
+    const models = [
+      ground.model!,
+      ...flag.models,
+      this.flagTarget.model,
+      this.bull.model!,
+    ];
+    const entities = [...flag.entities, this.bull.entity!];
 
     models.forEach((model) => this.scene?.add(model));
     entities.forEach((entity) => this.entityManager.add(entity));
@@ -95,6 +103,7 @@ class BullfightProject extends BaseProject {
 
     this.entityManager.update(delta);
     this.flagTarget.update(elapsedTime);
+    this.bull.update(elapsedTime * 1000);
   }
 
   dispose() {
