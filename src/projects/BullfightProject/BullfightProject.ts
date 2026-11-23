@@ -6,6 +6,8 @@ import { RenderLoop } from "@/decorators/renderLoop";
 import type { LoadManagerType } from "./BullfightProject.types";
 import Flag from "./helpers/Flag";
 import Ground from "./helpers/Ground";
+import CameraZoomHelper from "@/helpers/CameraZoomHelper";
+import { GROUND_SIZE } from "./BullfightProject.constants";
 
 type BullfightProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -42,6 +44,17 @@ class BullfightProject extends BaseProject {
     this.scene?.add(ambientLight);
     this.scene?.add(directionalLight1);
     this.scene?.add(directionalLight2);
+  }
+
+  setupCamera() {
+    super.setupCamera();
+    if (this.camera) {
+      const zoomHelper = new CameraZoomHelper(this.camera);
+      zoomHelper.fitAreaWithOffsetY({
+        area: { width: GROUND_SIZE.width, depth: GROUND_SIZE.height },
+        offsetY: 1,
+      });
+    }
   }
 
   async setupModel() {
