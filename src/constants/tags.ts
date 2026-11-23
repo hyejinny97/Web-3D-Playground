@@ -5,7 +5,7 @@ interface TagType {
   color: ColorType;
 }
 
-export const TAGS: { [value: string]: TagType } = {
+export const TAGS = {
   geometry: { label: "Geometry", color: "red-400" },
   raycaster: { label: "Raycaster", color: "amber-400" },
   material: { label: "Material", color: "blue-400" },
@@ -22,5 +22,14 @@ export const TAGS: { [value: string]: TagType } = {
   arrive: { label: "Arrive Steering", color: "indigo-400" },
   seek: { label: "Seek Steering", color: "violet-400" },
   pursuit: { label: "Pursuit Steering", color: "purple-400" },
-  offsetPursuit: { label: "Offset Pursuit Steering", color: "rose-400" },
-};
+  offsetPursuit: { label: "Offset Pursuit Steering", color: "fuchsia-400" },
+  interpose: { label: "Interpose Steering", color: "pink-400" },
+} as const;
+
+export interface ProjectType {
+  id: string;
+  title: string;
+  imageUrl?: string;
+  tags: TagType[];
+  component: React.LazyExoticComponent<() => React.JSX.Element>;
+}
