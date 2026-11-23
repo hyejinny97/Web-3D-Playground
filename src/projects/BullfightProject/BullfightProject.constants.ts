@@ -36,7 +36,7 @@ export const ORIGINAL_MODEL_NAME = "model";
 
 export const FLAG_SIZE = 0.3 as const;
 
-export const FLAG_OFFSET = {
+export const FLAG_OFFSET_FROM_ANCHOR = {
   x: FLAG_SIZE / 2,
   y: 0,
   z: 0,

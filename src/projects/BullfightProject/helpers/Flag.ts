@@ -6,7 +6,7 @@ import {
   type GLTF,
 } from "three/examples/jsm/Addons.js";
 import {
-  FLAG_OFFSET,
+  FLAG_OFFSET_FROM_ANCHOR,
   FLAG_SIZE,
   ORIGINAL_MODEL_NAME,
 } from "../BullfightProject.constants";
@@ -31,6 +31,7 @@ class Flag implements FlagType {
     this.entities.forEach((entity, idx) =>
       this.connectEntityToModel(entity, this.models[idx]),
     );
+    this.alignToSideBySide();
   }
 
   private async loadGLTF() {
@@ -90,20 +91,21 @@ class Flag implements FlagType {
 
   private transformEntities() {
     const anchor = this.entities[0];
+    const flag = this.models[1];
+    const box = new THREE.Box3().setFromObject(flag);
+    const size = box.getSize(new THREE.Vector3());
+    anchor.position.y = size.y / 2;
+
     this.entities.forEach((entity, idx) => {
       const isAnchor = idx === 0;
       const isLeftFlag = idx === 1;
       if (isAnchor) return;
 
-      const model = this.models[idx];
-      const box = new THREE.Box3().setFromObject(model);
-      const size = box.getSize(new THREE.Vector3());
       const sign = isLeftFlag ? -1 : 1;
-
       entity.position.set(
-        anchor.position.x + FLAG_OFFSET.x * sign,
-        anchor.position.y + FLAG_OFFSET.y * sign + size.y / 2,
-        anchor.position.z + FLAG_OFFSET.z * sign,
+        anchor.position.x + FLAG_OFFSET_FROM_ANCHOR.x * sign,
+        anchor.position.y + FLAG_OFFSET_FROM_ANCHOR.y,
+        anchor.position.z + FLAG_OFFSET_FROM_ANCHOR.z,
       );
     });
   }
@@ -115,6 +117,25 @@ class Flag implements FlagType {
 
   private sync(entity: YUKA.GameEntity, renderComponent: THREE.Object3D) {
     renderComponent.matrix.copy(entity.worldMatrix as unknown as THREE.Matrix4);
+  }
+
+  private alignToSideBySide() {
+    const anchor = this.entities[0];
+    this.entities.forEach((entity, idx) => {
+      const isAnchor = idx === 0;
+      const isLeftFlag = idx === 1;
+      if (isAnchor) return;
+
+      const sign = isLeftFlag ? -1 : 1;
+      const offset = new YUKA.Vector3(
+        FLAG_OFFSET_FROM_ANCHOR.x * sign,
+        FLAG_OFFSET_FROM_ANCHOR.y,
+        FLAG_OFFSET_FROM_ANCHOR.z,
+      );
+
+      const behavior = new YUKA.OffsetPursuitBehavior(anchor, offset);
+      entity.steering.add(behavior);
+    });
   }
 }
 
