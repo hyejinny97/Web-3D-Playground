@@ -8,6 +8,7 @@ import WildGeese from "./helpers/WildGeese";
 import { TARGET_RANGE_LIMIT } from "./WildGeeseProject.constants";
 import Target from "./helpers/Target";
 import { HDRLoader } from "three/examples/jsm/Addons.js";
+import CameraZoomHelper from "@/helpers/CameraZoomHelper";
 
 type WildGeeseProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -39,17 +40,15 @@ class WildGeeseProject extends BaseProject {
   setupCamera() {
     super.setupCamera();
     if (this.camera) {
-      const fovRad = THREE.MathUtils.degToRad(this.camera.fov);
-      const aspect = this.camera.aspect;
-
-      const distForDepth = TARGET_RANGE_LIMIT.z / Math.tan(fovRad / 2);
-      const distForWidth =
-        TARGET_RANGE_LIMIT.x / (Math.tan(fovRad / 2) * aspect);
-      const distance = Math.max(distForDepth, distForWidth);
-
-      const y = 8;
-      const z = Math.sqrt(Math.pow(distance * 1.15, 2) - Math.pow(y, 2));
-      this.camera.position.set(0, y, z);
+      const zoomHelper = new CameraZoomHelper(this.camera);
+      zoomHelper.fitAreaWithOffsetY({
+        area: {
+          width: TARGET_RANGE_LIMIT.x * 2,
+          depth: TARGET_RANGE_LIMIT.z * 2,
+        },
+        offsetY: 8,
+        distanceFactor: 1.15,
+      });
     }
   }
 

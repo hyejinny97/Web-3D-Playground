@@ -97,6 +97,43 @@ class CameraZoomHelper {
       });
     }
   }
+
+  /**
+   * area와 카메라의 높이차(offsetY)를 고정한 채, 지정한 영역(너비 x 깊이)이
+   * 화면에 들어오도록 카메라의 z 위치를 계산해 배치한다.
+   */
+  fitAreaWithOffsetY({
+    area: { width, depth, position = new THREE.Vector3(0, 0, 0) },
+    offsetY,
+    distanceFactor = 1,
+  }: {
+    area: {
+      width: number;
+      depth: number;
+      position?: THREE.Vector3;
+    };
+    offsetY: number;
+    distanceFactor?: number;
+  }) {
+    const halfTan = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
+
+    const distForDepth = (depth * 0.5) / halfTan;
+    const distForWidth = (width * 0.5) / (halfTan * this.camera.aspect);
+    const distance = Math.max(distForDepth, distForWidth) * distanceFactor;
+
+    const offsetZ = Math.sqrt(Math.max(distance ** 2 - offsetY ** 2, 0));
+
+    this.camera.position.set(
+      position.x,
+      position.y + offsetY,
+      position.z + offsetZ,
+    );
+    this.camera.lookAt(position);
+    this.updateNearFar({
+      cameraPosition: this.camera.position,
+      targetPosition: position,
+    });
+  }
 }
 
 export default CameraZoomHelper;

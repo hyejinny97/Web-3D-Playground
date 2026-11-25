@@ -1,4 +1,4 @@
-import { TAGS } from "./tags";
+import { TAGS, type ProjectType } from "./tags";
 import { lazy } from "react";
 import image_url_basic_geometries from "@/assets/images/projects/basic_geometries.png";
 import image_url_polyhedron_geometry from "@/assets/images/projects/polyhedron_geometry.png";
@@ -32,15 +32,16 @@ import image_url_hit_punching_bag from "@/assets/images/projects/hit_punching_ba
 import image_url_bees_flowers from "@/assets/images/projects/bees_flowers.png";
 import image_url_orca_seal from "@/assets/images/projects/orca_seal.png";
 import image_url_wild_geese from "@/assets/images/projects/wild_geese.png";
+import image_url_bullfight from "@/assets/images/projects/bullfight.png";
 
-export const BASIC_PROJECT = {
+export const BASIC_PROJECT: ProjectType = {
   id: "base",
   title: "",
   tags: [],
   component: lazy(() => import("@/components/projects/BasicCanvas")),
 };
 
-const MODEL_PROJECTS = [
+const MODEL_PROJECTS: ProjectType[] = [
   {
     id: "geometries",
     title: "Basic geometries",
@@ -177,7 +178,7 @@ const MODEL_PROJECTS = [
   },
 ];
 
-const THREE_D_FILE_PROJECTS = [
+const THREE_D_FILE_PROJECTS: ProjectType[] = [
   {
     id: "gltf-model",
     title: "GLTF Model",
@@ -219,7 +220,7 @@ const THREE_D_FILE_PROJECTS = [
   },
 ];
 
-const PHYSICS_PROJECTS = [
+const PHYSICS_PROJECTS: ProjectType[] = [
   {
     id: "fire-cannon",
     title: "Fire a cannon",
@@ -268,7 +269,7 @@ const PHYSICS_PROJECTS = [
   },
 ];
 
-const GAME_AI_PROJECTS = [
+const GAME_AI_PROJECTS: ProjectType[] = [
   {
     id: "bees-flowers",
     title: "Bees and Flowers",
@@ -289,6 +290,13 @@ const GAME_AI_PROJECTS = [
     imageUrl: image_url_wild_geese,
     tags: [TAGS.yuka, TAGS.offsetPursuit, TAGS.seek, TAGS.gltf],
     component: lazy(() => import("@/components/projects/WildGeeseCanvas")),
+  },
+  {
+    id: "bullfight",
+    title: "Bullfight",
+    imageUrl: image_url_bullfight,
+    tags: [TAGS.yuka, TAGS.interpose, TAGS.offsetPursuit, TAGS.seek, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/BullfightCanvas")),
   },
 ];
 
