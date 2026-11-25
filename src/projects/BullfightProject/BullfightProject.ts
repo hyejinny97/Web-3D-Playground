@@ -81,10 +81,11 @@ class BullfightProject extends BaseProject {
     ];
     const entities = [...flag.entities, this.bull.entity!];
 
-    models.forEach((model) => this.scene?.add(model));
     entities.forEach((entity) => this.entityManager.add(entity));
-
     flag.seek(this.flagTarget.position);
+    this.entityManager.update(0);
+    models.forEach((model) => this.scene?.add(model));
+
     this.timeoutId = setTimeout(() => {
       this.bull.interpose(flag.entities[1], flag.entities[2]);
     }, 1500);
