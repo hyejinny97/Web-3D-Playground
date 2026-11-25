@@ -7,6 +7,7 @@ import CameraZoomHelper from "@/helpers/CameraZoomHelper";
 import { GROUND_SIZE } from "./LionBuffalosProject.constants";
 import Ground from "./helpers/Ground";
 import type { LoadManagerType } from "./LionBuffalosProject.types";
+import Buffalo from "./helpers/Buffalo";
 
 type LionBuffalosProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -18,6 +19,7 @@ class LionBuffalosProject extends BaseProject {
   private stopRender = false;
   private entityManager = new YUKA.EntityManager();
   private time = new YUKA.Time();
+  private buffalo!: Buffalo;
 
   constructor({ canvasEl, loadManager }: LionBuffalosProjectProps) {
     super({ canvasEl });
@@ -40,7 +42,7 @@ class LionBuffalosProject extends BaseProject {
       const zoomHelper = new CameraZoomHelper(this.camera);
       zoomHelper.fitAreaWithOffsetY({
         area: { width: GROUND_SIZE.width, depth: GROUND_SIZE.height },
-        offsetY: 2,
+        offsetY: 2.5,
         distanceFactor: 1.25,
       });
     }
@@ -49,12 +51,15 @@ class LionBuffalosProject extends BaseProject {
   async setupModel() {
     const loadingManager = this.generateLoadingManager();
     const ground = new Ground({ loadingManager });
+    this.buffalo = new Buffalo({ loadingManager, count: 20 });
 
-    await Promise.allSettled([ground.init()]);
+    await Promise.allSettled([ground.init(), this.buffalo.init()]);
     if (this.stopRender) return;
 
-    const models = [ground.model!];
+    const models = [ground.model!, ...this.buffalo.models];
+    const entities = [...this.buffalo.entities];
 
+    entities.forEach((entity) => this.entityManager.add(entity));
     models.forEach((model) => this.scene?.add(model));
   }
 
@@ -71,7 +76,10 @@ class LionBuffalosProject extends BaseProject {
 
   update() {
     const delta = this.time.update().getDelta();
+    const elapsedTime = this.time.getElapsed(); // 단위: s
+
     this.entityManager.update(delta);
+    this.buffalo.update(elapsedTime * 1000);
   }
 
   dispose() {

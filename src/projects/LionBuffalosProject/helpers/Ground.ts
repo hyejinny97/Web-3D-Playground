@@ -40,12 +40,12 @@ class Ground implements GroundType {
     const geometry = new THREE.PlaneGeometry(
       GROUND_SIZE.width,
       GROUND_SIZE.height,
-      Math.pow(2, GROUND_SIZE.width + 2),
-      Math.pow(2, GROUND_SIZE.height + 2),
+      Math.pow(2, GROUND_SIZE.width),
+      Math.pow(2, GROUND_SIZE.height),
     );
     const material = new THREE.MeshStandardMaterial({
       ...this.textures,
-      displacementScale: 1,
+      displacementScale: 0.5,
       displacementBias: -0.3,
     });
     this.model = new THREE.Mesh(geometry, material);

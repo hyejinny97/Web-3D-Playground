@@ -27,3 +27,12 @@ export const GROUND_SIZE = {
   width: 5,
   height: 5,
 } as const;
+
+export const ORIGINAL_MODEL_NAME = "model" as const;
+
+export const ANIMATION_NAME = {
+  buffalo: {
+    idle: "Idle",
+    walk: "Buffalo|Buffalo_WalkFast_F",
+  },
+} as const;

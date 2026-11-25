@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as YUKA from "yuka";
 import type { GRASS_TEXTURES } from "./LionBuffalosProject.constants";
 
 export type GrassTextureType = keyof typeof GRASS_TEXTURES;
@@ -12,4 +13,11 @@ export interface LoadManagerType {
 export interface GroundType {
   model: THREE.Mesh | null;
   init: () => void;
+}
+
+export interface BuffaloType {
+  models: THREE.Object3D[];
+  entities: YUKA.Vehicle[];
+  init: () => void;
+  update: (time: number) => void;
 }
