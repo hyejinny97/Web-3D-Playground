@@ -63,30 +63,59 @@ class Buffalo implements BuffaloType {
   }
 
   private transformModels() {
+    const CLUSTER_CENTER = new THREE.Vector3(0, 0, 0);
+    const CLUSTER_RADIUS =
+      (Math.min(GROUND_SIZE.width, GROUND_SIZE.height) * 0.8) / 2;
+
+    const box = new THREE.Box3().setFromObject(this.models[0]);
+    const size = box.getSize(new THREE.Vector3());
+
+    const MIN_DISTANCE = size.length() * 0.8;
+    const ATTEMPTS_LIMIT = this.count * 5;
+
+    const placedPositions: THREE.Vector3Like[] = [];
+    let attempts = 0;
+
+    const getDistance = (
+      a: THREE.Vector3Like,
+      b: THREE.Vector3Like,
+    ): number => {
+      return Math.hypot(b.x - a.x, b.y - a.y, b.z - a.z);
+    };
+
+    const isOverlap = (position: THREE.Vector3Like): boolean => {
+      if (ATTEMPTS_LIMIT < attempts) return false;
+      attempts++;
+      return placedPositions.some(
+        (placedPosition) =>
+          getDistance(placedPosition, position) <= MIN_DISTANCE,
+      );
+    };
+
+    const calculatePosition = (): THREE.Vector3Like => {
+      const r = CLUSTER_RADIUS * Math.pow(Math.random(), 0.25);
+      const theta = 2 * Math.PI * Math.random();
+
+      const x = CLUSTER_CENTER.x + r * Math.cos(theta);
+      const z = CLUSTER_CENTER.z + r * Math.sin(theta);
+      const position = { x, y: 0, z };
+
+      if (isOverlap(position)) {
+        return calculatePosition();
+      } else {
+        placedPositions.push(position);
+        return position;
+      }
+    };
+
     this.models.forEach((model) => {
       const originalModel = model.getObjectByName(ORIGINAL_MODEL_NAME);
       if (!originalModel) return;
 
-      originalModel.position.set(
-        this.getRandomNm({
-          min: (-GROUND_SIZE.width * 0.8) / 2,
-          max: (GROUND_SIZE.width * 0.8) / 2,
-        }),
-        0,
-        this.getRandomNm({
-          min: (-GROUND_SIZE.height * 0.8) / 2,
-          max: (GROUND_SIZE.height * 0.8) / 2,
-        }),
-      );
-      originalModel.rotateY(
-        this.getRandomNm({ min: -2 * Math.PI, max: 2 * Math.PI }),
-      );
+      const { x, y, z } = calculatePosition();
+      originalModel.position.set(x, y, z);
+      originalModel.rotateY(2 * Math.PI * Math.random());
     });
-  }
-
-  private getRandomNm(props?: { min?: number; max?: number }) {
-    const { min = 0, max = 1 } = props || {};
-    return min + Math.random() * (max - min);
   }
 
   private setupAnimations() {
@@ -98,7 +127,7 @@ class Buffalo implements BuffaloType {
       });
       animation.play({
         name: ANIMATION_NAME.buffalo.idle,
-        startAt: this.getRandomNm(),
+        startAt: Math.random(),
       });
       this.animations.push(animation);
     });
