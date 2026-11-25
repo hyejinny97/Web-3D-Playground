@@ -11,7 +11,7 @@ export const TAGS = {
   material: { label: "Material", color: "blue-400" },
   transform: { label: "Transform", color: "purple-400" },
   gltf: { label: "GLTF", color: "yellow-300" },
-  animation: { label: "Animation", color: "pink-400" },
+  animation: { label: "Animation", color: "stone-400" },
   cannon: { label: "Cannon-es", color: "lime-400" },
   lock: { label: "Lock Constraint", color: "green-400" },
   distance: { label: "Distance Constraint", color: "emerald-400" },
@@ -24,6 +24,7 @@ export const TAGS = {
   pursuit: { label: "Pursuit Steering", color: "purple-400" },
   offsetPursuit: { label: "Offset Pursuit Steering", color: "fuchsia-400" },
   interpose: { label: "Interpose Steering", color: "pink-400" },
+  flee: { label: "Flee Steering", color: "rose-400" },
 } as const;
 
 export interface ProjectType {

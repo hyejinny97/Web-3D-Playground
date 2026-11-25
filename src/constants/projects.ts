@@ -298,6 +298,13 @@ const GAME_AI_PROJECTS: ProjectType[] = [
     tags: [TAGS.yuka, TAGS.interpose, TAGS.offsetPursuit, TAGS.seek, TAGS.gltf],
     component: lazy(() => import("@/components/projects/BullfightCanvas")),
   },
+  {
+    id: "lion-buffalos",
+    title: "A Lion and Buffaloes",
+    imageUrl: "",
+    tags: [TAGS.yuka, TAGS.flee, TAGS.arrive, TAGS.gltf],
+    component: lazy(() => import("@/components/projects/LionBuffalosCanvas")),
+  },
 ];
 
 export const ALL_PROJECTS = [
