@@ -32,6 +32,7 @@ import image_url_hit_punching_bag from "@/assets/images/projects/hit_punching_ba
 import image_url_bees_flowers from "@/assets/images/projects/bees_flowers.png";
 import image_url_orca_seal from "@/assets/images/projects/orca_seal.png";
 import image_url_wild_geese from "@/assets/images/projects/wild_geese.png";
+import image_url_bullfight from "@/assets/images/projects/bullfight.png";
 
 export const BASIC_PROJECT: ProjectType = {
   id: "base",
@@ -293,7 +294,7 @@ const GAME_AI_PROJECTS: ProjectType[] = [
   {
     id: "bullfight",
     title: "Bullfight",
-    imageUrl: "",
+    imageUrl: image_url_bullfight,
     tags: [TAGS.yuka, TAGS.interpose, TAGS.offsetPursuit, TAGS.seek, TAGS.gltf],
     component: lazy(() => import("@/components/projects/BullfightCanvas")),
   },
