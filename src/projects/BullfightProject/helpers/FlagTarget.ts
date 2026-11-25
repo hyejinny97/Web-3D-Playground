@@ -29,8 +29,8 @@ class FlagTarget implements FlagTargetType {
   }
 
   update(time: number) {
-    this.position.x = Math.sin(time * 0.2) * (GROUND_SIZE.width * 0.4);
-    this.position.z = Math.cos(time * 0.5) * (GROUND_SIZE.height * 0.4);
+    this.position.x = Math.sin(time * 0.2) * (GROUND_SIZE.width * 0.35);
+    this.position.z = Math.cos(time * 0.6) * (GROUND_SIZE.height * 0.35);
     this.model.position.set(this.position.x, this.position.y, this.position.z);
   }
 }

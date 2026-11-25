@@ -29,15 +29,15 @@ export const GRASS_TEXTURES = {
 
 export const GROUND_SIZE = {
   width: 5,
-  height: 3,
+  height: 5,
 } as const;
 
 export const ORIGINAL_MODEL_NAME = "model";
 
-export const FLAG_SIZE = 0.3 as const;
+export const FLAG_SIZE = 0.5 as const;
 
 export const FLAG_OFFSET_FROM_ANCHOR = {
-  x: FLAG_SIZE * 1.2,
+  x: FLAG_SIZE * 1.3,
   y: 0,
   z: 0,
 } as const;
@@ -47,3 +47,5 @@ export const BULL_ANIMATION_NAME = {
   run: "Take 001_4",
   attack: "Take 001",
 } as const;
+
+export const BULL_ATTACK_DISTANCE = 0.5 as const;

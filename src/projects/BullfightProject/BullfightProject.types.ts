@@ -34,5 +34,6 @@ export interface BullType {
   model: THREE.Object3D | null;
   entity: YUKA.Vehicle | null;
   init: () => void;
+  interpose: (entity1: YUKA.Vehicle, entity2: YUKA.Vehicle) => void;
   update: (time: number) => void;
 }

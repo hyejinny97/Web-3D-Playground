@@ -23,6 +23,7 @@ class BullfightProject extends BaseProject {
   private time = new YUKA.Time();
   private flagTarget!: FlagTarget;
   private bull!: Bull;
+  private timeoutId: number | null = null;
 
   constructor({ canvasEl, loadManager }: BullfightProjectProps) {
     super({ canvasEl });
@@ -56,7 +57,7 @@ class BullfightProject extends BaseProject {
       const zoomHelper = new CameraZoomHelper(this.camera);
       zoomHelper.fitAreaWithOffsetY({
         area: { width: GROUND_SIZE.width, depth: GROUND_SIZE.height },
-        offsetY: 1,
+        offsetY: 2,
         distanceFactor: 1.25,
       });
     }
@@ -84,6 +85,9 @@ class BullfightProject extends BaseProject {
     entities.forEach((entity) => this.entityManager.add(entity));
 
     flag.seek(this.flagTarget.position);
+    this.timeoutId = setTimeout(() => {
+      this.bull.interpose(flag.entities[1], flag.entities[2]);
+    }, 1500);
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -111,6 +115,7 @@ class BullfightProject extends BaseProject {
     this.stopRender = true;
     this.entityManager.clear();
     this.time.dispose();
+    if (this.timeoutId) clearTimeout(this.timeoutId);
   }
 }
 
