@@ -26,5 +26,15 @@ export interface LionType {
   model: THREE.Object3D | null;
   entity: YUKA.Vehicle | null;
   init: () => void;
-  update: (time: number) => void;
+  setTarget: (target: YUKA.Vector3) => void;
+  seek: () => Promise<void>;
+  update: (time: number, delta: number) => void;
+}
+
+export interface LionTargetType {
+  model: THREE.Mesh;
+  position: YUKA.Vector3;
+  show: () => void;
+  hide: () => void;
+  placeRandomly: () => void;
 }

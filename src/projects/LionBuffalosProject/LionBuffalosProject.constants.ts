@@ -40,3 +40,9 @@ export const ANIMATION_NAME = {
     walk: "Walk",
   },
 } as const;
+
+export const MAX_TURN_RATE = Math.PI / 2;
+
+export const MOVE_THRESHOLD = 0.1 as const;
+
+export const ARRIVE_TOLERANCE = 0.1 as const;

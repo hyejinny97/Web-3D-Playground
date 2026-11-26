@@ -9,6 +9,7 @@ import Ground from "./helpers/Ground";
 import type { LoadManagerType } from "./LionBuffalosProject.types";
 import Buffalo from "./helpers/Buffalo";
 import Lion from "./helpers/Lion";
+import LionTarget from "./helpers/LionTarget";
 
 type LionBuffalosProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -20,8 +21,10 @@ class LionBuffalosProject extends BaseProject {
   private stopRender = false;
   private entityManager = new YUKA.EntityManager();
   private time = new YUKA.Time();
+  private timeoutId: number | null = null;
   private buffalo!: Buffalo;
   private lion!: Lion;
+  private lionTarget!: LionTarget;
 
   constructor({ canvasEl, loadManager }: LionBuffalosProjectProps) {
     super({ canvasEl });
@@ -55,6 +58,7 @@ class LionBuffalosProject extends BaseProject {
     const ground = new Ground({ loadingManager });
     this.buffalo = new Buffalo({ loadingManager, count: 20 });
     this.lion = new Lion({ loadingManager });
+    this.lionTarget = new LionTarget();
 
     await Promise.allSettled([
       ground.init(),
@@ -63,11 +67,27 @@ class LionBuffalosProject extends BaseProject {
     ]);
     if (this.stopRender) return;
 
-    const models = [ground.model!, ...this.buffalo.models, this.lion.model!];
-    const entities = [...this.buffalo.entities];
+    const models = [
+      ground.model!,
+      ...this.buffalo.models,
+      this.lion.model!,
+      this.lionTarget.model,
+    ];
+    const entities = [...this.buffalo.entities, this.lion.entity!];
 
     entities.forEach((entity) => this.entityManager.add(entity));
     models.forEach((model) => this.scene?.add(model));
+
+    this.lion.setTarget(this.lionTarget.position);
+    this.timeoutId = setTimeout(this.moveLion.bind(this), 3000);
+  }
+
+  async moveLion() {
+    this.lionTarget.placeRandomly();
+    await this.lion.seek();
+
+    if (this.timeoutId) clearTimeout(this.timeoutId);
+    this.timeoutId = setTimeout(this.moveLion.bind(this), 2000);
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -87,7 +107,7 @@ class LionBuffalosProject extends BaseProject {
 
     this.entityManager.update(delta);
     this.buffalo.update(elapsedTime * 1000);
-    this.lion.update(elapsedTime * 1000);
+    this.lion.update(elapsedTime * 1000, delta);
   }
 
   dispose() {
@@ -95,6 +115,7 @@ class LionBuffalosProject extends BaseProject {
     this.stopRender = true;
     this.entityManager.clear();
     this.time.dispose();
+    if (this.timeoutId) clearTimeout(this.timeoutId);
   }
 }
 
