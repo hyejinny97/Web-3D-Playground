@@ -78,6 +78,7 @@ class LionBuffalosProject extends BaseProject {
     entities.forEach((entity) => this.entityManager.add(entity));
     models.forEach((model) => this.scene?.add(model));
 
+    this.buffalo.flee(this.lion.entity!.position);
     this.lion.setTarget(this.lionTarget.position);
     this.timeoutId = setTimeout(this.moveLion.bind(this), 3000);
   }

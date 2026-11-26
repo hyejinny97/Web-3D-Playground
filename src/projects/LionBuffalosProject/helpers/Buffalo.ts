@@ -9,6 +9,7 @@ import {
 import {
   ANIMATION_NAME,
   GROUND_SIZE,
+  MOVE_THRESHOLD,
   ORIGINAL_MODEL_NAME,
 } from "../LionBuffalosProject.constants";
 import AnimationHelper from "@/helpers/AnimationHelper";
@@ -35,7 +36,11 @@ class Buffalo implements BuffaloType {
   async init() {
     await this.loadGLTF();
     this.setupModels();
-    this.transformModels();
+    this.setupEntities();
+    this.transformEntities();
+    this.entities.forEach((entity, idx) =>
+      this.connectEntityToModel(entity!, this.models[idx]),
+    );
     this.setupAnimations();
   }
 
@@ -62,7 +67,27 @@ class Buffalo implements BuffaloType {
       });
   }
 
-  private transformModels() {
+  private setupEntities() {
+    Array(this.count)
+      .fill(0)
+      .forEach(() => {
+        const entity = new YUKA.Vehicle();
+        entity.maxSpeed = 1;
+        entity.maxForce = 5;
+        this.entities.push(entity);
+      });
+  }
+
+  private connectEntityToModel(entity: YUKA.GameEntity, model: THREE.Object3D) {
+    model.matrixAutoUpdate = false;
+    entity.setRenderComponent(model, this.sync);
+  }
+
+  private sync(entity: YUKA.GameEntity, renderComponent: THREE.Object3D) {
+    renderComponent.matrix.copy(entity.worldMatrix as unknown as THREE.Matrix4);
+  }
+
+  private transformEntities() {
     const CLUSTER_CENTER = new THREE.Vector3(0, 0, 0);
     const CLUSTER_RADIUS =
       (Math.min(GROUND_SIZE.width, GROUND_SIZE.height) * 0.8) / 2;
@@ -71,7 +96,7 @@ class Buffalo implements BuffaloType {
     const size = box.getSize(new THREE.Vector3());
 
     const MIN_DISTANCE = size.length() * 0.8;
-    const ATTEMPTS_LIMIT = this.count * 5;
+    const ATTEMPTS_LIMIT = this.count * 7;
 
     const placedPositions: THREE.Vector3Like[] = [];
     let attempts = 0;
@@ -108,13 +133,10 @@ class Buffalo implements BuffaloType {
       }
     };
 
-    this.models.forEach((model) => {
-      const originalModel = model.getObjectByName(ORIGINAL_MODEL_NAME);
-      if (!originalModel) return;
-
+    this.entities.forEach((entity) => {
       const { x, y, z } = calculatePosition();
-      originalModel.position.set(x, y, z);
-      originalModel.rotateY(2 * Math.PI * Math.random());
+      entity.position.set(x, y, z);
+      entity.rotation.fromEuler(0, -2 * Math.PI * Math.random(), 0);
     });
   }
 
@@ -133,9 +155,32 @@ class Buffalo implements BuffaloType {
     });
   }
 
+  flee(target: YUKA.Vector3) {
+    this.entities.forEach((entity) => {
+      const behavior = new YUKA.FleeBehavior(target);
+      behavior.panicDistance = 1;
+      entity.steering.add(behavior);
+    });
+  }
+
   update(time: number) {
     this.animations.forEach((animation) => {
       animation.update(time);
+    });
+    this.entities.forEach((entity, idx) => {
+      const animation = this.animations[idx];
+      const isMoving = entity.velocity.squaredLength() > MOVE_THRESHOLD ** 2;
+
+      let animationToPlay: string;
+      if (isMoving) {
+        animationToPlay = ANIMATION_NAME.buffalo.walk;
+      } else {
+        animationToPlay = ANIMATION_NAME.buffalo.idle;
+      }
+
+      if (animationToPlay !== animation.getPlayingAnimationName()) {
+        animation.play({ name: animationToPlay });
+      }
     });
   }
 }

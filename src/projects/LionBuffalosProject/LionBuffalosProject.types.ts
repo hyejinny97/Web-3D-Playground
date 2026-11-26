@@ -19,6 +19,7 @@ export interface BuffaloType {
   models: THREE.Object3D[];
   entities: YUKA.Vehicle[];
   init: () => void;
+  flee: (target: YUKA.Vector3) => void;
   update: (time: number) => void;
 }
 
