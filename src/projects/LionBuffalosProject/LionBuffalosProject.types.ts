@@ -21,3 +21,10 @@ export interface BuffaloType {
   init: () => void;
   update: (time: number) => void;
 }
+
+export interface LionType {
+  model: THREE.Object3D | null;
+  entity: YUKA.Vehicle | null;
+  init: () => void;
+  update: (time: number) => void;
+}

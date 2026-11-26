@@ -43,7 +43,7 @@ class Buffalo implements BuffaloType {
     const loader = new GLTFLoader(this.loadingManager);
     this.gltf = await loader.loadAsync("/models/buffalo/scene.gltf");
 
-    const SIZE = 0.2;
+    const SIZE = 0.3;
     this.gltf.scene.scale.set(SIZE, SIZE, SIZE);
   }
 
@@ -93,7 +93,7 @@ class Buffalo implements BuffaloType {
     };
 
     const calculatePosition = (): THREE.Vector3Like => {
-      const r = CLUSTER_RADIUS * Math.pow(Math.random(), 0.25);
+      const r = CLUSTER_RADIUS * Math.pow(Math.random(), 0.3);
       const theta = 2 * Math.PI * Math.random();
 
       const x = CLUSTER_CENTER.x + r * Math.cos(theta);
