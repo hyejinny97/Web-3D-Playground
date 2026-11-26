@@ -11,6 +11,8 @@ import {
   GROUND_SIZE,
   MOVE_THRESHOLD,
   ORIGINAL_MODEL_NAME,
+  PANIC_DISTANCE,
+  RESTRICTED_AREA,
 } from "../LionBuffalosProject.constants";
 import AnimationHelper from "@/helpers/AnimationHelper";
 
@@ -157,13 +159,18 @@ class Buffalo implements BuffaloType {
 
   flee(target: YUKA.Vector3) {
     this.entities.forEach((entity) => {
-      const behavior = new YUKA.FleeBehavior(target);
-      behavior.panicDistance = 1;
-      entity.steering.add(behavior);
+      const fleeBehavior = new YUKA.FleeBehavior(target);
+      fleeBehavior.panicDistance = PANIC_DISTANCE;
+
+      const returnBehavior = new YUKA.SeekBehavior(RESTRICTED_AREA.center);
+      returnBehavior.active = false;
+
+      entity.steering.add(fleeBehavior);
+      entity.steering.add(returnBehavior);
     });
   }
 
-  update(time: number) {
+  private animate(time: number) {
     this.animations.forEach((animation) => {
       animation.update(time);
     });
@@ -182,6 +189,38 @@ class Buffalo implements BuffaloType {
         animation.play({ name: animationToPlay });
       }
     });
+  }
+
+  private forceWithinRestrictedArea() {
+    this.entities.forEach((entity) => {
+      let fleeBehavior: YUKA.FleeBehavior | null = null;
+      let returnBehavior: YUKA.SeekBehavior | null = null;
+      for (const behavior of entity.steering.behaviors) {
+        if (behavior instanceof YUKA.FleeBehavior) {
+          fleeBehavior = behavior;
+        }
+        if (behavior instanceof YUKA.SeekBehavior) {
+          returnBehavior = behavior;
+        }
+      }
+      if (!fleeBehavior || !returnBehavior) return;
+
+      const distanceFromCenter = entity.position.distanceTo(
+        RESTRICTED_AREA.center,
+      );
+      if (distanceFromCenter > RESTRICTED_AREA.radius) {
+        fleeBehavior.active = false;
+        returnBehavior.active = true;
+      } else {
+        fleeBehavior.active = true;
+        returnBehavior.active = false;
+      }
+    });
+  }
+
+  update(time: number) {
+    this.animate(time);
+    this.forceWithinRestrictedArea();
   }
 }
 

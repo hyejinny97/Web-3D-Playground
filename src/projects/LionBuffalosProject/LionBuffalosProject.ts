@@ -56,7 +56,7 @@ class LionBuffalosProject extends BaseProject {
   async setupModel() {
     const loadingManager = this.generateLoadingManager();
     const ground = new Ground({ loadingManager });
-    this.buffalo = new Buffalo({ loadingManager, count: 20 });
+    this.buffalo = new Buffalo({ loadingManager, count: 10 });
     this.lion = new Lion({ loadingManager });
     this.lionTarget = new LionTarget();
 

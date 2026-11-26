@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as YUKA from "yuka";
 
 export const GRASS_TEXTURES = {
   aoMap: {
@@ -24,8 +25,8 @@ export const GRASS_TEXTURES = {
 } as const;
 
 export const GROUND_SIZE = {
-  width: 6,
-  height: 6,
+  width: 8,
+  height: 5,
 } as const;
 
 export const ORIGINAL_MODEL_NAME = "model" as const;
@@ -46,3 +47,10 @@ export const MAX_TURN_RATE = Math.PI / 2;
 export const MOVE_THRESHOLD = 0.1 as const;
 
 export const ARRIVE_TOLERANCE = 0.1 as const;
+
+export const RESTRICTED_AREA = {
+  center: new YUKA.Vector3(0, 0, 0),
+  radius: Math.min(GROUND_SIZE.width, GROUND_SIZE.height) * 0.5,
+} as const;
+
+export const PANIC_DISTANCE = 1 as const;
