@@ -74,10 +74,12 @@ class Lion implements LionType {
 
   private transformEntity() {
     if (!this.entity) return;
+
+    this.entity.rotation.fromEuler(0, -Math.PI / 2, 0);
     this.entity.position.set(
-      (Math.random() - 0.5) * GROUND_SIZE.width * 0.8,
+      (GROUND_SIZE.width / 2) * 0.8,
       0,
-      (Math.random() - 0.5) * GROUND_SIZE.height * 0.8,
+      (GROUND_SIZE.height / 2) * 0.8,
     );
   }
 
