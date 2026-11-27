@@ -21,6 +21,7 @@ class Buffalo implements BuffaloType {
   private count!: number;
   private gltf: GLTF | null = null;
   private animations: AnimationHelper[] = [];
+  private target: YUKA.Vector3 | null = null;
   models: THREE.Object3D[] = [];
   entities: YUKA.Vehicle[] = [];
 
@@ -158,6 +159,7 @@ class Buffalo implements BuffaloType {
   }
 
   flee(target: YUKA.Vector3) {
+    this.target = target;
     this.entities.forEach((entity) => {
       const fleeBehavior = new YUKA.FleeBehavior(target);
       fleeBehavior.panicDistance = PANIC_DISTANCE;
@@ -192,6 +194,8 @@ class Buffalo implements BuffaloType {
   }
 
   private forceWithinRestrictedArea() {
+    if (!this.target) return;
+
     this.entities.forEach((entity) => {
       let fleeBehavior: YUKA.FleeBehavior | null = null;
       let returnBehavior: YUKA.SeekBehavior | null = null;
@@ -212,7 +216,13 @@ class Buffalo implements BuffaloType {
         fleeBehavior.active = false;
         returnBehavior.active = true;
       } else {
-        fleeBehavior.active = true;
+        const distanceFromTarget = entity.position.distanceTo(this.target!);
+        if (distanceFromTarget >= PANIC_DISTANCE * 1.5) {
+          fleeBehavior.active = false;
+          entity.velocity.set(0, 0, 0);
+        } else {
+          fleeBehavior.active = true;
+        }
         returnBehavior.active = false;
       }
     });
