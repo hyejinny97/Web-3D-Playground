@@ -36,3 +36,8 @@ export const ANIMATION_NAME = {
   idle: "Idle",
   walk: "Walk",
 } as const;
+
+export const MODEL_NAME = {
+  ground: "ground",
+  point: "point",
+} as const;

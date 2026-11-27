@@ -6,6 +6,7 @@ import type {
 import {
   GROUND_SIZE,
   GROUND_TEXTURES,
+  MODEL_NAME,
 } from "../WalkingStonePathProject.constants";
 
 class Ground implements GroundType {
@@ -52,6 +53,7 @@ class Ground implements GroundType {
       displacementBias: 0,
     });
     this.model = new THREE.Mesh(geometry, material);
+    this.model.name = MODEL_NAME.ground;
   }
 
   private transform() {

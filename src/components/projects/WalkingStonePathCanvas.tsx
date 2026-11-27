@@ -3,6 +3,7 @@ import WalkingStonePathProject from "@/projects/WalkingStonePathProject";
 import type { Project } from "@/types/project";
 import useLoad from "@/hooks/useLoading";
 import Loading from "../Loading";
+import Text from "@jinni-labs/ui/Text";
 
 const WalkingStonePathCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -36,7 +37,13 @@ const WalkingStonePathCanvas = () => {
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
-      {isLoading && <Loading progress={progress} helpText="Loading files..." />}
+      {isLoading ? (
+        <Loading progress={progress} helpText="Loading files..." />
+      ) : (
+        <Text className="absolute bottom-5 left-5 text-white! typo-headline-small">
+          * Click on the ground to move your character.
+        </Text>
+      )}
     </div>
   );
 };

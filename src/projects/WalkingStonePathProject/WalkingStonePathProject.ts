@@ -5,10 +5,11 @@ import BaseProject from "../BaseProject";
 import { RenderLoop } from "@/decorators/renderLoop";
 import type { LoadManagerType } from "./WalkingStonePathProject.types";
 import CameraZoomHelper from "@/helpers/CameraZoomHelper";
-import { GROUND_SIZE } from "./WalkingStonePathProject.constants";
+import { GROUND_SIZE, MODEL_NAME } from "./WalkingStonePathProject.constants";
 import Ground from "./helpers/Ground";
 import Stone from "./helpers/Stone";
 import Person from "./helpers/Person";
+import Point from "./helpers/Point";
 
 type WalkingStonePathProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -20,12 +21,18 @@ class WalkingStonePathProject extends BaseProject {
   private stopRender = false;
   private entityManager = new YUKA.EntityManager();
   private time = new YUKA.Time();
+  private raycaster = new THREE.Raycaster();
+  private ground!: Ground;
   private person!: Person;
+  private point!: Point;
+  declare private handlePointerMove: (event: PointerEvent) => void;
+  declare private handlePointerDown: (event: PointerEvent) => void;
 
   constructor({ canvasEl, loadManager }: WalkingStonePathProjectProps) {
     super({ canvasEl });
     this.loadManager = loadManager;
     this.setupModel();
+    this.setupEvent();
   }
 
   init() {
@@ -62,14 +69,24 @@ class WalkingStonePathProject extends BaseProject {
 
   async setupModel() {
     const loadingManager = this.generateLoadingManager();
-    const ground = new Ground({ loadingManager });
+    this.ground = new Ground({ loadingManager });
     const stone = new Stone({ loadingManager, count: 10 });
     this.person = new Person({ loadingManager });
+    this.point = new Point();
 
-    await Promise.allSettled([ground.init(), stone.init(), this.person.init()]);
+    await Promise.allSettled([
+      this.ground.init(),
+      stone.init(),
+      this.person.init(),
+    ]);
     if (this.stopRender) return;
 
-    const models = [ground.model!, ...stone.models, this.person.model!];
+    const models = [
+      this.ground.model!,
+      ...stone.models,
+      this.person.model!,
+      this.point.model,
+    ];
     const entities = [...stone.entities, this.person.entity!];
 
     entities.forEach((entity) => this.entityManager.add(entity));
@@ -87,6 +104,45 @@ class WalkingStonePathProject extends BaseProject {
     return manager;
   }
 
+  setupEvent() {
+    this.handlePointerMove = (event: PointerEvent) => {
+      if (!this.ground.model) return;
+      const hit = this.getHit(event);
+
+      if (hit && hit.object.name === MODEL_NAME.ground) {
+        this.point.displayLow(hit.point);
+      } else {
+        this.point.hide();
+      }
+    };
+    this.handlePointerDown = (event: PointerEvent) => {
+      if (!this.ground.model) return;
+      const hit = this.getHit(event);
+
+      if (hit && hit.object.name === MODEL_NAME.ground) {
+        this.point.displayHigh(hit.point);
+      } else {
+        this.point.hide();
+      }
+    };
+
+    this.canvasEl.addEventListener("pointermove", this.handlePointerMove);
+    this.canvasEl.addEventListener("pointerdown", this.handlePointerDown);
+  }
+
+  getHit(event: PointerEvent): THREE.Intersection<THREE.Object3D> | undefined {
+    const x = (event.clientX / this.canvasEl.clientWidth) * 2 - 1;
+    const y = -(event.clientY / this.canvasEl.clientHeight) * 2 + 1;
+    const mouse = new THREE.Vector2(x, y);
+
+    this.raycaster.setFromCamera(mouse, this.camera!);
+    const intersects = this.raycaster.intersectObjects(
+      this.scene!.children.filter((obj) => obj.name !== MODEL_NAME.point),
+    );
+
+    return intersects.length > 0 ? intersects[0] : undefined;
+  }
+
   update() {
     const delta = this.time.update().getDelta();
     const elapsedTime = this.time.getElapsed(); // 단위: s
@@ -100,6 +156,8 @@ class WalkingStonePathProject extends BaseProject {
     this.stopRender = true;
     this.entityManager.clear();
     this.time.dispose();
+    this.canvasEl.removeEventListener("pointermove", this.handlePointerMove);
+    this.canvasEl.removeEventListener("pointerdown", this.handlePointerDown);
   }
 }
 
