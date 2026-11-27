@@ -31,3 +31,8 @@ export const GROUND_SIZE = {
   width: 8,
   height: 5,
 } as const;
+
+export const ANIMATION_NAME = {
+  idle: "Idle",
+  walk: "Walk",
+} as const;

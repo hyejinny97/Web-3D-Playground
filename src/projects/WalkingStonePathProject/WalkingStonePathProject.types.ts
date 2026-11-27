@@ -20,3 +20,10 @@ export interface StoneType {
   entities: YUKA.GameEntity[];
   init: () => void;
 }
+
+export interface PersonType {
+  model: THREE.Object3D | null;
+  entity: YUKA.Vehicle | null;
+  init: () => void;
+  update: (time: number) => void;
+}

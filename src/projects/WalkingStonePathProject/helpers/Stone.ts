@@ -86,9 +86,9 @@ class Stone implements StoneType {
       entity.scale.set(SIZE, SIZE, SIZE);
       entity.rotation.fromEuler(0, -2 * Math.PI * Math.random(), 0);
       entity.position.set(
-        (Math.random() - 0.5) * GROUND_SIZE.width * 0.8,
+        (Math.random() - 0.5) * GROUND_SIZE.width * 0.7,
         0,
-        (Math.random() - 0.5) * GROUND_SIZE.height * 0.8,
+        (Math.random() - 0.5) * GROUND_SIZE.height * 0.7,
       );
     });
   }
