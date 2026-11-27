@@ -49,7 +49,7 @@ class Ground implements GroundType {
     const material = new THREE.MeshStandardMaterial({
       ...this.textures,
       displacementScale: 0.1,
-      displacementBias: -0.1,
+      displacementBias: 0,
     });
     this.model = new THREE.Mesh(geometry, material);
   }

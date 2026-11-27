@@ -7,6 +7,7 @@ import type { LoadManagerType } from "./WalkingStonePathProject.types";
 import CameraZoomHelper from "@/helpers/CameraZoomHelper";
 import { GROUND_SIZE } from "./WalkingStonePathProject.constants";
 import Ground from "./helpers/Ground";
+import Stone from "./helpers/Stone";
 
 type WalkingStonePathProjectProps = ConstructorProps & {
   loadManager: LoadManagerType;
@@ -49,12 +50,15 @@ class WalkingStonePathProject extends BaseProject {
   async setupModel() {
     const loadingManager = this.generateLoadingManager();
     const ground = new Ground({ loadingManager });
+    const stone = new Stone({ loadingManager, count: 10 });
 
-    await Promise.allSettled([ground.init()]);
+    await Promise.allSettled([ground.init(), stone.init()]);
     if (this.stopRender) return;
 
-    const models = [ground.model!];
+    const models = [ground.model!, ...stone.models];
+    const entities = [...stone.entities];
 
+    entities.forEach((entity) => this.entityManager.add(entity));
     models.forEach((model) => this.scene?.add(model));
   }
 
