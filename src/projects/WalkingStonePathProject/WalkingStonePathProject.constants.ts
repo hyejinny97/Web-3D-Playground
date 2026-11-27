@@ -41,3 +41,7 @@ export const MODEL_NAME = {
   ground: "ground",
   point: "point",
 } as const;
+
+export const ARRIVE_TOLERANCE = 0.1 as const;
+
+export const MOVE_THRESHOLD = 0.1 as const;

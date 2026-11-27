@@ -25,12 +25,16 @@ export interface PersonType {
   model: THREE.Object3D | null;
   entity: YUKA.Vehicle | null;
   init: () => void;
+  setTarget: (target: YUKA.Vector3) => void;
+  seek: () => void;
   update: (time: number) => void;
 }
 
 export interface PointType {
   model: THREE.Mesh;
+  position: YUKA.Vector3;
   displayLow: (position: THREE.Vector3, direction: THREE.Vector3) => void;
   displayHigh: (position: THREE.Vector3, direction: THREE.Vector3) => void;
   hide: () => void;
+  updatePosition: (position: THREE.Vector3) => void;
 }

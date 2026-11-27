@@ -91,6 +91,8 @@ class WalkingStonePathProject extends BaseProject {
 
     entities.forEach((entity) => this.entityManager.add(entity));
     models.forEach((model) => this.scene?.add(model));
+
+    this.person.setTarget(this.point.position);
   }
 
   generateLoadingManager(): THREE.LoadingManager {
@@ -121,6 +123,8 @@ class WalkingStonePathProject extends BaseProject {
 
       if (hit && hit.object.name === MODEL_NAME.ground) {
         this.point.displayHigh(hit.point);
+        this.point.updatePosition(hit.point);
+        this.person.seek();
       } else {
         this.point.hide();
       }

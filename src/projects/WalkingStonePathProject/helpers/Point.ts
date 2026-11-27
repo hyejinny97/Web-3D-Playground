@@ -1,10 +1,12 @@
 import * as THREE from "three";
+import * as YUKA from "yuka";
 import type { PointType } from "../WalkingStonePathProject.types";
 import { MODEL_NAME } from "../WalkingStonePathProject.constants";
 
 class Point implements PointType {
   private material!: THREE.MeshBasicMaterial;
   model!: THREE.Mesh;
+  position = new YUKA.Vector3();
 
   constructor() {
     this.setupModel();
@@ -41,6 +43,12 @@ class Point implements PointType {
 
   hide() {
     this.model.visible = false;
+  }
+
+  updatePosition(position: THREE.Vector3) {
+    this.position.x = position.x;
+    this.position.y = position.y;
+    this.position.z = position.z;
   }
 }
 

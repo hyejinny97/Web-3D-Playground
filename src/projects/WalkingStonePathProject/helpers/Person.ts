@@ -5,13 +5,16 @@ import AnimationHelper from "@/helpers/AnimationHelper";
 import { GLTFLoader, type GLTF } from "three/examples/jsm/Addons.js";
 import {
   ANIMATION_NAME,
+  ARRIVE_TOLERANCE,
   GROUND_SIZE,
+  MOVE_THRESHOLD,
 } from "../WalkingStonePathProject.constants";
 
 class Person implements PersonType {
   private loadingManager: THREE.LoadingManager;
   private gltf: GLTF | null = null;
   private animation: AnimationHelper | null = null;
+  private target: YUKA.Vector3 | null = null;
   model: THREE.Object3D | null = null;
   entity: YUKA.Vehicle | null = null;
 
@@ -41,7 +44,6 @@ class Person implements PersonType {
 
     const SIZE = 0.01;
     this.gltf.scene.scale.set(SIZE, SIZE, SIZE);
-    this.gltf.scene.rotateY(Math.PI * 0.2);
     this.gltf.scene.updateMatrixWorld(true);
 
     const box = new THREE.Box3().setFromObject(this.gltf.scene);
@@ -50,8 +52,9 @@ class Person implements PersonType {
 
   private setupEntity() {
     this.entity = new YUKA.Vehicle();
-    this.entity.maxSpeed = 1;
-    this.entity.maxForce = 2;
+    this.entity.maxSpeed = 30;
+    this.entity.maxForce = 50;
+    this.entity.mass = 0.5;
   }
 
   private connectEntityToModel(entity: YUKA.GameEntity, model: THREE.Object3D) {
@@ -65,6 +68,7 @@ class Person implements PersonType {
 
   private transformEntity() {
     if (!this.entity) return;
+    this.entity.rotation.fromEuler(0, Math.PI * 0.2, 0);
     this.entity.position.set(
       (-GROUND_SIZE.width / 2) * 0.9,
       0,
@@ -83,8 +87,44 @@ class Person implements PersonType {
     });
   }
 
-  update(time: number) {
+  setTarget(target: YUKA.Vector3) {
+    if (!this.entity) return;
+    this.target = target;
+    const behavior = new YUKA.ArriveBehavior(target);
+    behavior.tolerance = ARRIVE_TOLERANCE;
+    behavior.active = false;
+    this.entity.steering.add(behavior);
+  }
+
+  seek() {
+    if (!this.entity || !this.target) return;
+    this.entity.steering.behaviors[0].active = true;
+  }
+
+  private animate(time: number) {
     this.animation?.update(time);
+    if (this.entity && this.animation) {
+      const isMoving =
+        this.entity.velocity.squaredLength() >= MOVE_THRESHOLD ** 2;
+
+      let animationToPlay: string;
+      if (isMoving) {
+        animationToPlay = ANIMATION_NAME.walk;
+      } else {
+        animationToPlay = ANIMATION_NAME.idle;
+      }
+
+      if (animationToPlay !== this.animation.getPlayingAnimationName()) {
+        this.animation.play({
+          name: animationToPlay,
+          duration: isMoving ? 1500 : undefined,
+        });
+      }
+    }
+  }
+
+  update(time: number) {
+    this.animate(time);
   }
 }
 
