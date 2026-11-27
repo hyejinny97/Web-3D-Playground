@@ -33,6 +33,7 @@ import image_url_bees_flowers from "@/assets/images/projects/bees_flowers.png";
 import image_url_orca_seal from "@/assets/images/projects/orca_seal.png";
 import image_url_wild_geese from "@/assets/images/projects/wild_geese.png";
 import image_url_bullfight from "@/assets/images/projects/bullfight.png";
+import image_url_lion_buffalos from "@/assets/images/projects/lion_buffalos.png";
 
 export const BASIC_PROJECT: ProjectType = {
   id: "base",
@@ -301,7 +302,7 @@ const GAME_AI_PROJECTS: ProjectType[] = [
   {
     id: "lion-buffalos",
     title: "A Lion and Buffaloes",
-    imageUrl: "",
+    imageUrl: image_url_lion_buffalos,
     tags: [TAGS.yuka, TAGS.flee, TAGS.seek, TAGS.arrive, TAGS.gltf],
     component: lazy(() => import("@/components/projects/LionBuffalosCanvas")),
   },
