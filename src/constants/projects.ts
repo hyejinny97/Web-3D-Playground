@@ -306,6 +306,15 @@ const GAME_AI_PROJECTS: ProjectType[] = [
     tags: [TAGS.yuka, TAGS.flee, TAGS.seek, TAGS.arrive, TAGS.gltf],
     component: lazy(() => import("@/components/projects/LionBuffalosCanvas")),
   },
+  {
+    id: "stone-path",
+    title: "Walking on a stone path",
+    imageUrl: "",
+    tags: [TAGS.yuka, TAGS.avoidance, TAGS.arrive, TAGS.gltf],
+    component: lazy(
+      () => import("@/components/projects/WalkingStonePathCanvas"),
+    ),
+  },
 ];
 
 export const ALL_PROJECTS = [

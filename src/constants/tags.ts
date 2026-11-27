@@ -25,6 +25,7 @@ export const TAGS = {
   offsetPursuit: { label: "Offset Pursuit Steering", color: "fuchsia-400" },
   interpose: { label: "Interpose Steering", color: "pink-400" },
   flee: { label: "Flee Steering", color: "rose-400" },
+  avoidance: { label: "Obstacle Avoidance Steering", color: "slate-400" },
 } as const;
 
 export interface ProjectType {
